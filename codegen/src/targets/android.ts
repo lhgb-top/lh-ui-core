@@ -1,8 +1,9 @@
 /**
  * Android（Kotlin + Jetpack Compose）令牌生成。
  *
- * 产出 com/lh/ui/tokens/LhTokens.kt（明色）与 LhDarkTokens.kt（暗色覆盖）。
+ * 产出 top/lhgb/ui/tokens/LhTokens.kt（明色）与 LhDarkTokens.kt（暗色覆盖）。
  * 令牌按路径层级组织为嵌套 object，色值为 ARGB Int，尺寸为 dp / sp。
+ * 包名遵循家族命名规范（总纲 D20）：反域名 top.lhgb.ui。
  */
 
 import { structureValue, toArgbHex, usesSp } from '../format'
@@ -10,7 +11,7 @@ import { buildTokenTree, pascalCase } from '../tree'
 import type { CodegenInput, CodegenTarget, GeneratedFile, ResolvedToken, TokenSet } from '../types'
 import { render } from '../render'
 
-const PACKAGE = 'com.lh.ui.tokens'
+const PACKAGE = 'top.lhgb.ui.tokens'
 const HEADER_SOURCE = '@lh-ui/core tokens'
 
 interface KotlinLine {
@@ -146,11 +147,11 @@ export const androidTarget: CodegenTarget = {
     const darkBody = buildDarkKotlinBody(input.tokens, darkFeatures)
     return [
       {
-        relativePath: 'com/lh/ui/tokens/LhTokens.kt',
+        relativePath: 'top/lhgb/ui/tokens/LhTokens.kt',
         content: renderKotlinFile(lightBody, input.version, lightFeatures),
       },
       {
-        relativePath: 'com/lh/ui/tokens/LhDarkTokens.kt',
+        relativePath: 'top/lhgb/ui/tokens/LhDarkTokens.kt',
         content: renderKotlinFile(darkBody, input.version, darkFeatures),
       },
     ]

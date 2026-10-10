@@ -4,7 +4,7 @@
 // 修改请编辑 lh-ui-core 仓的 tokens/*.json 后重新执行 pnpm codegen。
 // =====================================================================================
 
-package com.lh.ui.tokens
+package top.lhgb.ui.tokens
 
 import androidx.compose.ui.graphics.Color as ComposeColor
 

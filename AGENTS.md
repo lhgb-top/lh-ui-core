@@ -54,6 +54,10 @@
   避免被所在文件的默认类型误导（如 `button.fontWeight` 引用 `typography.fontWeight.primary`，
   类型随目标取 `number`，而非 components.json 的文件级 `dimension`）。
 - 分组（含文件根）可声明 `$type` 覆盖整组默认类型（如 typography.json 的 `fontSize` 组标 `$type: dimension`）。
+- **产物包名 / 标识符规范（总纲 D20）**：平台包名一律反域名 `top.lhgb.ui`——android target 产出
+  `package top.lhgb.ui.tokens`，dist 路径 `dist/android/top/lhgb/ui/tokens/`；自有常量/类/枚举
+  一律 LH 前缀（Kotlin/Swift/ArkTS `Lh*`，C 宏 `LH_*`，按各语言惯例定大小写）。
+  npm / ohpm 的 `@lh-ui/*` scope 不受此约束（npm 不使用反域名）。
 
 ## 令牌种子
 
