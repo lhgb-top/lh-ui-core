@@ -1,0 +1,86 @@
+{
+  "$schema": "./schema.json",
+  "$description": "国风主题色板（明色）。种子取自 lh-ui-share/styles/theme/common/variables.scss（2026-10-10 一次性搬运，此后两血脉各自演化）",
+  "$type": "color",
+  "primary": {
+    "default": { "value": "#2B4C7C", "description": "主色（靛蓝 — 青花瓷之蓝）" },
+    "hover": { "value": "#3D649E", "description": "主色悬停" },
+    "active": { "value": "#1F3A5F", "description": "主色按压/选中文字" },
+    "bg": { "value": "#E8EDF3", "description": "主色浅底（选中态底色）" },
+    "border": { "value": "#D4DCE8", "description": "主色描边" }
+  },
+  "onPrimary": { "value": "#FFFFFF", "description": "主色底上的文字色（浅主色预设不应写死白字）" },
+  "selected": { "ref": "color.primary.active", "description": "选中态文字色，跟随主色按压变体" },
+  "hoverBg": { "value": "rgba(0, 0, 0, 0.05)", "description": "列表/面板项的中性悬停底色" },
+  "success": {
+    "default": { "value": "#5B8C5A", "description": "成功色（松花绿 — 竹影青翠）" },
+    "hover": { "value": "#6FA36E" },
+    "active": { "value": "#4B7A4A" },
+    "bg": { "value": "#EDF5EC" }
+  },
+  "warning": {
+    "default": { "value": "#C4A35A", "description": "警告色（藤黄 — 秋叶金黄）" },
+    "hover": { "value": "#D4B76F" },
+    "active": { "value": "#B3924A" },
+    "bg": { "value": "#FBF6EA" }
+  },
+  "danger": {
+    "default": { "value": "#B23A3A", "description": "危险色（朱砂 — 印泥朱红）" },
+    "hover": { "value": "#C45050" },
+    "active": { "value": "#9A3030" },
+    "bg": { "value": "#FDF0F0" }
+  },
+  "info": {
+    "default": { "value": "#7A7A7A", "description": "信息色（黛色 — 水墨淡彩）" },
+    "hover": { "value": "#8F8F8F" },
+    "active": { "value": "#6A6A6A" },
+    "bg": { "value": "#F2F2F2" }
+  },
+  "gold": {
+    "default": { "value": "#B8860B", "description": "金色点缀（华贵古韵）" },
+    "hover": { "value": "#D4A843" },
+    "active": { "value": "#9A7208" },
+    "bg": { "value": "#FBF6EA" },
+    "border": { "value": "#FDFAF3" }
+  },
+  "vermilion": {
+    "default": { "value": "#C43A31", "description": "朱砂点缀（印泥朱红）" },
+    "hover": { "value": "#E85D4A" },
+    "active": { "value": "#A92E26" },
+    "bg": { "value": "#FDF0EE" }
+  },
+  "jade": {
+    "default": { "value": "#5B8C5A", "description": "玉色（翠竹清雅）" },
+    "hover": { "value": "#7AAE7A" },
+    "active": { "value": "#4B7A4A" },
+    "bg": { "value": "#EDF5EC" }
+  },
+  "decoration": { "value": "rgba(184, 134, 11, 0.12)", "description": "花纹装饰色" },
+  "surface": { "value": "#FAF6F0", "description": "中性白（宣纸白）" },
+  "ink": { "value": "#1A1A1A", "description": "中性黑（墨）" },
+  "text": {
+    "primary": { "value": "#2C2C2C", "description": "主要文字" },
+    "regular": { "value": "#5A5A5A", "description": "常规文字" },
+    "secondary": { "value": "#8A8A8A", "description": "次要文字" },
+    "placeholder": { "value": "#B0B0B0", "description": "占位文字" },
+    "disabled": { "value": "#C8C8C8", "description": "禁用文字" }
+  },
+  "border": {
+    "base": { "value": "#D8D3CC", "description": "基础描边" },
+    "light": { "value": "#E5E0D8" },
+    "lighter": { "value": "#EEE9E2" },
+    "extraLight": { "value": "#F5F0EB" }
+  },
+  "background": {
+    "default": { "value": "#FAF6F0", "description": "组件底色（宣纸色）" },
+    "page": { "value": "#F5F0EB", "description": "页面底色" },
+    "disabled": { "value": "#EDE8E0" },
+    "overlay": { "value": "rgba(26, 26, 26, 0.4)", "description": "遮罩层底色" }
+  },
+  "disabled": {
+    "bg": { "ref": "color.background.disabled", "description": "禁用底色" },
+    "text": { "ref": "color.text.disabled", "description": "禁用文字色" },
+    "border": { "ref": "color.border.light", "description": "禁用描边色" }
+  },
+  "focus": { "ref": "color.primary.default", "description": "键盘焦点环色，默认跟随主色" }
+}

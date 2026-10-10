@@ -1,0 +1,12 @@
+{
+  "$schema": "./schema.json",
+  "$description": "间距尺度（中性单位 px，各端构建期换算：Android dp / iOS pt / 鸿蒙 vp / C 逻辑像素）",
+  "$type": "dimension",
+  "xs": { "value": "4px" },
+  "sm": { "value": "8px" },
+  "md": { "value": "12px" },
+  "base": { "value": "16px" },
+  "lg": { "value": "20px" },
+  "xl": { "value": "24px" },
+  "xxl": { "value": "32px" }
+}

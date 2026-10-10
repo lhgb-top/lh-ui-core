@@ -1,0 +1,66 @@
+/*
+ * =====================================================================================
+ * 本文件由 @lh-ui/core 自动生成（构建期 codegen），请勿手改。
+ * 源：@lh-ui/core tokens @ v0.0.1
+ * 暗色覆盖：以下宏在明色令牌之后包含，覆盖同名定义。
+ * 修改请编辑 lh-ui-core 仓的 tokens/color-dark.json 后重新执行 pnpm codegen。
+ * =====================================================================================
+ */
+
+#ifndef LH_UI_DARK_TOKENS_H
+#define LH_UI_DARK_TOKENS_H
+
+#define LH_COLOR_BACKGROUND_DEFAULT 0xFF2A2520  /* 组件底色（宣纸色） */
+#define LH_COLOR_BACKGROUND_DISABLED 0xFF242018
+#define LH_COLOR_BACKGROUND_OVERLAY 0xB30A0806  /* 遮罩层底色 */
+#define LH_COLOR_BACKGROUND_PAGE 0xFF1E1A16  /* 页面底色 */
+#define LH_COLOR_BORDER_BASE 0xFF3A3530  /* 基础描边 */
+#define LH_COLOR_BORDER_EXTRA_LIGHT 0xFF242018
+#define LH_COLOR_BORDER_LIGHT 0xFF302B28
+#define LH_COLOR_BORDER_LIGHTER 0xFF2A2520
+#define LH_COLOR_DANGER_ACTIVE 0xFFB23A3A
+#define LH_COLOR_DANGER_BG 0xFF2A1A1A
+#define LH_COLOR_DANGER_DEFAULT 0xFFC45050  /* 危险色（朱砂 — 印泥朱红） */
+#define LH_COLOR_DANGER_HOVER 0xFFD46060
+#define LH_COLOR_DECORATION 0x14D4A843  /* 花纹装饰色 */
+#define LH_COLOR_FOCUS 0xFF7FA6D9  /* 键盘焦点环色，默认跟随主色 */
+#define LH_COLOR_GOLD_ACTIVE 0xFFB8860B
+#define LH_COLOR_GOLD_BG 0xFF2A241A
+#define LH_COLOR_GOLD_BORDER 0xFF3A2E1A
+#define LH_COLOR_GOLD_DEFAULT 0xFFD4A843  /* 金色点缀（华贵古韵） */
+#define LH_COLOR_GOLD_HOVER 0xFFE8C35C
+#define LH_COLOR_HOVER_BG 0x14FFFFFF  /* 列表/面板项的中性悬停底色 */
+#define LH_COLOR_INFO_ACTIVE 0xFF7A7A7A
+#define LH_COLOR_INFO_BG 0xFF1A1A1A
+#define LH_COLOR_INFO_DEFAULT 0xFF8F8F8F  /* 信息色（黛色 — 水墨淡彩） */
+#define LH_COLOR_INFO_HOVER 0xFFA0A0A0
+#define LH_COLOR_JADE_ACTIVE 0xFF5B8C5A
+#define LH_COLOR_JADE_BG 0xFF1A2A1A
+#define LH_COLOR_JADE_DEFAULT 0xFF7AAE7A  /* 玉色（翠竹清雅） */
+#define LH_COLOR_JADE_HOVER 0xFF9CC89C
+#define LH_COLOR_ON_PRIMARY 0xFFFFFFFF  /* 主色底上的文字色（浅主色预设不应写死白字） */
+#define LH_COLOR_PRIMARY_ACTIVE 0xFF2B4C7C  /* 主色按压/选中文字 */
+#define LH_COLOR_PRIMARY_BG 0x403D649E  /* 主色浅底（选中态底色） */
+#define LH_COLOR_PRIMARY_BORDER 0xFF2A3A4A  /* 主色描边 */
+#define LH_COLOR_PRIMARY_DEFAULT 0xFF3D649E  /* 主色（靛蓝 — 青花瓷之蓝） */
+#define LH_COLOR_PRIMARY_HOVER 0xFF5078AB  /* 主色悬停 */
+#define LH_COLOR_SELECTED 0xFFB1C1D8  /* 选中态文字色，跟随主色按压变体 */
+#define LH_COLOR_SUCCESS_ACTIVE 0xFF5B8C5A
+#define LH_COLOR_SUCCESS_BG 0xFF1A2A1A
+#define LH_COLOR_SUCCESS_DEFAULT 0xFF6FA36E  /* 成功色（松花绿 — 竹影青翠） */
+#define LH_COLOR_SUCCESS_HOVER 0xFF82B581
+#define LH_COLOR_TEXT_DISABLED 0xFF5A5250  /* 禁用文字 */
+#define LH_COLOR_TEXT_PLACEHOLDER 0xFF7A7270  /* 占位文字 */
+#define LH_COLOR_TEXT_PRIMARY 0xFFE8E0D8  /* 主要文字 */
+#define LH_COLOR_TEXT_REGULAR 0xFFC8C0B8  /* 常规文字 */
+#define LH_COLOR_TEXT_SECONDARY 0xFFA09890  /* 次要文字 */
+#define LH_COLOR_VERMILION_ACTIVE 0xFFC43A31
+#define LH_COLOR_VERMILION_BG 0xFF2A1A18
+#define LH_COLOR_VERMILION_DEFAULT 0xFFE85D4A  /* 朱砂点缀（印泥朱红） */
+#define LH_COLOR_VERMILION_HOVER 0xFFFF7B6B
+#define LH_COLOR_WARNING_ACTIVE 0xFFC4A35A
+#define LH_COLOR_WARNING_BG 0xFF2A251A
+#define LH_COLOR_WARNING_DEFAULT 0xFFD4B76F  /* 警告色（藤黄 — 秋叶金黄） */
+#define LH_COLOR_WARNING_HOVER 0xFFE0C680
+
+#endif /* LH_UI_DARK_TOKENS_H */

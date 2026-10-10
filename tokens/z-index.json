@@ -1,0 +1,14 @@
+{
+  "$schema": "./schema.json",
+  "$namespace": "zIndex",
+  "$description": "层级（无单位整数）",
+  "$type": "number",
+  "normal": { "value": 1 },
+  "dropdown": { "value": 1000 },
+  "sticky": { "value": 1020 },
+  "fixed": { "value": 1030 },
+  "modalBackdrop": { "value": 1040 },
+  "modal": { "value": 1050 },
+  "popover": { "value": 1060 },
+  "toast": { "value": 2000, "description": "原生血脉新增：轻提示层级（web 血脉对应 tooltip 位）", "nativeOnly": true }
+}

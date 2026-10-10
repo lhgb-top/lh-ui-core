@@ -1,0 +1,16 @@
+{
+  "$schema": "./schema.json",
+  "$description": "动效时长与缓动。时长中性单位 s，各端换算为本地时间单位（Android ms / iOS s / 鸿蒙 ms）",
+  "duration": {
+    "fast": { "value": "0.25s", "type": "duration" },
+    "base": { "value": "0.3s", "type": "duration" },
+    "slow": { "value": "0.4s", "type": "duration" }
+  },
+  "easing": {
+    "easeInOut": {
+      "value": [0.4, 0, 0.2, 1],
+      "type": "cubicBezier",
+      "description": "标准缓动 cubic-bezier(0.4, 0, 0.2, 1)"
+    }
+  }
+}

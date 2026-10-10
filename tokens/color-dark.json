@@ -1,0 +1,81 @@
+{
+  "$schema": "./schema.json",
+  "$namespace": "color",
+  "$description": "国风暗色主题覆盖。种子取自 lh-ui-share/styles/theme/common/var-dark.scss（2026-10-10）。仅声明需要覆盖的键，未覆盖键沿用 color.json。原 web 暗色中的 color-mix 表达式已构建期预计算为字面色值（见 docs/设计语言基线.md）",
+  "$type": "color",
+  "$dark": true,
+  "primary": {
+    "default": { "value": "#3D649E", "description": "暗色主色（夜青花）" },
+    "hover": { "value": "#5078AB" },
+    "active": { "value": "#2B4C7C" },
+    "bg": { "value": "rgba(61, 100, 158, 0.25)", "description": "预计算自 color-mix(primary 25%, transparent)" },
+    "border": { "value": "#2A3A4A" }
+  },
+  "onPrimary": { "value": "#FFFFFF" },
+  "selected": { "value": "#B1C1D8", "description": "预计算自 color-mix(primary 40%, #fff)，暗色面板对比度 5.2:1" },
+  "hoverBg": { "value": "rgba(255, 255, 255, 0.08)", "description": "暗色下必须比面板背景亮" },
+  "success": {
+    "default": { "value": "#6FA36E" },
+    "hover": { "value": "#82B581" },
+    "active": { "value": "#5B8C5A" },
+    "bg": { "value": "#1A2A1A" }
+  },
+  "warning": {
+    "default": { "value": "#D4B76F" },
+    "hover": { "value": "#E0C680" },
+    "active": { "value": "#C4A35A" },
+    "bg": { "value": "#2A251A" }
+  },
+  "danger": {
+    "default": { "value": "#C45050" },
+    "hover": { "value": "#D46060" },
+    "active": { "value": "#B23A3A" },
+    "bg": { "value": "#2A1A1A" }
+  },
+  "info": {
+    "default": { "value": "#8F8F8F" },
+    "hover": { "value": "#A0A0A0" },
+    "active": { "value": "#7A7A7A" },
+    "bg": { "value": "#1A1A1A" }
+  },
+  "gold": {
+    "default": { "value": "#D4A843", "description": "夜金辉" },
+    "hover": { "value": "#E8C35C" },
+    "active": { "value": "#B8860B" },
+    "bg": { "value": "#2A241A" },
+    "border": { "value": "#3A2E1A" }
+  },
+  "vermilion": {
+    "default": { "value": "#E85D4A", "description": "夜朱红" },
+    "hover": { "value": "#FF7B6B" },
+    "active": { "value": "#C43A31" },
+    "bg": { "value": "#2A1A18" }
+  },
+  "jade": {
+    "default": { "value": "#7AAE7A", "description": "夜翠微" },
+    "hover": { "value": "#9CC89C" },
+    "active": { "value": "#5B8C5A" },
+    "bg": { "value": "#1A2A1A" }
+  },
+  "decoration": { "value": "rgba(212, 168, 67, 0.08)", "description": "暗夜金" },
+  "text": {
+    "primary": { "value": "#E8E0D8", "description": "暖白墨韵" },
+    "regular": { "value": "#C8C0B8" },
+    "secondary": { "value": "#A09890" },
+    "placeholder": { "value": "#7A7270" },
+    "disabled": { "value": "#5A5250" }
+  },
+  "border": {
+    "base": { "value": "#3A3530" },
+    "light": { "value": "#302B28" },
+    "lighter": { "value": "#2A2520" },
+    "extraLight": { "value": "#242018" }
+  },
+  "background": {
+    "default": { "value": "#2A2520", "description": "深墨宣纸" },
+    "page": { "value": "#1E1A16" },
+    "disabled": { "value": "#242018" },
+    "overlay": { "value": "rgba(10, 8, 6, 0.7)" }
+  },
+  "focus": { "value": "#7FA6D9", "description": "暗色焦点环提亮" }
+}

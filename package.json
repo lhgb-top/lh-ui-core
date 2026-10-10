@@ -1,0 +1,43 @@
+{
+  "name": "@lh-ui/core",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "lh-ui 原生血脉的构建期中心：设计令牌（JSON 真源）+ 组件契约 + 黄金用例 + 跨端 codegen",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.34.5",
+  "scripts": {
+    "build": "pnpm codegen && pnpm verify",
+    "codegen": "tsx codegen/src/index.ts",
+    "verify:tokens": "tsx scripts/verify-tokens.mts",
+    "verify:specs": "tsx scripts/verify-specs.mts",
+    "verify": "pnpm verify:tokens && pnpm verify:specs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"**/*.{json,md,yml,yaml}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "changeset": "changeset",
+    "changeset:status": "changeset status",
+    "changeset:version": "changeset version"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@changesets/cli": "^2.27.12",
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^22.10.0",
+    "ajv": "^8.17.1",
+    "handlebars": "^4.7.8",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.0",
+    "vitest": "^3.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false
+}

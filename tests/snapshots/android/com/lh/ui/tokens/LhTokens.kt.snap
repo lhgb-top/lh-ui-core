@@ -1,0 +1,185 @@
+// =====================================================================================
+// 本文件由 @lh-ui/core 自动生成（构建期 codegen），请勿手改。
+// 源：@lh-ui/core tokens @ v0.0.1
+// 修改请编辑 lh-ui-core 仓的 tokens/*.json 后重新执行 pnpm codegen。
+// =====================================================================================
+
+package com.lh.ui.tokens
+
+import androidx.compose.ui.graphics.Color as ComposeColor
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.animation.core.CubicBezierEasing
+
+object LhTokens {
+  object Button {
+    val borderRadius = 2.dp  // 按钮圆角跟随全局圆角
+    val borderWidth = 1.dp
+    val focusRingOffset = 2.dp
+    val focusRingWidth = 2.dp
+    val fontWeight = 400
+    object FontSize {
+      val large = 16.sp
+      val medium = 14.sp
+      val small = 13.sp
+    }
+    object Height {
+      val large = 48.dp  // 大号按钮高度
+      val medium = 40.dp  // 中号按钮高度（默认）
+      val small = 32.dp  // 小号按钮高度
+    }
+    object IconSize {
+      val large = 20.dp
+      val medium = 18.dp
+      val small = 16.dp
+    }
+    object PaddingHorizontal {
+      val large = 24.dp
+      val medium = 20.dp
+      val small = 16.dp
+    }
+  }
+  object Color {
+    val decoration = ComposeColor(0x1FB8860B)  // 花纹装饰色
+    val focus = ComposeColor(0xFF2B4C7C)  // 键盘焦点环色，默认跟随主色
+    val hoverBg = ComposeColor(0x0D000000)  // 列表/面板项的中性悬停底色
+    val ink = ComposeColor(0xFF1A1A1A)  // 中性黑（墨）
+    val onPrimary = ComposeColor(0xFFFFFFFF)  // 主色底上的文字色（浅主色预设不应写死白字）
+    val selected = ComposeColor(0xFF1F3A5F)  // 选中态文字色，跟随主色按压变体
+    val surface = ComposeColor(0xFFFAF6F0)  // 中性白（宣纸白）
+    object Background {
+      val default = ComposeColor(0xFFFAF6F0)  // 组件底色（宣纸色）
+      val disabled = ComposeColor(0xFFEDE8E0)
+      val overlay = ComposeColor(0x661A1A1A)  // 遮罩层底色
+      val page = ComposeColor(0xFFF5F0EB)  // 页面底色
+    }
+    object Border {
+      val base = ComposeColor(0xFFD8D3CC)  // 基础描边
+      val extraLight = ComposeColor(0xFFF5F0EB)
+      val light = ComposeColor(0xFFE5E0D8)
+      val lighter = ComposeColor(0xFFEEE9E2)
+    }
+    object Danger {
+      val active = ComposeColor(0xFF9A3030)
+      val bg = ComposeColor(0xFFFDF0F0)
+      val default = ComposeColor(0xFFB23A3A)  // 危险色（朱砂 — 印泥朱红）
+      val hover = ComposeColor(0xFFC45050)
+    }
+    object Disabled {
+      val bg = ComposeColor(0xFFEDE8E0)  // 禁用底色
+      val border = ComposeColor(0xFFE5E0D8)  // 禁用描边色
+      val text = ComposeColor(0xFFC8C8C8)  // 禁用文字色
+    }
+    object Gold {
+      val active = ComposeColor(0xFF9A7208)
+      val bg = ComposeColor(0xFFFBF6EA)
+      val border = ComposeColor(0xFFFDFAF3)
+      val default = ComposeColor(0xFFB8860B)  // 金色点缀（华贵古韵）
+      val hover = ComposeColor(0xFFD4A843)
+    }
+    object Info {
+      val active = ComposeColor(0xFF6A6A6A)
+      val bg = ComposeColor(0xFFF2F2F2)
+      val default = ComposeColor(0xFF7A7A7A)  // 信息色（黛色 — 水墨淡彩）
+      val hover = ComposeColor(0xFF8F8F8F)
+    }
+    object Jade {
+      val active = ComposeColor(0xFF4B7A4A)
+      val bg = ComposeColor(0xFFEDF5EC)
+      val default = ComposeColor(0xFF5B8C5A)  // 玉色（翠竹清雅）
+      val hover = ComposeColor(0xFF7AAE7A)
+    }
+    object Primary {
+      val active = ComposeColor(0xFF1F3A5F)  // 主色按压/选中文字
+      val bg = ComposeColor(0xFFE8EDF3)  // 主色浅底（选中态底色）
+      val border = ComposeColor(0xFFD4DCE8)  // 主色描边
+      val default = ComposeColor(0xFF2B4C7C)  // 主色（靛蓝 — 青花瓷之蓝）
+      val hover = ComposeColor(0xFF3D649E)  // 主色悬停
+    }
+    object Success {
+      val active = ComposeColor(0xFF4B7A4A)
+      val bg = ComposeColor(0xFFEDF5EC)
+      val default = ComposeColor(0xFF5B8C5A)  // 成功色（松花绿 — 竹影青翠）
+      val hover = ComposeColor(0xFF6FA36E)
+    }
+    object Text {
+      val disabled = ComposeColor(0xFFC8C8C8)  // 禁用文字
+      val placeholder = ComposeColor(0xFFB0B0B0)  // 占位文字
+      val primary = ComposeColor(0xFF2C2C2C)  // 主要文字
+      val regular = ComposeColor(0xFF5A5A5A)  // 常规文字
+      val secondary = ComposeColor(0xFF8A8A8A)  // 次要文字
+    }
+    object Vermilion {
+      val active = ComposeColor(0xFFA92E26)
+      val bg = ComposeColor(0xFFFDF0EE)
+      val default = ComposeColor(0xFFC43A31)  // 朱砂点缀（印泥朱红）
+      val hover = ComposeColor(0xFFE85D4A)
+    }
+    object Warning {
+      val active = ComposeColor(0xFFB3924A)
+      val bg = ComposeColor(0xFFFBF6EA)
+      val default = ComposeColor(0xFFC4A35A)  // 警告色（藤黄 — 秋叶金黄）
+      val hover = ComposeColor(0xFFD4B76F)
+    }
+  }
+  object Motion {
+    object Duration {
+      val base = 300  // 0.3s（毫秒）
+      val fast = 250  // 0.25s（毫秒）
+      val slow = 400  // 0.4s（毫秒）
+    }
+    object Easing {
+      val easeInOut = CubicBezierEasing(0.4f, 0f, 0.2f, 1f)  // 标准缓动 cubic-bezier(0.4, 0, 0.2, 1)
+    }
+  }
+  object Radius {
+    val base = 2.dp
+    val circle = 0.50f  // 50%（分数，由容器尺寸换算）  // 正圆，各端取 min(宽,高)/2
+    val round = 20.dp  // 胶囊圆角
+    val small = 2.dp
+  }
+  object Shadow {
+    val base = Shadow(color = ComposeColor(0x141A1A1A), offset = Offset(0f, 2f), blurRadius = 12f)  // 扩展量 0px Compose 不支持，已忽略
+    val light = Shadow(color = ComposeColor(0x0F1A1A1A), offset = Offset(0f, 2f), blurRadius = 4f)  // 扩展量 0px Compose 不支持，已忽略
+    val lighter = Shadow(color = ComposeColor(0x0A1A1A1A), offset = Offset(0f, 0f), blurRadius = 4f)  // 扩展量 0px Compose 不支持，已忽略
+  }
+  object Spacing {
+    val base = 16.dp
+    val lg = 20.dp
+    val md = 12.dp
+    val sm = 8.dp
+    val xl = 24.dp
+    val xs = 4.dp
+    val xxl = 32.dp
+  }
+  object Typography {
+    val fontFamily = "'Noto Serif SC', 'STSong', 'SimSun', 'Source Han Serif SC', 'PingFang SC', 'Microsoft YaHei', serif"  // 国风衬线字体栈，各端取首个可用族
+    object FontSize {
+      val base = 14.sp  // 正文基准字号
+      val extraLarge = 20.sp  // 字号 特大
+      val extraSmall = 12.sp
+      val large = 18.sp
+      val medium = 16.sp
+      val small = 13.sp
+    }
+    object FontWeight {
+      val bold = 600  // 加粗字重
+      val primary = 400  // 常规字重
+    }
+    object LineHeight {
+      val primary = 1.8  // 正文行高
+    }
+  }
+  object ZIndex {
+    val dropdown = 1000
+    val fixed = 1030
+    val modal = 1050
+    val modalBackdrop = 1040
+    val normal = 1
+    val popover = 1060
+    val sticky = 1020
+    val toast = 2000  // 原生血脉新增：轻提示层级（web 血脉对应 tooltip 位）
+  }
+}

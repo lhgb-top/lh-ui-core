@@ -1,0 +1,153 @@
+<!-- 本文件由 @lh-ui/core 自动生成，请勿手改。源：@lh-ui/core tokens -->
+
+# lh-ui 设计令牌速查（v0.0.1）
+
+## button
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `button.borderRadius` | dimension | 2px | — | 按钮圆角跟随全局圆角 |
+| `button.borderWidth` | dimension | 1px | — | 原生新增 |
+| `button.focusRingOffset` | dimension | 2px | — | 原生新增 |
+| `button.focusRingWidth` | dimension | 2px | — | 原生新增 |
+| `button.fontSize.large` | dimension | 16px | — |  |
+| `button.fontSize.medium` | dimension | 14px | — |  |
+| `button.fontSize.small` | dimension | 13px | — |  |
+| `button.fontWeight` | number | 400 | — |  |
+| `button.height.large` | dimension | 48px | — | 原生新增；大号按钮高度 |
+| `button.height.medium` | dimension | 40px | — | 原生新增；中号按钮高度（默认） |
+| `button.height.small` | dimension | 32px | — | 原生新增；小号按钮高度 |
+| `button.iconSize.large` | dimension | 20px | — | 原生新增 |
+| `button.iconSize.medium` | dimension | 18px | — | 原生新增 |
+| `button.iconSize.small` | dimension | 16px | — | 原生新增 |
+| `button.paddingHorizontal.large` | dimension | 24px | — | 原生新增 |
+| `button.paddingHorizontal.medium` | dimension | 20px | — | 原生新增 |
+| `button.paddingHorizontal.small` | dimension | 16px | — | 原生新增 |
+
+## color
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `color.background.default` | color | #FAF6F0 → #faf6f0 | #2A2520 → #2a2520 | 组件底色（宣纸色） |
+| `color.background.disabled` | color | #EDE8E0 → #ede8e0 | #242018 → #242018 |  |
+| `color.background.overlay` | color | rgba(26, 26, 26, 0.4) → rgba(26, 26, 26, 0.4) | rgba(10, 8, 6, 0.7) → rgba(10, 8, 6, 0.7) | 遮罩层底色 |
+| `color.background.page` | color | #F5F0EB → #f5f0eb | #1E1A16 → #1e1a16 | 页面底色 |
+| `color.border.base` | color | #D8D3CC → #d8d3cc | #3A3530 → #3a3530 | 基础描边 |
+| `color.border.extraLight` | color | #F5F0EB → #f5f0eb | #242018 → #242018 |  |
+| `color.border.light` | color | #E5E0D8 → #e5e0d8 | #302B28 → #302b28 |  |
+| `color.border.lighter` | color | #EEE9E2 → #eee9e2 | #2A2520 → #2a2520 |  |
+| `color.danger.active` | color | #9A3030 → #9a3030 | #B23A3A → #b23a3a |  |
+| `color.danger.bg` | color | #FDF0F0 → #fdf0f0 | #2A1A1A → #2a1a1a |  |
+| `color.danger.default` | color | #B23A3A → #b23a3a | #C45050 → #c45050 | 危险色（朱砂 — 印泥朱红） |
+| `color.danger.hover` | color | #C45050 → #c45050 | #D46060 → #d46060 |  |
+| `color.decoration` | color | rgba(184, 134, 11, 0.12) → rgba(184, 134, 11, 0.12) | rgba(212, 168, 67, 0.08) → rgba(212, 168, 67, 0.08) | 花纹装饰色 |
+| `color.disabled.bg` | color | #EDE8E0 → #ede8e0 | — | 禁用底色 |
+| `color.disabled.border` | color | #E5E0D8 → #e5e0d8 | — | 禁用描边色 |
+| `color.disabled.text` | color | #C8C8C8 → #c8c8c8 | — | 禁用文字色 |
+| `color.focus` | color | #2B4C7C → #2b4c7c | #7FA6D9 → #7fa6d9 | 键盘焦点环色，默认跟随主色 |
+| `color.gold.active` | color | #9A7208 → #9a7208 | #B8860B → #b8860b |  |
+| `color.gold.bg` | color | #FBF6EA → #fbf6ea | #2A241A → #2a241a |  |
+| `color.gold.border` | color | #FDFAF3 → #fdfaf3 | #3A2E1A → #3a2e1a |  |
+| `color.gold.default` | color | #B8860B → #b8860b | #D4A843 → #d4a843 | 金色点缀（华贵古韵） |
+| `color.gold.hover` | color | #D4A843 → #d4a843 | #E8C35C → #e8c35c |  |
+| `color.hoverBg` | color | rgba(0, 0, 0, 0.05) → rgba(0, 0, 0, 0.05) | rgba(255, 255, 255, 0.08) → rgba(255, 255, 255, 0.08) | 列表/面板项的中性悬停底色 |
+| `color.info.active` | color | #6A6A6A → #6a6a6a | #7A7A7A → #7a7a7a |  |
+| `color.info.bg` | color | #F2F2F2 → #f2f2f2 | #1A1A1A → #1a1a1a |  |
+| `color.info.default` | color | #7A7A7A → #7a7a7a | #8F8F8F → #8f8f8f | 信息色（黛色 — 水墨淡彩） |
+| `color.info.hover` | color | #8F8F8F → #8f8f8f | #A0A0A0 → #a0a0a0 |  |
+| `color.ink` | color | #1A1A1A → #1a1a1a | — | 中性黑（墨） |
+| `color.jade.active` | color | #4B7A4A → #4b7a4a | #5B8C5A → #5b8c5a |  |
+| `color.jade.bg` | color | #EDF5EC → #edf5ec | #1A2A1A → #1a2a1a |  |
+| `color.jade.default` | color | #5B8C5A → #5b8c5a | #7AAE7A → #7aae7a | 玉色（翠竹清雅） |
+| `color.jade.hover` | color | #7AAE7A → #7aae7a | #9CC89C → #9cc89c |  |
+| `color.onPrimary` | color | #FFFFFF → #ffffff | #FFFFFF → #ffffff | 主色底上的文字色（浅主色预设不应写死白字） |
+| `color.primary.active` | color | #1F3A5F → #1f3a5f | #2B4C7C → #2b4c7c | 主色按压/选中文字 |
+| `color.primary.bg` | color | #E8EDF3 → #e8edf3 | rgba(61, 100, 158, 0.25) → rgba(61, 100, 158, 0.25) | 主色浅底（选中态底色） |
+| `color.primary.border` | color | #D4DCE8 → #d4dce8 | #2A3A4A → #2a3a4a | 主色描边 |
+| `color.primary.default` | color | #2B4C7C → #2b4c7c | #3D649E → #3d649e | 主色（靛蓝 — 青花瓷之蓝） |
+| `color.primary.hover` | color | #3D649E → #3d649e | #5078AB → #5078ab | 主色悬停 |
+| `color.selected` | color | #1F3A5F → #1f3a5f | #B1C1D8 → #b1c1d8 | 选中态文字色，跟随主色按压变体 |
+| `color.success.active` | color | #4B7A4A → #4b7a4a | #5B8C5A → #5b8c5a |  |
+| `color.success.bg` | color | #EDF5EC → #edf5ec | #1A2A1A → #1a2a1a |  |
+| `color.success.default` | color | #5B8C5A → #5b8c5a | #6FA36E → #6fa36e | 成功色（松花绿 — 竹影青翠） |
+| `color.success.hover` | color | #6FA36E → #6fa36e | #82B581 → #82b581 |  |
+| `color.surface` | color | #FAF6F0 → #faf6f0 | — | 中性白（宣纸白） |
+| `color.text.disabled` | color | #C8C8C8 → #c8c8c8 | #5A5250 → #5a5250 | 禁用文字 |
+| `color.text.placeholder` | color | #B0B0B0 → #b0b0b0 | #7A7270 → #7a7270 | 占位文字 |
+| `color.text.primary` | color | #2C2C2C → #2c2c2c | #E8E0D8 → #e8e0d8 | 主要文字 |
+| `color.text.regular` | color | #5A5A5A → #5a5a5a | #C8C0B8 → #c8c0b8 | 常规文字 |
+| `color.text.secondary` | color | #8A8A8A → #8a8a8a | #A09890 → #a09890 | 次要文字 |
+| `color.vermilion.active` | color | #A92E26 → #a92e26 | #C43A31 → #c43a31 |  |
+| `color.vermilion.bg` | color | #FDF0EE → #fdf0ee | #2A1A18 → #2a1a18 |  |
+| `color.vermilion.default` | color | #C43A31 → #c43a31 | #E85D4A → #e85d4a | 朱砂点缀（印泥朱红） |
+| `color.vermilion.hover` | color | #E85D4A → #e85d4a | #FF7B6B → #ff7b6b |  |
+| `color.warning.active` | color | #B3924A → #b3924a | #C4A35A → #c4a35a |  |
+| `color.warning.bg` | color | #FBF6EA → #fbf6ea | #2A251A → #2a251a |  |
+| `color.warning.default` | color | #C4A35A → #c4a35a | #D4B76F → #d4b76f | 警告色（藤黄 — 秋叶金黄） |
+| `color.warning.hover` | color | #D4B76F → #d4b76f | #E0C680 → #e0c680 |  |
+
+## motion
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `motion.duration.base` | duration | 0.3s | — |  |
+| `motion.duration.fast` | duration | 0.25s | — |  |
+| `motion.duration.slow` | duration | 0.4s | — |  |
+| `motion.easing.easeInOut` | cubicBezier | 0.4,0,0.2,1 | — | 标准缓动 cubic-bezier(0.4, 0, 0.2, 1) |
+
+## radius
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `radius.base` | dimension | 2px | — |  |
+| `radius.circle` | dimension | 50% | — | 正圆，各端取 min(宽,高)/2 |
+| `radius.round` | dimension | 20px | — | 胶囊圆角 |
+| `radius.small` | dimension | 2px | — |  |
+
+## shadow
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `shadow.base` | shadow | 0px 2px 12px 0px rgba(26, 26, 26, 0.08) | — |  |
+| `shadow.light` | shadow | 0px 2px 4px 0px rgba(26, 26, 26, 0.06) | — |  |
+| `shadow.lighter` | shadow | 0px 0px 4px 0px rgba(26, 26, 26, 0.04) | — |  |
+
+## spacing
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `spacing.base` | dimension | 16px | — |  |
+| `spacing.lg` | dimension | 20px | — |  |
+| `spacing.md` | dimension | 12px | — |  |
+| `spacing.sm` | dimension | 8px | — |  |
+| `spacing.xl` | dimension | 24px | — |  |
+| `spacing.xs` | dimension | 4px | — |  |
+| `spacing.xxl` | dimension | 32px | — |  |
+
+## typography
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `typography.fontFamily` | string | 'Noto Serif SC', 'STSong', 'SimSun', 'Source Han Serif SC', 'PingFang SC', 'Microsoft YaHei', serif | — | 国风衬线字体栈，各端取首个可用族 |
+| `typography.fontSize.base` | dimension | 14px | — | 正文基准字号 |
+| `typography.fontSize.extraLarge` | dimension | 20px | — | 字号 特大 |
+| `typography.fontSize.extraSmall` | dimension | 12px | — |  |
+| `typography.fontSize.large` | dimension | 18px | — |  |
+| `typography.fontSize.medium` | dimension | 16px | — |  |
+| `typography.fontSize.small` | dimension | 13px | — |  |
+| `typography.fontWeight.bold` | number | 600 | — | 加粗字重 |
+| `typography.fontWeight.primary` | number | 400 | — | 常规字重 |
+| `typography.lineHeight.primary` | number | 1.8 | — | 正文行高 |
+
+## zIndex
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `zIndex.dropdown` | number | 1000 | — |  |
+| `zIndex.fixed` | number | 1030 | — |  |
+| `zIndex.modal` | number | 1050 | — |  |
+| `zIndex.modalBackdrop` | number | 1040 | — |  |
+| `zIndex.normal` | number | 1 | — |  |
+| `zIndex.popover` | number | 1060 | — |  |
+| `zIndex.sticky` | number | 1020 | — |  |
+| `zIndex.toast` | number | 2000 | — | 原生新增；原生血脉新增：轻提示层级（web 血脉对应 tooltip 位） |

@@ -1,0 +1,84 @@
+// =====================================================================================
+// 本文件由 @lh-ui/core 自动生成（构建期 codegen），请勿手改。
+// 源：@lh-ui/core tokens @ v0.0.1
+// 修改请编辑 lh-ui-core 仓的 tokens/*.json 后重新执行 pnpm codegen。
+// =====================================================================================
+
+export class LhDarkTokens {
+  class Color {
+    static readonly decoration: ResourceColor = '#14D4A843'  // 花纹装饰色
+    static readonly focus: ResourceColor = '#FF7FA6D9'  // 键盘焦点环色，默认跟随主色
+    static readonly hoverBg: ResourceColor = '#14FFFFFF'  // 列表/面板项的中性悬停底色
+    static readonly onPrimary: ResourceColor = '#FFFFFFFF'  // 主色底上的文字色（浅主色预设不应写死白字）
+    static readonly selected: ResourceColor = '#FFB1C1D8'  // 选中态文字色，跟随主色按压变体
+    class Background {
+      static readonly default: ResourceColor = '#FF2A2520'  // 组件底色（宣纸色）
+      static readonly disabled: ResourceColor = '#FF242018'
+      static readonly overlay: ResourceColor = '#B30A0806'  // 遮罩层底色
+      static readonly page: ResourceColor = '#FF1E1A16'  // 页面底色
+    }
+    class Border {
+      static readonly base: ResourceColor = '#FF3A3530'  // 基础描边
+      static readonly extraLight: ResourceColor = '#FF242018'
+      static readonly light: ResourceColor = '#FF302B28'
+      static readonly lighter: ResourceColor = '#FF2A2520'
+    }
+    class Danger {
+      static readonly active: ResourceColor = '#FFB23A3A'
+      static readonly bg: ResourceColor = '#FF2A1A1A'
+      static readonly default: ResourceColor = '#FFC45050'  // 危险色（朱砂 — 印泥朱红）
+      static readonly hover: ResourceColor = '#FFD46060'
+    }
+    class Gold {
+      static readonly active: ResourceColor = '#FFB8860B'
+      static readonly bg: ResourceColor = '#FF2A241A'
+      static readonly border: ResourceColor = '#FF3A2E1A'
+      static readonly default: ResourceColor = '#FFD4A843'  // 金色点缀（华贵古韵）
+      static readonly hover: ResourceColor = '#FFE8C35C'
+    }
+    class Info {
+      static readonly active: ResourceColor = '#FF7A7A7A'
+      static readonly bg: ResourceColor = '#FF1A1A1A'
+      static readonly default: ResourceColor = '#FF8F8F8F'  // 信息色（黛色 — 水墨淡彩）
+      static readonly hover: ResourceColor = '#FFA0A0A0'
+    }
+    class Jade {
+      static readonly active: ResourceColor = '#FF5B8C5A'
+      static readonly bg: ResourceColor = '#FF1A2A1A'
+      static readonly default: ResourceColor = '#FF7AAE7A'  // 玉色（翠竹清雅）
+      static readonly hover: ResourceColor = '#FF9CC89C'
+    }
+    class Primary {
+      static readonly active: ResourceColor = '#FF2B4C7C'  // 主色按压/选中文字
+      static readonly bg: ResourceColor = '#403D649E'  // 主色浅底（选中态底色）
+      static readonly border: ResourceColor = '#FF2A3A4A'  // 主色描边
+      static readonly default: ResourceColor = '#FF3D649E'  // 主色（靛蓝 — 青花瓷之蓝）
+      static readonly hover: ResourceColor = '#FF5078AB'  // 主色悬停
+    }
+    class Success {
+      static readonly active: ResourceColor = '#FF5B8C5A'
+      static readonly bg: ResourceColor = '#FF1A2A1A'
+      static readonly default: ResourceColor = '#FF6FA36E'  // 成功色（松花绿 — 竹影青翠）
+      static readonly hover: ResourceColor = '#FF82B581'
+    }
+    class Text {
+      static readonly disabled: ResourceColor = '#FF5A5250'  // 禁用文字
+      static readonly placeholder: ResourceColor = '#FF7A7270'  // 占位文字
+      static readonly primary: ResourceColor = '#FFE8E0D8'  // 主要文字
+      static readonly regular: ResourceColor = '#FFC8C0B8'  // 常规文字
+      static readonly secondary: ResourceColor = '#FFA09890'  // 次要文字
+    }
+    class Vermilion {
+      static readonly active: ResourceColor = '#FFC43A31'
+      static readonly bg: ResourceColor = '#FF2A1A18'
+      static readonly default: ResourceColor = '#FFE85D4A'  // 朱砂点缀（印泥朱红）
+      static readonly hover: ResourceColor = '#FFFF7B6B'
+    }
+    class Warning {
+      static readonly active: ResourceColor = '#FFC4A35A'
+      static readonly bg: ResourceColor = '#FF2A251A'
+      static readonly default: ResourceColor = '#FFD4B76F'  // 警告色（藤黄 — 秋叶金黄）
+      static readonly hover: ResourceColor = '#FFE0C680'
+    }
+  }
+}

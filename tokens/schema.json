@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lh-ui.dev/core/schemas/tokens.schema.json",
+  "title": "lh-ui 设计令牌（平台无关中性源）",
+  "description": "原生血脉的设计令牌唯一真源。所有值必须是与平台无关的中性表达，禁止 var()、rem、sp、dp 等平台专属语法。",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string" },
+    "$description": { "type": "string" },
+    "$type": {
+      "type": "string",
+      "enum": ["color", "dimension", "number", "string", "shadow", "duration", "cubicBezier"],
+      "description": "文件级默认令牌类型，叶子令牌可用自身 type 覆盖"
+    },
+    "$dark": {
+      "type": "boolean",
+      "description": "暗色覆盖文件标记。true 表示本文件仅声明需要覆盖的键"
+    },
+    "$namespace": {
+      "type": "string",
+      "description": "命名空间前缀。令牌的全局点路径为「$namespace.嵌套路径」；未声明时取文件名（z-index.json → zIndex）。暗色文件须与明色文件声明相同的 $namespace。空串表示顶层键即命名空间（如 components.json 的 button.*）"
+    }
+  },
+  "patternProperties": {
+    "^\\$": {}
+  },
+  "additionalProperties": { "$ref": "#/$defs/node" },
+  "$defs": {
+    "token": {
+      "type": "object",
+      "properties": {
+        "value": { "description": "字面值（与 ref 二选一）" },
+        "ref": {
+          "type": "string",
+          "description": "引用另一令牌的点路径（如 radius.base），构建期静态解析并烘焙；与 value 二选一"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["color", "dimension", "number", "string", "shadow", "duration", "cubicBezier"],
+          "description": "令牌类型，未声明时继承文件级 $type"
+        },
+        "description": { "type": "string" },
+        "nativeOnly": {
+          "type": "boolean",
+          "description": "标记为原生血脉新增令牌（非 web 血脉对齐项），供基线文档过滤"
+        }
+      },
+      "anyOf": [{ "required": ["value"] }, { "required": ["ref"] }],
+      "additionalProperties": false
+    },
+    "group": {
+      "type": "object",
+      "patternProperties": { "^\\$": {} },
+      "additionalProperties": { "$ref": "#/$defs/node" }
+    },
+    "node": {
+      "oneOf": [{ "$ref": "#/$defs/token" }, { "$ref": "#/$defs/group" }]
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "$schema": "./schema.json",
+  "name": "button",
+  "component": "LhButton",
+  "since": "0.1.0",
+  "description": "按钮：触发即时操作，支持类型、尺寸、加载、禁用、图标与花纹底。",
+  "props": [
+    {
+      "name": "type",
+      "type": "enum",
+      "values": ["default", "primary", "success", "warning", "danger", "info"],
+      "default": "default",
+      "description": "按钮类型，决定底色与文字色"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["small", "medium", "large"],
+      "default": "medium",
+      "description": "按钮尺寸，映射到 button.height / paddingHorizontal / fontSize / iconSize 令牌"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "description": "是否禁用；禁用时点击不触发 onClick"
+    },
+    {
+      "name": "loading",
+      "type": "boolean",
+      "default": false,
+      "description": "是否加载中；加载中显示加载指示器且点击不触发 onClick"
+    },
+    {
+      "name": "icon",
+      "type": "string",
+      "description": "图标名（按钮内左侧图标，各端按本地图标体系渲染）"
+    },
+    {
+      "name": "bgPattern",
+      "type": "boolean",
+      "default": false,
+      "description": "是否绘制国风花纹底纹（消费 color.decoration 令牌）"
+    }
+  ],
+  "events": [
+    {
+      "name": "onClick",
+      "payload": [],
+      "description": "点击按钮时触发；disabled 或 loading 为 true 时不触发"
+    }
+  ],
+  "slots": [
+    { "name": "default", "description": "按钮文字内容" },
+    { "name": "icon", "description": "自定义图标内容，覆盖 icon prop" }
+  ],
+  "behaviors": [
+    "disabled 为 true 时：不响应点击，呈现禁用样式（disabled.* 令牌），不触发 onClick",
+    "loading 为 true 时：显示加载指示器，不触发 onClick",
+    "disabled 与 loading 同时为 true 时按 disabled 优先处理",
+    "size 映射：small/medium/large 分别取 button.height.<size> 等尺寸令牌",
+    "type 映射：primary 取主色底 + onPrimary 文字；其余类型取对应语义色",
+    "bgPattern 为 true 时以 color.decoration 绘制底纹，不影响文字对比度"
+  ],
+  "tokenRefs": [
+    "button.height.small",
+    "button.height.medium",
+    "button.height.large",
+    "button.paddingHorizontal.small",
+    "button.paddingHorizontal.medium",
+    "button.paddingHorizontal.large",
+    "button.borderRadius",
+    "button.fontSize.small",
+    "button.fontSize.medium",
+    "button.fontSize.large",
+    "button.fontWeight",
+    "button.iconSize.small",
+    "button.iconSize.medium",
+    "button.iconSize.large",
+    "button.borderWidth",
+    "color.primary.default",
+    "color.onPrimary",
+    "color.decoration",
+    "color.disabled.bg",
+    "color.disabled.text"
+  ]
+}

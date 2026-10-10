@@ -1,0 +1,9 @@
+{
+  "$schema": "./schema.json",
+  "$description": "圆角。circle 为百分比，由各端按容器尺寸计算",
+  "$type": "dimension",
+  "small": { "value": "2px" },
+  "base": { "value": "2px" },
+  "round": { "value": "20px", "description": "胶囊圆角" },
+  "circle": { "value": "50%", "description": "正圆，各端取 min(宽,高)/2" }
+}

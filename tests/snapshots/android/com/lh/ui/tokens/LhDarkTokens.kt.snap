@@ -1,0 +1,88 @@
+// =====================================================================================
+// 本文件由 @lh-ui/core 自动生成（构建期 codegen），请勿手改。
+// 源：@lh-ui/core tokens @ v0.0.1
+// 修改请编辑 lh-ui-core 仓的 tokens/*.json 后重新执行 pnpm codegen。
+// =====================================================================================
+
+package com.lh.ui.tokens
+
+import androidx.compose.ui.graphics.Color as ComposeColor
+
+object LhDarkTokens {
+  object Color {
+    val decoration = ComposeColor(0x14D4A843)  // 花纹装饰色
+    val focus = ComposeColor(0xFF7FA6D9)  // 键盘焦点环色，默认跟随主色
+    val hoverBg = ComposeColor(0x14FFFFFF)  // 列表/面板项的中性悬停底色
+    val onPrimary = ComposeColor(0xFFFFFFFF)  // 主色底上的文字色（浅主色预设不应写死白字）
+    val selected = ComposeColor(0xFFB1C1D8)  // 选中态文字色，跟随主色按压变体
+    object Background {
+      val default = ComposeColor(0xFF2A2520)  // 组件底色（宣纸色）
+      val disabled = ComposeColor(0xFF242018)
+      val overlay = ComposeColor(0xB30A0806)  // 遮罩层底色
+      val page = ComposeColor(0xFF1E1A16)  // 页面底色
+    }
+    object Border {
+      val base = ComposeColor(0xFF3A3530)  // 基础描边
+      val extraLight = ComposeColor(0xFF242018)
+      val light = ComposeColor(0xFF302B28)
+      val lighter = ComposeColor(0xFF2A2520)
+    }
+    object Danger {
+      val active = ComposeColor(0xFFB23A3A)
+      val bg = ComposeColor(0xFF2A1A1A)
+      val default = ComposeColor(0xFFC45050)  // 危险色（朱砂 — 印泥朱红）
+      val hover = ComposeColor(0xFFD46060)
+    }
+    object Gold {
+      val active = ComposeColor(0xFFB8860B)
+      val bg = ComposeColor(0xFF2A241A)
+      val border = ComposeColor(0xFF3A2E1A)
+      val default = ComposeColor(0xFFD4A843)  // 金色点缀（华贵古韵）
+      val hover = ComposeColor(0xFFE8C35C)
+    }
+    object Info {
+      val active = ComposeColor(0xFF7A7A7A)
+      val bg = ComposeColor(0xFF1A1A1A)
+      val default = ComposeColor(0xFF8F8F8F)  // 信息色（黛色 — 水墨淡彩）
+      val hover = ComposeColor(0xFFA0A0A0)
+    }
+    object Jade {
+      val active = ComposeColor(0xFF5B8C5A)
+      val bg = ComposeColor(0xFF1A2A1A)
+      val default = ComposeColor(0xFF7AAE7A)  // 玉色（翠竹清雅）
+      val hover = ComposeColor(0xFF9CC89C)
+    }
+    object Primary {
+      val active = ComposeColor(0xFF2B4C7C)  // 主色按压/选中文字
+      val bg = ComposeColor(0x403D649E)  // 主色浅底（选中态底色）
+      val border = ComposeColor(0xFF2A3A4A)  // 主色描边
+      val default = ComposeColor(0xFF3D649E)  // 主色（靛蓝 — 青花瓷之蓝）
+      val hover = ComposeColor(0xFF5078AB)  // 主色悬停
+    }
+    object Success {
+      val active = ComposeColor(0xFF5B8C5A)
+      val bg = ComposeColor(0xFF1A2A1A)
+      val default = ComposeColor(0xFF6FA36E)  // 成功色（松花绿 — 竹影青翠）
+      val hover = ComposeColor(0xFF82B581)
+    }
+    object Text {
+      val disabled = ComposeColor(0xFF5A5250)  // 禁用文字
+      val placeholder = ComposeColor(0xFF7A7270)  // 占位文字
+      val primary = ComposeColor(0xFFE8E0D8)  // 主要文字
+      val regular = ComposeColor(0xFFC8C0B8)  // 常规文字
+      val secondary = ComposeColor(0xFFA09890)  // 次要文字
+    }
+    object Vermilion {
+      val active = ComposeColor(0xFFC43A31)
+      val bg = ComposeColor(0xFF2A1A18)
+      val default = ComposeColor(0xFFE85D4A)  // 朱砂点缀（印泥朱红）
+      val hover = ComposeColor(0xFFFF7B6B)
+    }
+    object Warning {
+      val active = ComposeColor(0xFFC4A35A)
+      val bg = ComposeColor(0xFF2A251A)
+      val default = ComposeColor(0xFFD4B76F)  // 警告色（藤黄 — 秋叶金黄）
+      val hover = ComposeColor(0xFFE0C680)
+    }
+  }
+}

@@ -1,0 +1,176 @@
+// =====================================================================================
+// 本文件由 @lh-ui/core 自动生成（构建期 codegen），请勿手改。
+// 源：@lh-ui/core tokens @ v0.0.1
+// 修改请编辑 lh-ui-core 仓的 tokens/*.json 后重新执行 pnpm codegen。
+// =====================================================================================
+
+export class LhTokens {
+  class Button {
+    static readonly borderRadius: Dimension | number = 2  // 按钮圆角跟随全局圆角
+    static readonly borderWidth: Dimension | number = 1
+    static readonly focusRingOffset: Dimension | number = 2
+    static readonly focusRingWidth: Dimension | number = 2
+    static readonly fontWeight: number = 400
+    class FontSize {
+      static readonly large: Dimension | number = 16
+      static readonly medium: Dimension | number = 14
+      static readonly small: Dimension | number = 13
+    }
+    class Height {
+      static readonly large: Dimension | number = 48  // 大号按钮高度
+      static readonly medium: Dimension | number = 40  // 中号按钮高度（默认）
+      static readonly small: Dimension | number = 32  // 小号按钮高度
+    }
+    class IconSize {
+      static readonly large: Dimension | number = 20
+      static readonly medium: Dimension | number = 18
+      static readonly small: Dimension | number = 16
+    }
+    class PaddingHorizontal {
+      static readonly large: Dimension | number = 24
+      static readonly medium: Dimension | number = 20
+      static readonly small: Dimension | number = 16
+    }
+  }
+  class Color {
+    static readonly decoration: ResourceColor = '#1FB8860B'  // 花纹装饰色
+    static readonly focus: ResourceColor = '#FF2B4C7C'  // 键盘焦点环色，默认跟随主色
+    static readonly hoverBg: ResourceColor = '#0D000000'  // 列表/面板项的中性悬停底色
+    static readonly ink: ResourceColor = '#FF1A1A1A'  // 中性黑（墨）
+    static readonly onPrimary: ResourceColor = '#FFFFFFFF'  // 主色底上的文字色（浅主色预设不应写死白字）
+    static readonly selected: ResourceColor = '#FF1F3A5F'  // 选中态文字色，跟随主色按压变体
+    static readonly surface: ResourceColor = '#FFFAF6F0'  // 中性白（宣纸白）
+    class Background {
+      static readonly default: ResourceColor = '#FFFAF6F0'  // 组件底色（宣纸色）
+      static readonly disabled: ResourceColor = '#FFEDE8E0'
+      static readonly overlay: ResourceColor = '#661A1A1A'  // 遮罩层底色
+      static readonly page: ResourceColor = '#FFF5F0EB'  // 页面底色
+    }
+    class Border {
+      static readonly base: ResourceColor = '#FFD8D3CC'  // 基础描边
+      static readonly extraLight: ResourceColor = '#FFF5F0EB'
+      static readonly light: ResourceColor = '#FFE5E0D8'
+      static readonly lighter: ResourceColor = '#FFEEE9E2'
+    }
+    class Danger {
+      static readonly active: ResourceColor = '#FF9A3030'
+      static readonly bg: ResourceColor = '#FFFDF0F0'
+      static readonly default: ResourceColor = '#FFB23A3A'  // 危险色（朱砂 — 印泥朱红）
+      static readonly hover: ResourceColor = '#FFC45050'
+    }
+    class Disabled {
+      static readonly bg: ResourceColor = '#FFEDE8E0'  // 禁用底色
+      static readonly border: ResourceColor = '#FFE5E0D8'  // 禁用描边色
+      static readonly text: ResourceColor = '#FFC8C8C8'  // 禁用文字色
+    }
+    class Gold {
+      static readonly active: ResourceColor = '#FF9A7208'
+      static readonly bg: ResourceColor = '#FFFBF6EA'
+      static readonly border: ResourceColor = '#FFFDFAF3'
+      static readonly default: ResourceColor = '#FFB8860B'  // 金色点缀（华贵古韵）
+      static readonly hover: ResourceColor = '#FFD4A843'
+    }
+    class Info {
+      static readonly active: ResourceColor = '#FF6A6A6A'
+      static readonly bg: ResourceColor = '#FFF2F2F2'
+      static readonly default: ResourceColor = '#FF7A7A7A'  // 信息色（黛色 — 水墨淡彩）
+      static readonly hover: ResourceColor = '#FF8F8F8F'
+    }
+    class Jade {
+      static readonly active: ResourceColor = '#FF4B7A4A'
+      static readonly bg: ResourceColor = '#FFEDF5EC'
+      static readonly default: ResourceColor = '#FF5B8C5A'  // 玉色（翠竹清雅）
+      static readonly hover: ResourceColor = '#FF7AAE7A'
+    }
+    class Primary {
+      static readonly active: ResourceColor = '#FF1F3A5F'  // 主色按压/选中文字
+      static readonly bg: ResourceColor = '#FFE8EDF3'  // 主色浅底（选中态底色）
+      static readonly border: ResourceColor = '#FFD4DCE8'  // 主色描边
+      static readonly default: ResourceColor = '#FF2B4C7C'  // 主色（靛蓝 — 青花瓷之蓝）
+      static readonly hover: ResourceColor = '#FF3D649E'  // 主色悬停
+    }
+    class Success {
+      static readonly active: ResourceColor = '#FF4B7A4A'
+      static readonly bg: ResourceColor = '#FFEDF5EC'
+      static readonly default: ResourceColor = '#FF5B8C5A'  // 成功色（松花绿 — 竹影青翠）
+      static readonly hover: ResourceColor = '#FF6FA36E'
+    }
+    class Text {
+      static readonly disabled: ResourceColor = '#FFC8C8C8'  // 禁用文字
+      static readonly placeholder: ResourceColor = '#FFB0B0B0'  // 占位文字
+      static readonly primary: ResourceColor = '#FF2C2C2C'  // 主要文字
+      static readonly regular: ResourceColor = '#FF5A5A5A'  // 常规文字
+      static readonly secondary: ResourceColor = '#FF8A8A8A'  // 次要文字
+    }
+    class Vermilion {
+      static readonly active: ResourceColor = '#FFA92E26'
+      static readonly bg: ResourceColor = '#FFFDF0EE'
+      static readonly default: ResourceColor = '#FFC43A31'  // 朱砂点缀（印泥朱红）
+      static readonly hover: ResourceColor = '#FFE85D4A'
+    }
+    class Warning {
+      static readonly active: ResourceColor = '#FFB3924A'
+      static readonly bg: ResourceColor = '#FFFBF6EA'
+      static readonly default: ResourceColor = '#FFC4A35A'  // 警告色（藤黄 — 秋叶金黄）
+      static readonly hover: ResourceColor = '#FFD4B76F'
+    }
+  }
+  class Motion {
+    class Duration {
+      static readonly base: number = 300  // 0.3s（毫秒）
+      static readonly fast: number = 250  // 0.25s（毫秒）
+      static readonly slow: number = 400  // 0.4s（毫秒）
+    }
+    class Easing {
+      static readonly easeInOut: number[] = [0.4, 0, 0.2, 1]  // 贝塞尔控制点，组件侧以 curves.cubicBezierCurve 消费  // 标准缓动 cubic-bezier(0.4, 0, 0.2, 1)
+    }
+  }
+  class Radius {
+    static readonly base: Dimension | number = 2
+    static readonly circle: Dimension | number = 0.500  // 50%（分数，由容器尺寸换算）  // 正圆，各端取 min(宽,高)/2
+    static readonly round: Dimension | number = 20  // 胶囊圆角
+    static readonly small: Dimension | number = 2
+  }
+  class Shadow {
+    static readonly base: LhShadow = { color: '#141A1A1A', radius: 12, offsetX: 0, offsetY: 2 }  // 扩展量 0px ArkUI 不支持，已忽略
+    static readonly light: LhShadow = { color: '#0F1A1A1A', radius: 4, offsetX: 0, offsetY: 2 }  // 扩展量 0px ArkUI 不支持，已忽略
+    static readonly lighter: LhShadow = { color: '#0A1A1A1A', radius: 4, offsetX: 0, offsetY: 0 }  // 扩展量 0px ArkUI 不支持，已忽略
+  }
+  class Spacing {
+    static readonly base: Dimension | number = 16
+    static readonly lg: Dimension | number = 20
+    static readonly md: Dimension | number = 12
+    static readonly sm: Dimension | number = 8
+    static readonly xl: Dimension | number = 24
+    static readonly xs: Dimension | number = 4
+    static readonly xxl: Dimension | number = 32
+  }
+  class Typography {
+    static readonly fontFamily: string = "'Noto Serif SC', 'STSong', 'SimSun', 'Source Han Serif SC', 'PingFang SC', 'Microsoft YaHei', serif"  // 国风衬线字体栈，各端取首个可用族
+    class FontSize {
+      static readonly base: Dimension | number = 14  // 正文基准字号
+      static readonly extraLarge: Dimension | number = 20  // 字号 特大
+      static readonly extraSmall: Dimension | number = 12
+      static readonly large: Dimension | number = 18
+      static readonly medium: Dimension | number = 16
+      static readonly small: Dimension | number = 13
+    }
+    class FontWeight {
+      static readonly bold: number = 600  // 加粗字重
+      static readonly primary: number = 400  // 常规字重
+    }
+    class LineHeight {
+      static readonly primary: number = 1.8  // 正文行高
+    }
+  }
+  class ZIndex {
+    static readonly dropdown: number = 1000
+    static readonly fixed: number = 1030
+    static readonly modal: number = 1050
+    static readonly modalBackdrop: number = 1040
+    static readonly normal: number = 1
+    static readonly popover: number = 1060
+    static readonly sticky: number = 1020
+    static readonly toast: number = 2000  // 原生血脉新增：轻提示层级（web 血脉对应 tooltip 位）
+  }
+}

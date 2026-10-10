@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lh-ui.dev/core/schemas/spec.schema.json",
+  "title": "lh-ui 组件契约（spec）",
+  "description": "组件的跨端契约：props / 事件 / 插槽 / 行为。codegen 依此生成各端的类型与默认值骨架，UI 实现由各端手写。",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string" },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "组件目录名（kebab-case），与文件名一致"
+    },
+    "component": {
+      "type": "string",
+      "pattern": "^Lh[A-Z][a-zA-Z0-9]*$",
+      "description": "组件类名（PascalCase，Lh 前缀），各端按本地命名习惯映射"
+    },
+    "since": { "type": "string", "description": "引入版本" },
+    "description": { "type": "string", "description": "组件中文描述" },
+    "props": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/prop" }
+    },
+    "events": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/event" }
+    },
+    "slots": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/slot" }
+    },
+    "behaviors": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "关键行为描述（自然语言），供 cases 抽取与文档生成"
+    },
+    "tokenRefs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "本组件消费的令牌点路径列表（如 button.height.medium），供 verify 检查引用完整性"
+    }
+  },
+  "required": ["name", "component", "description", "props"],
+  "additionalProperties": false,
+  "$defs": {
+    "propType": {
+      "type": "string",
+      "enum": ["string", "number", "boolean", "enum", "tokenRef", "node"],
+      "description": "node 表示插槽/子节点内容（Compose content、SwiftUI ViewBuilder、ArkUI Builder、C 子节点句柄）"
+    },
+    "prop": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z][a-zA-Z0-9]*$", "description": "prop 名（camelCase，五端统一）" },
+        "type": { "$ref": "#/$defs/propType" },
+        "values": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "type 为 enum 时的枚举值（字符串字面量）"
+        },
+        "default": {},
+        "required": { "type": "boolean", "default": false },
+        "description": { "type": "string" }
+      },
+      "required": ["name", "type", "description"],
+      "additionalProperties": false
+    },
+    "event": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "pattern": "^on[A-Z][a-zA-Z0-9]*$", "description": "事件名（onXxx，五端统一）" },
+        "payload": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "$ref": "#/$defs/propType" },
+              "description": { "type": "string" }
+            },
+            "required": ["name", "type"],
+            "additionalProperties": false
+          },
+          "description": "事件载荷字段；为空表示无载荷"
+        },
+        "description": { "type": "string" }
+      },
+      "required": ["name", "description"],
+      "additionalProperties": false
+    },
+    "slot": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z][a-zA-Z0-9]*$" },
+        "description": { "type": "string" }
+      },
+      "required": ["name", "description"],
+      "additionalProperties": false
+    }
+  }
+}

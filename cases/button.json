@@ -1,0 +1,86 @@
+{
+  "$schema": "./schema.json",
+  "component": "button",
+  "cases": [
+    {
+      "id": "click-emits-onclick",
+      "name": "点击触发 onClick",
+      "given": { "props": {} },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onClick", "assertion": "emitted", "times": 1 }],
+        "enabled": true
+      }
+    },
+    {
+      "id": "disabled-blocks-click",
+      "name": "禁用态不触发 onClick",
+      "given": { "props": { "disabled": true } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onClick", "assertion": "notEmitted" }],
+        "enabled": false
+      }
+    },
+    {
+      "id": "loading-blocks-click",
+      "name": "加载态不触发 onClick",
+      "given": { "props": { "loading": true } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onClick", "assertion": "notEmitted" }],
+        "enabled": false
+      }
+    },
+    {
+      "id": "disabled-precedes-loading",
+      "name": "禁用优先于加载",
+      "given": { "props": { "disabled": true, "loading": true } },
+      "when": { "action": "render" },
+      "then": {
+        "events": [{ "name": "onClick", "assertion": "notEmitted" }],
+        "enabled": false,
+        "notes": "两态共存时按禁用呈现；端实现可自行决定是否同时显示加载指示器，但必须不可交互"
+      }
+    },
+    {
+      "id": "default-type-renders-text",
+      "name": "默认类型渲染文字内容",
+      "given": { "props": { "type": "default" } },
+      "when": { "action": "render", "target": "default" },
+      "then": { "text": "按钮", "visible": true }
+    },
+    {
+      "id": "primary-type-uses-primary-tokens",
+      "name": "主色类型消费主色令牌",
+      "given": { "props": { "type": "primary" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "color.primary.default", "applied": true },
+          { "path": "color.onPrimary", "applied": true }
+        ]
+      }
+    },
+    {
+      "id": "small-size-uses-small-tokens",
+      "name": "小号尺寸消费 small 尺寸令牌",
+      "given": { "props": { "size": "small" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "button.height.small", "applied": true },
+          { "path": "button.fontSize.small", "applied": true },
+          { "path": "button.height.large", "applied": false }
+        ]
+      }
+    },
+    {
+      "id": "bgpattern-uses-decoration-token",
+      "name": "花纹底消费装饰色令牌",
+      "given": { "props": { "bgPattern": true } },
+      "when": { "action": "render" },
+      "then": { "tokens": [{ "path": "color.decoration", "applied": true }] }
+    }
+  ]
+}

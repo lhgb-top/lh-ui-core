@@ -1,0 +1,25 @@
+// =====================================================================================
+// 本文件由 @lh-ui/core 自动生成（构建期 codegen），请勿手改。
+// 源：@lh-ui/core tokens @ v0.0.1
+// 投影令牌的端侧载体（SwiftUI 无复合投影类型，以结构体承载）。
+// =====================================================================================
+
+import SwiftUI
+import CoreGraphics
+
+public struct LhShadow {
+    public let color: SwiftUI.Color
+    public let opacity: Double
+    /// 模糊半径
+    public let radius: CGFloat
+    public let x: CGFloat
+    public let y: CGFloat
+
+    public init(color: SwiftUI.Color, opacity: Double, radius: CGFloat, x: CGFloat, y: CGFloat) {
+        self.color = color
+        self.opacity = opacity
+        self.radius = radius
+        self.x = x
+        self.y = y
+    }
+}

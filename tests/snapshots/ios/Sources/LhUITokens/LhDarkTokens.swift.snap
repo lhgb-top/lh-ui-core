@@ -1,0 +1,87 @@
+// =====================================================================================
+// 本文件由 @lh-ui/core 自动生成（构建期 codegen），请勿手改。
+// 源：@lh-ui/core tokens @ v0.0.1
+// 修改请编辑 lh-ui-core 仓的 tokens/*.json 后重新执行 pnpm codegen。
+// =====================================================================================
+
+import SwiftUI
+import CoreGraphics
+
+public enum LhDarkTokens {
+  public enum Color {
+    public static let decoration = SwiftUI.Color(red: 0.831, green: 0.659, blue: 0.263).opacity(0.080)  // 花纹装饰色
+    public static let focus = SwiftUI.Color(red: 0.498, green: 0.651, blue: 0.851)  // 键盘焦点环色，默认跟随主色
+    public static let hoverBg = SwiftUI.Color(red: 1.000, green: 1.000, blue: 1.000).opacity(0.080)  // 列表/面板项的中性悬停底色
+    public static let onPrimary = SwiftUI.Color(red: 1.000, green: 1.000, blue: 1.000)  // 主色底上的文字色（浅主色预设不应写死白字）
+    public static let selected = SwiftUI.Color(red: 0.694, green: 0.757, blue: 0.847)  // 选中态文字色，跟随主色按压变体
+    public enum Background {
+      public static let `default` = SwiftUI.Color(red: 0.165, green: 0.145, blue: 0.125)  // 组件底色（宣纸色）
+      public static let disabled = SwiftUI.Color(red: 0.141, green: 0.125, blue: 0.094)
+      public static let overlay = SwiftUI.Color(red: 0.039, green: 0.031, blue: 0.024).opacity(0.700)  // 遮罩层底色
+      public static let page = SwiftUI.Color(red: 0.118, green: 0.102, blue: 0.086)  // 页面底色
+    }
+    public enum Border {
+      public static let base = SwiftUI.Color(red: 0.227, green: 0.208, blue: 0.188)  // 基础描边
+      public static let extraLight = SwiftUI.Color(red: 0.141, green: 0.125, blue: 0.094)
+      public static let light = SwiftUI.Color(red: 0.188, green: 0.169, blue: 0.157)
+      public static let lighter = SwiftUI.Color(red: 0.165, green: 0.145, blue: 0.125)
+    }
+    public enum Danger {
+      public static let active = SwiftUI.Color(red: 0.698, green: 0.227, blue: 0.227)
+      public static let bg = SwiftUI.Color(red: 0.165, green: 0.102, blue: 0.102)
+      public static let `default` = SwiftUI.Color(red: 0.769, green: 0.314, blue: 0.314)  // 危险色（朱砂 — 印泥朱红）
+      public static let hover = SwiftUI.Color(red: 0.831, green: 0.376, blue: 0.376)
+    }
+    public enum Gold {
+      public static let active = SwiftUI.Color(red: 0.722, green: 0.525, blue: 0.043)
+      public static let bg = SwiftUI.Color(red: 0.165, green: 0.141, blue: 0.102)
+      public static let border = SwiftUI.Color(red: 0.227, green: 0.180, blue: 0.102)
+      public static let `default` = SwiftUI.Color(red: 0.831, green: 0.659, blue: 0.263)  // 金色点缀（华贵古韵）
+      public static let hover = SwiftUI.Color(red: 0.910, green: 0.765, blue: 0.361)
+    }
+    public enum Info {
+      public static let active = SwiftUI.Color(red: 0.478, green: 0.478, blue: 0.478)
+      public static let bg = SwiftUI.Color(red: 0.102, green: 0.102, blue: 0.102)
+      public static let `default` = SwiftUI.Color(red: 0.561, green: 0.561, blue: 0.561)  // 信息色（黛色 — 水墨淡彩）
+      public static let hover = SwiftUI.Color(red: 0.627, green: 0.627, blue: 0.627)
+    }
+    public enum Jade {
+      public static let active = SwiftUI.Color(red: 0.357, green: 0.549, blue: 0.353)
+      public static let bg = SwiftUI.Color(red: 0.102, green: 0.165, blue: 0.102)
+      public static let `default` = SwiftUI.Color(red: 0.478, green: 0.682, blue: 0.478)  // 玉色（翠竹清雅）
+      public static let hover = SwiftUI.Color(red: 0.612, green: 0.784, blue: 0.612)
+    }
+    public enum Primary {
+      public static let active = SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)  // 主色按压/选中文字
+      public static let bg = SwiftUI.Color(red: 0.239, green: 0.392, blue: 0.620).opacity(0.250)  // 主色浅底（选中态底色）
+      public static let border = SwiftUI.Color(red: 0.165, green: 0.227, blue: 0.290)  // 主色描边
+      public static let `default` = SwiftUI.Color(red: 0.239, green: 0.392, blue: 0.620)  // 主色（靛蓝 — 青花瓷之蓝）
+      public static let hover = SwiftUI.Color(red: 0.314, green: 0.471, blue: 0.671)  // 主色悬停
+    }
+    public enum Success {
+      public static let active = SwiftUI.Color(red: 0.357, green: 0.549, blue: 0.353)
+      public static let bg = SwiftUI.Color(red: 0.102, green: 0.165, blue: 0.102)
+      public static let `default` = SwiftUI.Color(red: 0.435, green: 0.639, blue: 0.431)  // 成功色（松花绿 — 竹影青翠）
+      public static let hover = SwiftUI.Color(red: 0.510, green: 0.710, blue: 0.506)
+    }
+    public enum Text {
+      public static let disabled = SwiftUI.Color(red: 0.353, green: 0.322, blue: 0.314)  // 禁用文字
+      public static let placeholder = SwiftUI.Color(red: 0.478, green: 0.447, blue: 0.439)  // 占位文字
+      public static let primary = SwiftUI.Color(red: 0.910, green: 0.878, blue: 0.847)  // 主要文字
+      public static let regular = SwiftUI.Color(red: 0.784, green: 0.753, blue: 0.722)  // 常规文字
+      public static let secondary = SwiftUI.Color(red: 0.627, green: 0.596, blue: 0.565)  // 次要文字
+    }
+    public enum Vermilion {
+      public static let active = SwiftUI.Color(red: 0.769, green: 0.227, blue: 0.192)
+      public static let bg = SwiftUI.Color(red: 0.165, green: 0.102, blue: 0.094)
+      public static let `default` = SwiftUI.Color(red: 0.910, green: 0.365, blue: 0.290)  // 朱砂点缀（印泥朱红）
+      public static let hover = SwiftUI.Color(red: 1.000, green: 0.482, blue: 0.420)
+    }
+    public enum Warning {
+      public static let active = SwiftUI.Color(red: 0.769, green: 0.639, blue: 0.353)
+      public static let bg = SwiftUI.Color(red: 0.165, green: 0.145, blue: 0.102)
+      public static let `default` = SwiftUI.Color(red: 0.831, green: 0.718, blue: 0.435)  // 警告色（藤黄 — 秋叶金黄）
+      public static let hover = SwiftUI.Color(red: 0.878, green: 0.776, blue: 0.502)
+    }
+  }
+}

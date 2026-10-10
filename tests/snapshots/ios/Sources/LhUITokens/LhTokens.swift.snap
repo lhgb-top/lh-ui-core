@@ -1,0 +1,179 @@
+// =====================================================================================
+// 本文件由 @lh-ui/core 自动生成（构建期 codegen），请勿手改。
+// 源：@lh-ui/core tokens @ v0.0.1
+// 修改请编辑 lh-ui-core 仓的 tokens/*.json 后重新执行 pnpm codegen。
+// =====================================================================================
+
+import SwiftUI
+import CoreGraphics
+
+public enum LhTokens {
+  public enum Button {
+    public static let borderRadius = CGFloat(2)  // 按钮圆角跟随全局圆角
+    public static let borderWidth = CGFloat(1)
+    public static let focusRingOffset = CGFloat(2)
+    public static let focusRingWidth = CGFloat(2)
+    public static let fontWeight = 400
+    public enum FontSize {
+      public static let large = CGFloat(16)
+      public static let medium = CGFloat(14)
+      public static let small = CGFloat(13)
+    }
+    public enum Height {
+      public static let large = CGFloat(48)  // 大号按钮高度
+      public static let medium = CGFloat(40)  // 中号按钮高度（默认）
+      public static let small = CGFloat(32)  // 小号按钮高度
+    }
+    public enum IconSize {
+      public static let large = CGFloat(20)
+      public static let medium = CGFloat(18)
+      public static let small = CGFloat(16)
+    }
+    public enum PaddingHorizontal {
+      public static let large = CGFloat(24)
+      public static let medium = CGFloat(20)
+      public static let small = CGFloat(16)
+    }
+  }
+  public enum Color {
+    public static let decoration = SwiftUI.Color(red: 0.722, green: 0.525, blue: 0.043).opacity(0.120)  // 花纹装饰色
+    public static let focus = SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)  // 键盘焦点环色，默认跟随主色
+    public static let hoverBg = SwiftUI.Color(red: 0.000, green: 0.000, blue: 0.000).opacity(0.050)  // 列表/面板项的中性悬停底色
+    public static let ink = SwiftUI.Color(red: 0.102, green: 0.102, blue: 0.102)  // 中性黑（墨）
+    public static let onPrimary = SwiftUI.Color(red: 1.000, green: 1.000, blue: 1.000)  // 主色底上的文字色（浅主色预设不应写死白字）
+    public static let selected = SwiftUI.Color(red: 0.122, green: 0.227, blue: 0.373)  // 选中态文字色，跟随主色按压变体
+    public static let surface = SwiftUI.Color(red: 0.980, green: 0.965, blue: 0.941)  // 中性白（宣纸白）
+    public enum Background {
+      public static let `default` = SwiftUI.Color(red: 0.980, green: 0.965, blue: 0.941)  // 组件底色（宣纸色）
+      public static let disabled = SwiftUI.Color(red: 0.929, green: 0.910, blue: 0.878)
+      public static let overlay = SwiftUI.Color(red: 0.102, green: 0.102, blue: 0.102).opacity(0.400)  // 遮罩层底色
+      public static let page = SwiftUI.Color(red: 0.961, green: 0.941, blue: 0.922)  // 页面底色
+    }
+    public enum Border {
+      public static let base = SwiftUI.Color(red: 0.847, green: 0.827, blue: 0.800)  // 基础描边
+      public static let extraLight = SwiftUI.Color(red: 0.961, green: 0.941, blue: 0.922)
+      public static let light = SwiftUI.Color(red: 0.898, green: 0.878, blue: 0.847)
+      public static let lighter = SwiftUI.Color(red: 0.933, green: 0.914, blue: 0.886)
+    }
+    public enum Danger {
+      public static let active = SwiftUI.Color(red: 0.604, green: 0.188, blue: 0.188)
+      public static let bg = SwiftUI.Color(red: 0.992, green: 0.941, blue: 0.941)
+      public static let `default` = SwiftUI.Color(red: 0.698, green: 0.227, blue: 0.227)  // 危险色（朱砂 — 印泥朱红）
+      public static let hover = SwiftUI.Color(red: 0.769, green: 0.314, blue: 0.314)
+    }
+    public enum Disabled {
+      public static let bg = SwiftUI.Color(red: 0.929, green: 0.910, blue: 0.878)  // 禁用底色
+      public static let border = SwiftUI.Color(red: 0.898, green: 0.878, blue: 0.847)  // 禁用描边色
+      public static let text = SwiftUI.Color(red: 0.784, green: 0.784, blue: 0.784)  // 禁用文字色
+    }
+    public enum Gold {
+      public static let active = SwiftUI.Color(red: 0.604, green: 0.447, blue: 0.031)
+      public static let bg = SwiftUI.Color(red: 0.984, green: 0.965, blue: 0.918)
+      public static let border = SwiftUI.Color(red: 0.992, green: 0.980, blue: 0.953)
+      public static let `default` = SwiftUI.Color(red: 0.722, green: 0.525, blue: 0.043)  // 金色点缀（华贵古韵）
+      public static let hover = SwiftUI.Color(red: 0.831, green: 0.659, blue: 0.263)
+    }
+    public enum Info {
+      public static let active = SwiftUI.Color(red: 0.416, green: 0.416, blue: 0.416)
+      public static let bg = SwiftUI.Color(red: 0.949, green: 0.949, blue: 0.949)
+      public static let `default` = SwiftUI.Color(red: 0.478, green: 0.478, blue: 0.478)  // 信息色（黛色 — 水墨淡彩）
+      public static let hover = SwiftUI.Color(red: 0.561, green: 0.561, blue: 0.561)
+    }
+    public enum Jade {
+      public static let active = SwiftUI.Color(red: 0.294, green: 0.478, blue: 0.290)
+      public static let bg = SwiftUI.Color(red: 0.929, green: 0.961, blue: 0.925)
+      public static let `default` = SwiftUI.Color(red: 0.357, green: 0.549, blue: 0.353)  // 玉色（翠竹清雅）
+      public static let hover = SwiftUI.Color(red: 0.478, green: 0.682, blue: 0.478)
+    }
+    public enum Primary {
+      public static let active = SwiftUI.Color(red: 0.122, green: 0.227, blue: 0.373)  // 主色按压/选中文字
+      public static let bg = SwiftUI.Color(red: 0.910, green: 0.929, blue: 0.953)  // 主色浅底（选中态底色）
+      public static let border = SwiftUI.Color(red: 0.831, green: 0.863, blue: 0.910)  // 主色描边
+      public static let `default` = SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)  // 主色（靛蓝 — 青花瓷之蓝）
+      public static let hover = SwiftUI.Color(red: 0.239, green: 0.392, blue: 0.620)  // 主色悬停
+    }
+    public enum Success {
+      public static let active = SwiftUI.Color(red: 0.294, green: 0.478, blue: 0.290)
+      public static let bg = SwiftUI.Color(red: 0.929, green: 0.961, blue: 0.925)
+      public static let `default` = SwiftUI.Color(red: 0.357, green: 0.549, blue: 0.353)  // 成功色（松花绿 — 竹影青翠）
+      public static let hover = SwiftUI.Color(red: 0.435, green: 0.639, blue: 0.431)
+    }
+    public enum Text {
+      public static let disabled = SwiftUI.Color(red: 0.784, green: 0.784, blue: 0.784)  // 禁用文字
+      public static let placeholder = SwiftUI.Color(red: 0.690, green: 0.690, blue: 0.690)  // 占位文字
+      public static let primary = SwiftUI.Color(red: 0.173, green: 0.173, blue: 0.173)  // 主要文字
+      public static let regular = SwiftUI.Color(red: 0.353, green: 0.353, blue: 0.353)  // 常规文字
+      public static let secondary = SwiftUI.Color(red: 0.541, green: 0.541, blue: 0.541)  // 次要文字
+    }
+    public enum Vermilion {
+      public static let active = SwiftUI.Color(red: 0.663, green: 0.180, blue: 0.149)
+      public static let bg = SwiftUI.Color(red: 0.992, green: 0.941, blue: 0.933)
+      public static let `default` = SwiftUI.Color(red: 0.769, green: 0.227, blue: 0.192)  // 朱砂点缀（印泥朱红）
+      public static let hover = SwiftUI.Color(red: 0.910, green: 0.365, blue: 0.290)
+    }
+    public enum Warning {
+      public static let active = SwiftUI.Color(red: 0.702, green: 0.573, blue: 0.290)
+      public static let bg = SwiftUI.Color(red: 0.984, green: 0.965, blue: 0.918)
+      public static let `default` = SwiftUI.Color(red: 0.769, green: 0.639, blue: 0.353)  // 警告色（藤黄 — 秋叶金黄）
+      public static let hover = SwiftUI.Color(red: 0.831, green: 0.718, blue: 0.435)
+    }
+  }
+  public enum Motion {
+    public enum Duration {
+      public static let base = 0.300  // 0.3s（秒）
+      public static let fast = 0.250  // 0.25s（秒）
+      public static let slow = 0.400  // 0.4s（秒）
+    }
+    public enum Easing {
+      public static let easeInOut = (x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // 贝塞尔控制点，端自行构造 easing  // 标准缓动 cubic-bezier(0.4, 0, 0.2, 1)
+    }
+  }
+  public enum Radius {
+    public static let base = CGFloat(2)
+    public static let circle = 0.500  // 50%（分数，由容器尺寸换算）  // 正圆，各端取 min(宽,高)/2
+    public static let round = CGFloat(20)  // 胶囊圆角
+    public static let small = CGFloat(2)
+  }
+  public enum Shadow {
+    public static let base = LhShadow(color: SwiftUI.Color(red: 0.102, green: 0.102, blue: 0.102, opacity: 0.080, radius: 12, x: 0, y: 2)  // 扩展量 0px SwiftUI 不支持，已忽略
+    public static let light = LhShadow(color: SwiftUI.Color(red: 0.102, green: 0.102, blue: 0.102, opacity: 0.060, radius: 4, x: 0, y: 2)  // 扩展量 0px SwiftUI 不支持，已忽略
+    public static let lighter = LhShadow(color: SwiftUI.Color(red: 0.102, green: 0.102, blue: 0.102, opacity: 0.040, radius: 4, x: 0, y: 0)  // 扩展量 0px SwiftUI 不支持，已忽略
+  }
+  public enum Spacing {
+    public static let base = CGFloat(16)
+    public static let lg = CGFloat(20)
+    public static let md = CGFloat(12)
+    public static let sm = CGFloat(8)
+    public static let xl = CGFloat(24)
+    public static let xs = CGFloat(4)
+    public static let xxl = CGFloat(32)
+  }
+  public enum Typography {
+    public static let fontFamily = "'Noto Serif SC', 'STSong', 'SimSun', 'Source Han Serif SC', 'PingFang SC', 'Microsoft YaHei', serif"  // 国风衬线字体栈，各端取首个可用族
+    public enum FontSize {
+      public static let base = CGFloat(14)  // 正文基准字号
+      public static let extraLarge = CGFloat(20)  // 字号 特大
+      public static let extraSmall = CGFloat(12)
+      public static let large = CGFloat(18)
+      public static let medium = CGFloat(16)
+      public static let small = CGFloat(13)
+    }
+    public enum FontWeight {
+      public static let bold = 600  // 加粗字重
+      public static let primary = 400  // 常规字重
+    }
+    public enum LineHeight {
+      public static let primary = 1.8  // 正文行高
+    }
+  }
+  public enum ZIndex {
+    public static let dropdown = 1000
+    public static let fixed = 1030
+    public static let modal = 1050
+    public static let modalBackdrop = 1040
+    public static let normal = 1
+    public static let popover = 1060
+    public static let sticky = 1020
+    public static let toast = 2000  // 原生血脉新增：轻提示层级（web 血脉对应 tooltip 位）
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "./schema.json",
+  "$namespace": "",
+  "$type": "dimension",
+  "$description": "组件级令牌。命名空间为组件名（button.* 等）。移动端尺寸与 web 血脉不完全相同，nativeOnly 标记的为原生血脉新增项",
+  "button": {
+    "height": {
+      "small": { "value": "32px", "description": "小号按钮高度", "nativeOnly": true },
+      "medium": { "value": "40px", "description": "中号按钮高度（默认）", "nativeOnly": true },
+      "large": { "value": "48px", "description": "大号按钮高度", "nativeOnly": true }
+    },
+    "paddingHorizontal": {
+      "small": { "value": "16px", "nativeOnly": true },
+      "medium": { "value": "20px", "nativeOnly": true },
+      "large": { "value": "24px", "nativeOnly": true }
+    },
+    "borderRadius": { "ref": "radius.base", "description": "按钮圆角跟随全局圆角" },
+    "fontSize": {
+      "small": { "ref": "typography.fontSize.small" },
+      "medium": { "ref": "typography.fontSize.base" },
+      "large": { "ref": "typography.fontSize.medium" }
+    },
+    "fontWeight": { "ref": "typography.fontWeight.primary" },
+    "iconSize": {
+      "small": { "value": "16px", "nativeOnly": true },
+      "medium": { "value": "18px", "nativeOnly": true },
+      "large": { "value": "20px", "nativeOnly": true }
+    },
+    "borderWidth": { "value": "1px", "type": "dimension", "nativeOnly": true },
+    "focusRingWidth": { "value": "2px", "type": "dimension", "nativeOnly": true },
+    "focusRingOffset": { "value": "2px", "type": "dimension", "nativeOnly": true }
+  }
+}

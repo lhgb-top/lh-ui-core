@@ -1,0 +1,8 @@
+{
+  "$schema": "./schema.json",
+  "$description": "投影（柔和墨影）。复合值：x偏移 y偏移 模糊 [扩展] 颜色，各端解析为本地投影结构",
+  "$type": "shadow",
+  "base": { "value": "0px 2px 12px 0px rgba(26, 26, 26, 0.08)" },
+  "light": { "value": "0px 2px 4px 0px rgba(26, 26, 26, 0.06)" },
+  "lighter": { "value": "0px 0px 4px 0px rgba(26, 26, 26, 0.04)" }
+}

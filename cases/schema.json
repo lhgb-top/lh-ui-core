@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lh-ui.dev/core/schemas/cases.schema.json",
+  "title": "lh-ui 黄金用例（cases）",
+  "description": "可跨端翻译的行为级断言。各原生端测试仓库照此人工翻译成本地测试（JUnit / XCTest / ohpm test / C 单测），保证「逻辑不共享、行为共享」。",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string" },
+    "component": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "组件名，须与同名 spec 的 name 一致"
+    },
+    "cases": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/case" },
+      "minItems": 1
+    }
+  },
+  "required": ["component", "cases"],
+  "additionalProperties": false,
+  "$defs": {
+    "case": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "description": "用例唯一标识（kebab-case），各端测试命名以此对齐"
+        },
+        "name": { "type": "string", "description": "用例中文名" },
+        "given": {
+          "type": "object",
+          "properties": {
+            "props": { "type": "object", "description": "初始 props（键须存在于同名 spec 的 props）" },
+            "state": { "type": "object", "description": "初始组件状态（自由键，供端特有场景使用）" }
+          },
+          "additionalProperties": false
+        },
+        "when": {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["render", "click", "input", "focus", "blur", "custom"],
+              "description": "触发动作；custom 时须由 target 说明"
+            },
+            "target": { "type": "string", "description": "动作目标（如插槽名、子组件名）" },
+            "payload": { "description": "动作载荷（如 input 的文本）" }
+          },
+          "required": ["action"],
+          "additionalProperties": false
+        },
+        "then": {
+          "type": "object",
+          "properties": {
+            "events": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "description": "事件名（须存在于同名 spec 的 events）" },
+                  "assertion": { "type": "string", "enum": ["emitted", "notEmitted"] },
+                  "times": { "type": "number", "description": "期望触发次数，省略表示不校验次数" },
+                  "payload": { "description": "期望载荷（深比较）" }
+                },
+                "required": ["name", "assertion"],
+                "additionalProperties": false
+              }
+            },
+            "tokens": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": { "type": "string", "description": "令牌点路径" },
+                  "applied": { "type": "boolean", "description": "是否期望该令牌被应用到渲染结果" }
+                },
+                "required": ["path", "applied"],
+                "additionalProperties": false
+              },
+              "description": "断言某令牌是否生效，用于样式回归"
+            },
+            "visible": { "type": "boolean", "description": "期望组件是否可见" },
+            "enabled": { "type": "boolean", "description": "期望组件是否可交互" },
+            "text": { "type": "string", "description": "期望渲染出的文本内容" },
+            "notes": { "type": "string", "description": "端无关的补充断言说明" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["id", "name", "given", "when", "then"],
+      "additionalProperties": false
+    }
+  }
+}
