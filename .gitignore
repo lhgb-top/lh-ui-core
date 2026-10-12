@@ -8,3 +8,5 @@ docs/dist/
 docs/.astro/
 *.tgz
 .DS_Store
+# ZCode 工具目录（plan 文件等，非仓库内容）
+.zcode/

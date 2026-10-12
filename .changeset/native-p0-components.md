@@ -15,10 +15,7 @@
 
 另新增 `textarea.textInset`（6px，dimension，nativeOnly）：SwiftUI 的 `TextEditor` 自带约 6pt 文本内嵌，叠加占位文字与字数统计时需按此值对齐。此前端侧写死 `CGFloat = 6` 违反「组件实现禁止间距字面量」红线，已令牌化（登记于 docs/设计语言基线.md §四）。
 
-修复 iOS 端代码审查发现的一批问题（静态审查暴露，本机 Windows 无 SwiftUI 无法编译）：
+四端校验状态：`pnpm verify:specs`（15 契约 / 15 用例）、`pnpm verify:tokens`（200 令牌 / 53 暗色覆盖）、`pnpm codegen`（5 目标）、`pnpm test`（18 快照）全部通过。
 
-- 编译阻断：Checkbox / Radio / Switch 的 `accessibilityAddTraits(.notEnabled)` —— SwiftUI 的 `AccessibilityTraits` 无此成员（那是 UIKit 的），改为 `[]`；LhTextarea 的 `.scrollContentBackground(.hidden)` 是 iOS 16 / macOS 13+ API 而部署目标为 iOS 15 / macOS 12，用 `if #available` 包裹；LhCellPreviews（6 处）/ LhTagPreviews（1 处）的实参顺序违反 Swift 声明顺序要求。
-- 测试断言：LhToastTests 暗色默认类型断言了 success 圆点色，但默认类型 dotColor 为 nil，必挂；改为断言 nil 并另加 success 圆点的暗色专项。
-- 逻辑：LhButton / LhDialog 的阴影把 `LhShadow.color`（已内联 opacity）又乘一次 `.opacity(opacity)`，有效透明度降到约 0.0016，阴影几乎不可见 → 直接用 `.color`；LhPicker 确认时发送未钳制的原始索引（越界时与 UI 显示不一致）→ 钳制后再发并顺带纠正外部值；LhInput / LhTextarea 的 disabled / readonly 网关从事后拦截改为 `Binding` 写入网关（readonly 时不禁用控件、只拒绝写入，避免 `.disabled` 混淆两语义），移除与输入控件竞争的容器 `onTapGesture`，补上 LhTextarea 缺失的 `.focused`；LhToast 的 `.task(id:)` 由 visible 改为 (visible, text, duration) 组合，修复重复显示不重启倒计时，并修正 `fixedSize` 与 maxWidth 冲突导致长文本不换行；LhLoading 的 `animating` 由 false 切 true 时补 `.onChange` 重启动画；LhDialog / LhPicker 的 `.animation(value:)` 从 `if visible` 分支内移到外层（挂在内层对整体出现/消失无效）。
-
-四端校验状态：`pnpm verify:specs`（15 契约 / 15 用例）、`pnpm verify:tokens`（200 令牌 / 57 暗色覆盖）、`pnpm codegen`（5 目标）、`pnpm test`（18 快照）全部通过。iOS 端 13 个组件实现、Previews、XCTest 与文档站另见 lh-ui-ios 仓。
+iOS 端 13 个组件实现、Previews、XCTest、文档站与端侧 bug 修复另见 lh-ui-ios 仓 changeset
+（`native-ios-p0-components.md`）。
