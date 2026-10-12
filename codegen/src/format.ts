@@ -159,18 +159,9 @@ export function toArgbHash(c: ParsedColor): string {
   return toArgbHex(c).replace('0x', '#')
 }
 
-export function toNormalizedRgb(c: ParsedColor): { r: number; g: number; b: number; a: number } {
-  return { r: round(c.r / 255), g: round(c.g / 255), b: round(c.b / 255), a: round(c.a) }
-}
-
 /** 字号类令牌用 sp，其余尺寸用 dp（Android 专用判定） */
 export function usesSp(path: string): boolean {
   return /fontsize/i.test(path)
-}
-
-function round(n: number, digits = 3): number {
-  const f = 10 ** digits
-  return Math.round(n * f) / f
 }
 
 /** 按类型把中性值结构化，供各 target 自行格式化 */
@@ -179,7 +170,7 @@ export function structureValue(token: ResolvedToken):
   | { kind: 'dimension'; dimension: ParsedDimension }
   | { kind: 'duration'; duration: ParsedDuration }
   | { kind: 'shadow'; shadow: ParsedShadow }
-  | { kind: 'cubicBezier'; bezier: number[] }
+  | { kind: 'cubicBezier'; bezier: [number, number, number, number] }
   | { kind: 'number'; number: number }
   | { kind: 'string'; string: string } {
   switch (token.type) {
@@ -192,7 +183,7 @@ export function structureValue(token: ResolvedToken):
     case 'shadow':
       return { kind: 'shadow', shadow: parseShadow(String(token.value)) }
     case 'cubicBezier':
-      return { kind: 'cubicBezier', bezier: token.value as number[] }
+      return { kind: 'cubicBezier', bezier: token.value as [number, number, number, number] }
     case 'number':
       return { kind: 'number', number: token.value as number }
     case 'string':

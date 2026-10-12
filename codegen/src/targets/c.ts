@@ -22,6 +22,11 @@ function macroName(path: string): string {
   return 'LH_' + path.replace(/\./g, '_').replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`).toUpperCase()
 }
 
+/** 数值转合法 C 浮点字面量：整数补 .0 后缀，避免 0f / 2f 这类非法后缀 */
+function floatLiteral(value: number): string {
+  return Number.isInteger(value) ? `${value}.0f` : `${value}f`
+}
+
 function formatC(token: ResolvedToken): string {
   const structured = structureValue(token)
   switch (structured.kind) {
@@ -36,12 +41,12 @@ function formatC(token: ResolvedToken): string {
       return `${structured.duration.ms}  /* ${token.value} 毫秒 */`
     case 'cubicBezier': {
       const [x1, y1, x2, y2] = structured.bezier
-      return `{ ${x1}f, ${y1}f, ${x2}f, ${y2}f }`
+      return `{ ${floatLiteral(x1)}, ${floatLiteral(y1)}, ${floatLiteral(x2)}, ${floatLiteral(y2)} }`
     }
     case 'shadow': {
       const s = structured.shadow
       const spreadNote = s.spread !== undefined ? `  /* 扩展量 ${s.spread}px 已忽略 */` : ''
-      return `{ ${toArgbHex(s.color)}, ${s.x}f, ${s.y}f, ${s.blur}f }${spreadNote}`
+      return `{ ${toArgbHex(s.color)}, ${floatLiteral(s.x)}, ${floatLiteral(s.y)}, ${floatLiteral(s.blur)} }${spreadNote}`
     }
     case 'number':
       return String(structured.number)

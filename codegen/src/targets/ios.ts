@@ -46,11 +46,14 @@ function formatSwift(token: ResolvedToken): string {
     case 'shadow': {
       const s = structured.shadow
       const spreadNote = s.spread !== undefined ? `  // 扩展量 ${s.spread}px SwiftUI 不支持，已忽略` : ''
+      // LhShadow 的 color 已内联 alpha（组件直接取 .color 喂给 .shadow(color:)），
+      // 括号必须在 opacity 后闭合，radius/x/y 属于 LhShadow 而非 Color
+      const alpha = s.color.a.toFixed(3)
       return `LhShadow(color: SwiftUI.Color(red: ${(s.color.r / 255).toFixed(
         3,
       )}, green: ${(s.color.g / 255).toFixed(3)}, blue: ${(s.color.b / 255).toFixed(
         3,
-      )}, opacity: ${s.color.a.toFixed(3)}, radius: ${s.blur}, x: ${s.x}, y: ${s.y})${spreadNote}`
+      )}, opacity: ${alpha}), opacity: ${alpha}, radius: ${s.blur}, x: ${s.x}, y: ${s.y})${spreadNote}`
     }
     case 'number':
       return String(structured.number)

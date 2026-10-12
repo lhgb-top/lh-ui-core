@@ -6,6 +6,7 @@
  * - cases.then.events 的名称必须存在于 spec.events
  * - cases.then.tokens 的路径必须存在于令牌集
  * - spec.tokenRefs 的路径必须存在于令牌集
+ * - 存在 tokenRef 类型 prop 的契约必须声明 tokenRefs（否则该 prop 约束的令牌无从校验）
  * - 同一组件的 case id 不得重复
  */
 
@@ -67,6 +68,12 @@ function main(): void {
       if (!tokenSet.byPath.has(ref)) {
         errors.push(`契约 ${spec.name}：tokenRefs 引用了不存在的令牌「${ref}」`)
       }
+    }
+    const tokenRefProps = spec.props.filter((p) => p.type === 'tokenRef').map((p) => p.name)
+    if (tokenRefProps.length > 0 && (spec.tokenRefs ?? []).length === 0) {
+      errors.push(
+        `契约 ${spec.name}：存在 tokenRef 类型的 prop（${tokenRefProps.join('、')}），但未声明 tokenRefs，无法校验其引用的令牌`
+      )
     }
   }
 

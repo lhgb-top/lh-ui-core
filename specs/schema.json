@@ -20,7 +20,9 @@
     "description": { "type": "string", "description": "组件中文描述" },
     "props": {
       "type": "array",
-      "items": { "$ref": "#/$defs/prop" }
+      "items": { "$ref": "#/$defs/prop" },
+      "minItems": 1,
+      "description": "至少一项：一个组件不可能没有任何 prop"
     },
     "events": {
       "type": "array",
@@ -46,8 +48,8 @@
   "$defs": {
     "propType": {
       "type": "string",
-      "enum": ["string", "number", "boolean", "enum", "tokenRef", "node"],
-      "description": "node 表示插槽/子节点内容（Compose content、SwiftUI ViewBuilder、ArkUI Builder、C 子节点句柄）"
+      "enum": ["string", "number", "boolean", "enum", "tokenRef", "node", "array"],
+      "description": "node 表示插槽/子节点内容（Compose content、SwiftUI ViewBuilder、ArkUI Builder、C 子节点句柄）；array 表示字符串/数字数组（如选择器候选项）"
     },
     "prop": {
       "type": "object",
@@ -59,12 +61,31 @@
           "items": { "type": "string" },
           "description": "type 为 enum 时的枚举值（字符串字面量）"
         },
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["string", "number", "boolean"],
+              "description": "数组元素类型"
+            },
+            "description": { "type": "string" }
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
         "default": {},
         "required": { "type": "boolean", "default": false },
         "description": { "type": "string" }
       },
       "required": ["name", "type", "description"],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "array" } } },
+          "then": { "required": ["items"] }
+        }
+      ]
     },
     "event": {
       "type": "object",

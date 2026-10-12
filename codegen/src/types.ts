@@ -63,7 +63,7 @@ export interface ComponentSpec {
 
 export interface SpecProp {
   name: string
-  type: 'string' | 'number' | 'boolean' | 'enum' | 'tokenRef' | 'node'
+  type: 'string' | 'number' | 'boolean' | 'enum' | 'tokenRef' | 'node' | 'array'
   values?: string[]
   default?: unknown
   required?: boolean

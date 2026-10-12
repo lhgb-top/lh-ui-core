@@ -93,16 +93,43 @@ export function resolveTokens(files: LoadedTokenFile[]): ResolveResult {
   const byPath = new Map(tokens.map((t) => [t.path, t]))
 
   // 3) 暗色覆盖：暗色文件只声明需要覆盖的键，值替换到覆盖表
+  // 暗色命名空间视图：暗色文件自身的 path -> raw，供暗色 ref 就近解析
+  const darkRawMap = new Map<
+    string,
+    { value: TokenValue; ref?: string }
+  >()
+  for (const file of darkFiles) {
+    for (const [path, raw] of file.flat) {
+      darkRawMap.set(path, { value: raw.value as TokenValue, ref: raw.ref })
+    }
+  }
+
+  // 暗色 ref 先在暗色命名空间内沿链解析（暗色引用暗色才是同主题取值），
+  // 目标路径在暗色未覆盖时才回落亮色命名空间。
+  function resolveDarkRef(path: string, chain: string[]): TokenValue {
+    const darkEntry = darkRawMap.get(path)
+    if (darkEntry) {
+      if (darkEntry.ref) {
+        if (chain.includes(path)) {
+          throw new Error(`检测到暗色令牌引用环：${[...chain, path].join(' -> ')}`)
+        }
+        return resolveDarkRef(darkEntry.ref, [...chain, path])
+      }
+      return darkEntry.value
+    }
+    return resolveRef(path, chain).value
+  }
+
   const dark: DarkOverrides = new Map()
   const orphanDarkPaths: string[] = []
   for (const file of darkFiles) {
     for (const [path, raw] of file.flat) {
       let value: TokenValue
       if (raw.ref) {
-        if (!byPath.has(raw.ref) && !rawMap.has(raw.ref)) {
+        if (!byPath.has(raw.ref) && !rawMap.has(raw.ref) && !darkRawMap.has(raw.ref)) {
           throw new Error(`暗色令牌 ${path} 引用不存在：${raw.ref}`)
         }
-        value = resolveRef(raw.ref, [path]).value
+        value = resolveDarkRef(raw.ref, [path])
         refMap.set(`dark:${path}`, raw.ref)
       } else {
         value = raw.value as TokenValue
