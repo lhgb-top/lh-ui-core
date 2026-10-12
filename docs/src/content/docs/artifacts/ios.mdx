@@ -1,0 +1,107 @@
+---
+title: "iOS 产物"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+**路径**：`dist/ios/Sources/LhUITokens/LhTokens.swift` 与 `LhDarkTokens.swift`，存在投影令牌时额外生成 `LhShadow.swift`
+
+**模块目录**：`Sources/LhUITokens/`（SwiftPM 目录约定）
+
+## 结构
+
+Swift 的无实例命名空间惯用法：**嵌套 `public enum`** + `public static let`：
+
+```swift
+import SwiftUI
+import CoreGraphics
+
+public enum LhTokens {
+  public enum Button {
+    public static let borderRadius = CGFloat(2)  // 按钮圆角跟随全局圆角
+    public static let borderWidth = CGFloat(1)
+    public enum FontSize {
+      public static let large = CGFloat(16)
+      public static let medium = CGFloat(14)
+    }
+    public enum Height {
+      public static let medium = CGFloat(40)  // 中号按钮高度（默认）
+    }
+  }
+}
+```
+
+## 命名映射
+
+| 令牌路径 | Swift 成员 |
+| --- | --- |
+| `button.height.medium` | `LhTokens.Button.Height.medium` |
+| `color.primary.default` | `LhTokens.Color.Primary.`default`` |
+| `zIndex.modal` | `LhTokens.ZIndex.modal` |
+
+## 关键字转义
+
+成员名与 Swift 关键字同形时**加反引号**，否则产物无法编译：
+
+```swift
+public enum Primary {
+  public static let `default` = SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)
+  public static let `repeat` = ...
+}
+```
+
+转义只作用于**成员名**——枚举类型名走 `pascalCase`（首字母大写）后不会撞关键字。见 `ios.ts` 的 `SWIFT_KEYWORDS` 与 `swiftMemberName()`。
+
+## 单位与字面量
+
+| 令牌类型 | Swift 字面量 |
+| --- | --- |
+| 颜色（不透明） | `SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)` |
+| 颜色（半透明） | 同上 + `.opacity(0.400)` |
+| 尺寸 | `CGFloat(40)` |
+| 百分数 | `0.500  // 50%（分数，由容器尺寸换算）` |
+| 时长 | `0.200  // 0.2s（秒）`——**SwiftUI 动画以秒为单位，构建期换算**（毫秒 ÷ 1000，保留 3 位小数） |
+| 贝塞尔 | `(x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // 贝塞尔控制点，端自行构造 easing` |
+| 投影 | `LhShadow(color:opacity:radius:x:y:)` |
+| 数值 / 字符串 | 原样 / `JSON.stringify` |
+
+<Aside type="tip" title="颜色归一化">
+SwiftUI 的 `Color(red:green:blue:)` 接收 0..1 的归一化值，所以构建期把 0..255 除以 255 并保留 3 位小数。这是「平台单位换算由 target 负责」的典型例子。
+</Aside>
+
+## LhShadow.swift
+
+SwiftUI 没有复合投影类型，所以生成一个载体结构体（**静态模板，无令牌内容**）：
+
+```swift
+public struct LhShadow {
+  public let color: SwiftUI.Color
+  public let opacity: Double
+  public let radius: CGFloat
+  public let x: CGFloat
+  public let y: CGFloat
+  // memberwise init
+}
+```
+
+只有存在 `type: shadow` 的令牌时才生成。
+
+## 暗色
+
+独立的 `public enum LhDarkTokens`：
+
+```swift
+public enum LhDarkTokens {
+  public enum Color {
+    public static let focus = SwiftUI.Color(red: 0.498, green: 0.651, blue: 0.851)
+    public static let selected = SwiftUI.Color(red: 0.694, green: 0.757, blue: 0.847)
+    // …其余被覆盖的键
+  }
+}
+```
+
+未覆盖的键在暗色下沿用 `LhTokens`。
+
+## 消费方式
+
+iOS 仓通过 SPM 把 `dist/ios/` 作为本地 path 依赖或已发包引入，`import LhUITokens` 即可使用。

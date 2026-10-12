@@ -1,0 +1,75 @@
+---
+title: lh-ui-core
+template: splash
+description: lh-ui 原生血脉构建期中心 —— 设计令牌真源 + 组件契约 + 黄金用例 + 跨端 codegen
+hero:
+  title: lh-ui-core
+  tagline: 原生血脉的构建期中心 —— 设计令牌真源 · 组件契约 · 黄金用例 · 跨端 codegen。只在构建期工作，产物里没有一行 JavaScript。
+  actions:
+    - text: 快速开始
+      link: /guide/quickstart
+      variant: primary
+    - text: 令牌参考
+      link: /tokens/reference
+      variant: secondary
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+## 这个仓是做什么的
+
+<CardGrid>
+  <Card title="🎨 设计令牌唯一真源">
+    9 份 JSON 中性源（色板 / 排版 / 间距 / 圆角 / 投影 / 动效 / 层级 / 组件级），schema 强约束，禁止任何平台专属语法。
+    [令牌格式](/tokens/token-format)
+  </Card>
+  <Card title="📐 组件契约">
+    每组件一份 JSON 契约：props / 枚举 / 默认值 / 事件 / 插槽 / 行为，命名正则保证五端统一。
+    [契约格式](/specs/spec-format)
+  </Card>
+  <Card title="🧪 黄金用例">
+    可跨端翻译的 given/when/then 行为级断言——逻辑不共享，行为共享。
+    [用例格式](/cases/case-format)
+  </Card>
+  <Card title="⚙️ 跨端 codegen">
+    一套中性令牌，生成 Android（Kotlin）/ iOS（Swift）/ 鸿蒙（ArkTS）/ C 四端语言骨架，只生骨架不生实现。
+    [管线总览](/codegen/pipeline)
+  </Card>
+  <Card title="🌙 暗色预计算">
+    web 血脉的 `color-mix()` 在构建期预计算为字面色值，原生端零运行时成本。
+    [暗色合并](/tokens/dark-mode)
+  </Card>
+  <Card title="🔗 本地联动">
+    家族布局下改令牌重跑 codegen 即时生效，带存在性守卫，无需发包。
+    [本地联动](/guide/local-linking)
+  </Card>
+</CardGrid>
+
+## 家族站点
+
+<CardGrid>
+  <Card title="lh-ui（总览）">
+    家族门户，含双血脉架构与设计语言基线。
+    [前往 →](https://www.lhgb.top)
+  </Card>
+  <Card title="lh-ui-plus（Vue3）">
+    web 血脉的 Vue3 组件库。
+    [前往 →](https://www.lhgb.top/lhui/plus/)
+  </Card>
+  <Card title="lh-ui-android">
+    原生血脉：Compose 令牌包 + 组件实现。
+    [前往 →](https://www.lhgb.top/lhui/android/)
+  </Card>
+  <Card title="lh-ui-ios">
+    原生血脉：SwiftUI 令牌包 + 组件实现。
+    [前往 →](https://www.lhgb.top/lhui/ios/)
+  </Card>
+  <Card title="lh-ui-harmony">
+    原生血脉：ArkUI 令牌包 + 组件实现。
+    [前往 →](https://www.lhgb.top/lhui/harmony/)
+  </Card>
+  <Card title="lh-ui-c">
+    原生血脉：C 头文件令牌包。
+    [前往 →](https://www.lhgb.top/lhui/c/)
+  </Card>
+</CardGrid>

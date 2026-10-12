@@ -1,0 +1,21 @@
+---
+// 黄金用例参考页：构建期直接调 codegen 的 loadCases 读 cases/ JSON 真源渲染。
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import CaseReference from '../../components/CaseReference.astro'
+import { loadCases } from '../../../../codegen/src/load'
+import { fileURLToPath } from 'node:url'
+import { resolve } from 'node:path'
+
+// 站点根是 docs/，仓根在四层之上；用 import.meta.url 而非 process.cwd()，
+// 后者在 astro --root docs 下不可靠
+const repoRoot = fileURLToPath(new URL('../../../../', import.meta.url))
+const cases = loadCases(resolve(repoRoot, 'cases'))
+---
+
+<StarlightPage frontmatter={{ title: '黄金用例参考' }}>
+  <p>
+    下表由 <code>cases/*.json</code> 在构建期自动渲染。各端测试仓库照此翻译成本地测试——
+    逻辑不共享，行为共享。
+  </p>
+  <CaseReference cases={cases} />
+</StarlightPage>

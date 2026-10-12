@@ -1,0 +1,244 @@
+---
+import type { ResolvedToken, TokenValue } from '../../../codegen/src/types'
+
+interface Props {
+  tokens: ResolvedToken[]
+  dark: Map<string, TokenValue>
+}
+
+const { tokens, dark } = Astro.props
+
+interface TokenRow {
+  path: string
+  type: string
+  value: string
+  dark?: string
+  description?: string
+  nativeOnly?: boolean
+}
+
+/** 中性值渲染为表格里的字符串：数组展开，其余原样 */
+function formatValue(value: TokenValue): string {
+  if (Array.isArray(value)) return `[${value.join(', ')}]`
+  return String(value)
+}
+
+/** 把中性色值转成 CSS 可直接渲染的颜色（4 位 #RGB 展开；rgba() 原样） */
+function toCssColor(value: string): string | null {
+  if (/^#[0-9a-fA-F]{4}$/.test(value)) {
+    return `#${value[1]}${value[1]}${value[2]}${value[2]}${value[3]}${value[3]}`
+  }
+  if (/^#[0-9a-fA-F]{6,8}$/.test(value) || /^rgba?/i.test(value)) return value
+  return null
+}
+
+const rows: TokenRow[] = tokens.map((token) => {
+  const darkValue = dark.get(token.path)
+  return {
+    path: token.path,
+    type: token.type,
+    value: formatValue(token.value),
+    dark: darkValue !== undefined ? formatValue(darkValue) : undefined,
+    description: token.description,
+    nativeOnly: token.nativeOnly,
+  }
+})
+
+// 按顶级命名空间分组，组按命名空间字典序，组内保持 resolve 输出顺序
+const groups = new Map<string, TokenRow[]>()
+for (const row of rows) {
+  const namespace = row.path.split('.')[0]!
+  const list = groups.get(namespace) ?? []
+  list.push(row)
+  groups.set(namespace, list)
+}
+const sortedGroups = [...groups.entries()].sort(([a], [b]) => a.localeCompare(b))
+---
+
+<div class="token-reference">
+  <input
+    class="token-filter"
+    type="search"
+    placeholder="按路径或说明过滤（如 primary、按钮高度）…"
+    aria-label="过滤令牌"
+  />
+  <p class="token-count">共 {rows.length} 个令牌</p>
+
+  {
+    sortedGroups.map(([namespace, list]) => (
+      <section class="token-group" data-namespace={namespace}>
+        <h3 id={namespace}>{namespace}</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>令牌</th>
+                <th>类型</th>
+                <th>明色</th>
+                <th>暗色</th>
+                <th>说明</th>
+              </tr>
+            </thead>
+            <tbody>
+              {list.map((row) => (
+                <tr data-search={`${row.path} ${row.description ?? ''}`.toLowerCase()}>
+                  <td>
+                    <code>{row.path}</code>
+                  </td>
+                  <td>
+                    <span class="token-type">{row.type}</span>
+                  </td>
+                  <td>
+                    {toCssColor(row.value) && (
+                      <span class="swatch" style={`background-color: ${toCssColor(row.value)}`} />
+                    )}
+                    <code>{row.value}</code>
+                  </td>
+                  <td>
+                    {row.dark ? (
+                      <>
+                        {toCssColor(row.dark) && (
+                          <span class="swatch" style={`background-color: ${toCssColor(row.dark)}`} />
+                        )}
+                        <code>{row.dark}</code>
+                      </>
+                    ) : (
+                      <span class="dash">—</span>
+                    )}
+                  </td>
+                  <td>
+                    {row.nativeOnly && <span class="badge badge-native">原生新增</span>}
+                    {row.description}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    ))
+  }
+
+  <p class="empty" hidden>没有匹配的令牌。</p>
+</div>
+
+<script>
+  const input = document.querySelector<HTMLInputElement>('.token-filter')
+  const count = document.querySelector<HTMLParagraphElement>('.token-count')
+  const groups = document.querySelectorAll<HTMLElement>('.token-group')
+  const empty = document.querySelector<HTMLParagraphElement>('.empty')
+
+  input?.addEventListener('input', () => {
+    const keyword = input.value.trim().toLowerCase()
+    let matched = 0
+    groups.forEach((group) => {
+      let groupShown = 0
+      group
+        .querySelectorAll<HTMLTableRowElement>('tbody tr')
+        .forEach((row) => {
+          const hit = !keyword || (row.dataset.search ?? '').includes(keyword)
+          row.hidden = !hit
+          if (hit) groupShown += 1
+        })
+      group.hidden = groupShown === 0
+      matched += groupShown
+    })
+    if (count) count.textContent = `共 ${matched} 个令牌${keyword ? '（已过滤）' : ''}`
+    if (empty) empty.hidden = matched > 0
+  })
+</script>
+
+<style>
+  .token-filter {
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 8px;
+    background-color: var(--sl-color-bg);
+    color: var(--sl-color-text);
+    font-size: 14px;
+  }
+
+  .token-count {
+    margin: 0 0 16px;
+    font-size: 13px;
+    color: var(--sl-color-gray-3);
+  }
+
+  .token-group {
+    margin-bottom: 32px;
+  }
+
+  .token-group h3 {
+    margin: 0 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--sl-color-hairline-light);
+    font-size: 18px;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th,
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--sl-color-hairline);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    font-weight: 600;
+    color: var(--sl-color-gray-3);
+  }
+
+  td code {
+    font-size: 12px;
+    word-break: break-all;
+  }
+
+  .swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 6px;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 3px;
+    vertical-align: middle;
+  }
+
+  .token-type {
+    color: var(--sl-color-gray-3);
+    font-size: 12px;
+  }
+
+  .dash {
+    color: var(--sl-color-gray-4);
+  }
+
+  .badge {
+    display: inline-block;
+    margin-right: 6px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .badge-native {
+    background-color: var(--sl-color-accent-low);
+    color: var(--sl-color-accent-high);
+  }
+
+  .empty {
+    color: var(--sl-color-gray-3);
+  }
+</style>

@@ -1,0 +1,21 @@
+---
+// 组件契约参考页：构建期直接调 codegen 的 loadSpecs 读 specs/ JSON 真源渲染。
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import SpecReference from '../../components/SpecReference.astro'
+import { loadSpecs } from '../../../../codegen/src/load'
+import { fileURLToPath } from 'node:url'
+import { resolve } from 'node:path'
+
+// 站点根是 docs/，仓根在四层之上；用 import.meta.url 而非 process.cwd()，
+// 后者在 astro --root docs 下不可靠
+const repoRoot = fileURLToPath(new URL('../../../../', import.meta.url))
+const specs = loadSpecs(resolve(repoRoot, 'specs'))
+---
+
+<StarlightPage frontmatter={{ title: '组件契约参考' }}>
+  <p>
+    下表由 <code>specs/*.json</code> 在构建期自动渲染。切换组件查看其 props / 事件 / 插槽 /
+    行为与消费的令牌。
+  </p>
+  <SpecReference specs={specs} />
+</StarlightPage>

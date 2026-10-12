@@ -1,0 +1,23 @@
+---
+// 令牌参考页：构建期直接调 codegen 的装载 / 解析函数读 tokens/ JSON 真源渲染，
+// 与源同步，且构建期即做 schema 校验（契约写错 docs:build 会炸）。
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import TokenTable from '../../components/TokenTable.astro'
+import { loadTokenFiles } from '../../../../codegen/src/load'
+import { resolveTokens } from '../../../../codegen/src/resolve'
+import { fileURLToPath } from 'node:url'
+import { resolve } from 'node:path'
+
+// 站点根是 docs/，仓根在四层之上；用 import.meta.url 而非 process.cwd()，
+// 后者在 astro --root docs 下不可靠
+const repoRoot = fileURLToPath(new URL('../../../../', import.meta.url))
+const { tokenSet } = resolveTokens(loadTokenFiles(resolve(repoRoot, 'tokens')))
+---
+
+<StarlightPage frontmatter={{ title: '令牌参考' }}>
+  <p>
+    下表由 <code>tokens/*.json</code> 在构建期自动渲染（resolve 烘焙后的最终值）。ref
+    引用已展开为字面值，暗色列为 <code>color-dark.json</code> 的覆盖结果。
+  </p>
+  <TokenTable tokens={tokenSet.tokens} dark={tokenSet.dark} />
+</StarlightPage>

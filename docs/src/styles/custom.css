@@ -1,0 +1,14 @@
+/* lh-ui-core 文档站品牌色：青花瓷蓝，对齐家族令牌 color.primary.default（#2B4C7C）。 */
+/* Starlight 用 --sl-color-accent * 系列变量驱动链接 / 侧边栏 / 按钮的高亮色。 */
+
+:root {
+  --sl-color-accent: #2b4c7c;
+  --sl-color-accent-low: #1f3a5f;
+  --sl-color-accent-high: #3d649e;
+}
+
+:root[data-theme='dark'] {
+  --sl-color-accent: #7fa6d9;
+  --sl-color-accent-low: #2b4c7c;
+  --sl-color-accent-high: #b1c1d8;
+}

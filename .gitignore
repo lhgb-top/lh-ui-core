@@ -2,5 +2,9 @@ node_modules/
 dist/
 dist-toolkit/
 coverage/
+# Astro 缓存与生成的类型（站点根 docs/ 或误从仓根运行时产生）
+.astro/
+docs/dist/
+docs/.astro/
 *.tgz
 .DS_Store

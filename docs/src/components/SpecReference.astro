@@ -1,0 +1,295 @@
+---
+import type { ComponentSpec } from '../../../codegen/src/types'
+
+interface Props {
+  specs: ComponentSpec[]
+}
+
+const { specs } = Astro.props
+
+// 按组件名排序，保证下拉选项稳定
+const sorted = [...specs].sort((a, b) => a.name.localeCompare(b.name))
+
+function formatDefault(value: unknown): string {
+  if (value === undefined) return '—'
+  if (typeof value === 'string') return `"${value}"`
+  return JSON.stringify(value)
+}
+---
+
+<div class="spec-reference">
+  <div class="selector-bar">
+    <label for="spec-select">选择组件</label>
+    <select id="spec-select">
+      {
+        sorted.map((spec) => (
+          <option value={spec.name}>
+            {spec.component}（{spec.name}）
+          </option>
+        ))
+      }
+    </select>
+  </div>
+
+  {
+    sorted.map((spec, index) => (
+      <section class="spec-panel" data-spec={spec.name} hidden={index !== 0}>
+        <div class="spec-head">
+          <h2 id={spec.name}>{spec.component}</h2>
+          {spec.since && <span class="since">since {spec.since}</span>}
+        </div>
+        <p class="spec-description">{spec.description}</p>
+
+        <h3 id={`${spec.name}-props`}>Props</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>名称</th>
+                <th>类型</th>
+                <th>枚举值</th>
+                <th>默认值</th>
+                <th>必填</th>
+                <th>说明</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                spec.props.map((prop) => (
+                  <tr>
+                    <td>
+                      <code>{prop.name}</code>
+                    </td>
+                    <td>
+                      <span class="prop-type">{prop.type}</span>
+                    </td>
+                    <td>
+                      {prop.values ? (
+                        prop.values.map((value) => <code class="enum-value">{value}</code>)
+                      ) : (
+                        <span class="dash">—</span>
+                      )}
+                    </td>
+                    <td>
+                      <code>{formatDefault(prop.default)}</code>
+                    </td>
+                    <td>{prop.required ? '是' : '否'}</td>
+                    <td>{prop.description}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id={`${spec.name}-events`}>事件</h3>
+        {spec.events?.length ? (
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>名称</th>
+                  <th>载荷</th>
+                  <th>说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  spec.events.map((event) => (
+                    <tr>
+                      <td>
+                        <code>{event.name}</code>
+                      </td>
+                      <td>
+                        {!event.payload?.length ? (
+                          <span class="dash">无</span>
+                        ) : (
+                          event.payload.map((field) => (
+                            <code class="enum-value">
+                              {field.name}: {field.type}
+                            </code>
+                          ))
+                        )}
+                      </td>
+                      <td>{event.description}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p class="empty">本组件没有声明事件。</p>
+        )}
+
+        <h3 id={`${spec.name}-slots`}>插槽</h3>
+        {spec.slots?.length ? (
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>名称</th>
+                  <th>说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  spec.slots.map((slot) => (
+                    <tr>
+                      <td>
+                        <code>{slot.name}</code>
+                      </td>
+                      <td>{slot.description}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p class="empty">本组件没有声明插槽。</p>
+        )}
+
+        <h3 id={`${spec.name}-behaviors`}>行为说明</h3>
+        {spec.behaviors?.length ? (
+          <ul>
+            {spec.behaviors.map((behavior) => <li>{behavior}</li>)}
+          </ul>
+        ) : (
+          <p class="empty">本组件没有声明行为。</p>
+        )}
+
+        <h3 id={`${spec.name}-tokenrefs`}>消费的令牌</h3>
+        {spec.tokenRefs?.length ? (
+          <div class="token-refs">
+            {spec.tokenRefs.map((tokenRef) => <code class="enum-value">{tokenRef}</code>)}
+          </div>
+        ) : (
+          <p class="empty">本组件没有声明令牌引用。</p>
+        )}
+      </section>
+    ))
+  }
+</div>
+
+<script>
+  const select = document.querySelector<HTMLSelectElement>('#spec-select')
+  const panels = document.querySelectorAll<HTMLElement>('.spec-panel')
+
+  select?.addEventListener('change', () => {
+    panels.forEach((panel) => {
+      panel.hidden = panel.dataset.spec !== select.value
+    })
+  })
+</script>
+
+<style>
+  .selector-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  label {
+    font-size: 13px;
+    color: var(--sl-color-gray-3);
+  }
+
+  select {
+    padding: 6px 10px;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 8px;
+    background-color: var(--sl-color-bg);
+    color: var(--sl-color-text);
+    font-size: 14px;
+  }
+
+  .spec-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .spec-head h2 {
+    margin: 0;
+    font-size: 22px;
+  }
+
+  .since {
+    padding: 1px 8px;
+    border-radius: 4px;
+    background-color: var(--sl-color-bg-inline-code);
+    color: var(--sl-color-gray-3);
+    font-size: 12px;
+  }
+
+  .spec-description {
+    margin: 0 0 24px;
+    color: var(--sl-color-text);
+  }
+
+  h3 {
+    margin: 28px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--sl-color-hairline-light);
+    font-size: 17px;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th,
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--sl-color-hairline);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    font-weight: 600;
+    color: var(--sl-color-gray-3);
+  }
+
+  td code,
+  .enum-value {
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .enum-value {
+    display: inline-block;
+    margin: 0 6px 4px 0;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background-color: var(--sl-color-bg-inline-code);
+    color: var(--sl-color-text);
+  }
+
+  .prop-type {
+    color: var(--sl-color-gray-3);
+    font-size: 12px;
+  }
+
+  .dash {
+    color: var(--sl-color-gray-4);
+  }
+
+  .empty {
+    color: var(--sl-color-gray-3);
+  }
+
+  .token-refs {
+    display: flex;
+    flex-wrap: wrap;
+  }
+</style>

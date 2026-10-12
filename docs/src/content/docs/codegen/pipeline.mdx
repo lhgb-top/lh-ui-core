@@ -1,0 +1,137 @@
+---
+title: "管线总览"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+`pnpm codegen` 执行 `codegen/src/index.ts`，完整管线如下：
+
+```
+package.json 版本号
+        │
+        ▼
+loadTokenFiles()          装载 tokens/*.json，Ajv 结构校验，flatten 扁平化
+        │                  返回 LoadedTokenFile[]（每文件含 namespace / isDark / flat）
+        ▼
+resolveTokens()           ref 解析（含环检测）+ 暗色合并
+        │                  返回 { tokenSet, orphanDarkPaths, refMap }
+        ▼
+loadSpecs()               装载 specs/*.json（schema 校验）
+loadCases()               装载 cases/*.json（schema 校验）
+        │
+        ▼
+组装 CodegenInput { tokens: tokenSet, specs, cases, version }
+        │
+        ▼
+删掉整个 dist/ 并重建
+        │
+        ▼
+依次执行 5 个 target ──► android → ios → harmony → c → docs
+        │                 每个 target.generate(input) 返回 GeneratedFile[]
+        ▼
+按 dist/<outDir>/<relativePath> 逐文件落盘
+```
+
+## 入口文件 `codegen/src/index.ts`
+
+### 常量
+
+| 常量 | 值 |
+| --- | --- |
+| `ROOT` | 仓库根（`import.meta.dirname` 上两级） |
+| `DIST` | `<ROOT>/dist` |
+| `targets` | `[androidTarget, iosTarget, harmonyTarget, cTarget, docsTarget]`，**顺序固定** |
+
+### `main()`
+
+```ts
+function main(): void
+```
+
+唯一的入口（`index.ts` 不导出任何实体，`main()` 是内部函数，文件底部直接调用）。步骤：
+
+1. `readVersion()` 读 `package.json` 版本号
+2. `loadTokenFiles()` 装载令牌
+3. `resolveTokens(files)` 解析，取 `tokenSet`
+4. `loadSpecs()` / `loadCases()` 装载契约与用例
+5. 组装 `CodegenInput`
+6. `existsSync(DIST)` 时 `rmSync(DIST, { recursive: true })` —— **先删后建，保证产物无残留**
+7. 逐 target 调 `generate(input)`，按 `dist/<outDir>/<relativePath>` 写文件，每个产物打印 `[target] path` 日志
+8. 末行汇总 target 数、文件数、版本
+
+文件头注释明确红线 1：**只生成令牌骨架，不生成任何 UI 实现**。
+
+## 核心接口（`codegen/src/types.ts`）
+
+下面是管线里最常用的四个接口；**全部 16 个类型导出的完整参考见 [类型定义 types.ts](./types)。**
+
+### `CodegenTarget`
+
+```ts
+interface CodegenTarget {
+  name: string               // 日志前缀，如 'android'
+  outDir: string             // dist 下的子目录名，如 'android'
+  generate(input: CodegenInput): GeneratedFile[]
+}
+```
+
+每个平台 target 实现这个接口。新增一个平台 = 新增一个 target 并加进 `targets` 数组。
+
+### `CodegenInput`
+
+```ts
+interface CodegenInput {
+  tokens: TokenSet    // 解析后的明色令牌集 + 暗色覆盖
+  specs: ComponentSpec[]   // 当前未被任何 target 消费（预留给未来组件文档/测试生成）
+  cases: ComponentCases[]  // 同上
+  version: string     // package.json 版本号，写进每个产物的头部注释
+}
+```
+
+<Aside type="tip" title="specs / cases 的状态">
+目前各 target **只**消费 `input.tokens`，没有任何 target 使用 `specs` / `cases`——它们是预留给未来组件文档 / 类型骨架 / 测试生成的接口。
+</Aside>
+
+### `GeneratedFile`
+
+```ts
+interface GeneratedFile {
+  relativePath: string  // 相对 dist/<outDir>/ 的输出路径
+  content: string
+}
+```
+
+### `TokenSet`
+
+```ts
+interface TokenSet {
+  tokens: ResolvedToken[]              // 明色令牌（path 字典序）
+  byPath: Map<string, ResolvedToken>   // 按路径快速查找
+  dark: DarkOverrides                  // path -> 暗色覆盖值
+}
+```
+
+## 产物总数
+
+| target | 文件数 |
+| --- | --- |
+| android | 2（`LhTokens.kt` + `LhDarkTokens.kt`） |
+| ios | 2~3（+ `LhShadow.swift`，存在 shadow 令牌时） |
+| harmony | 2~3（+ `LhShadow.ets`） |
+| c | 2 |
+| docs | 3 |
+
+`ios` / `harmony` 的投影文件只在存在 `shadow` 令牌时生成，故总文件数随令牌内容变化，以 `dist/` 实际产物为准。
+
+## 相关模块
+
+| 模块 | 职责 |
+| --- | --- |
+| [load.ts](./load) | 装载与结构校验 |
+| [resolve.ts](./resolve) | 引用解析与暗色合并 |
+| [format.ts](./format) | 中性值解析与端格式化 |
+| [tree.ts](./tree) | 扁平转嵌套 |
+| [render.ts](./render) | 模板渲染 |
+| [types.ts](./types) | 全部类型定义 |
+| [targets/](./targets) | 五个平台 target |
+| [templates/](./templates) | 7 个 handlebars 模板 |

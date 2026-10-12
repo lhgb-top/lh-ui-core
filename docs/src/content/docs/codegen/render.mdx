@@ -1,0 +1,71 @@
+---
+title: "渲染层 render.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> Handlebars 模板渲染封装。
+
+## 设计原则：薄模板
+
+模板**只负责文件骨架**（头部注释、import、命名空间开合）。逐令牌的字面量格式化**全部在 target 的 TS 里完成**，以组装好的 `body` 字符串喂给模板。
+
+```
+target.ts:  逐令牌格式化 → 拼成 body 字符串
+                        ▼
+render.ts:  render('android/LhTokens.kt.hbs', { package, imports, body })
+                        ▼
+模板:       头部注释 + package 声明 + imports + {{{body}}}
+```
+
+好处：模板里没有复杂的 handlebars 逻辑，改字面量格式只动 target 的 TS，改文件骨架只动模板，互不干扰。
+
+## 函数
+
+### `loadTemplate(name: string): HandlebarsTemplateDelegate`
+
+内部函数。按模板名读 `codegen/templates/<name>`：
+
+```ts
+const compiled = Handlebars.compile(source, { noEscape: true })
+cache.set(name, compiled)   // 编译结果缓存，避免重复编译
+```
+
+<Aside type="tip" title="为什么必须 `noEscape: true`">
+模板内容含 `<` `>` `#` 等字符（C 头文件守卫 `#ifndef`、`#define`、Kotlin 泛型）。默认的 HTML 转义会把它们破坏掉，所以必须关闭。
+</Aside>
+
+模板目录由常量 `TEMPLATES_DIR` 指定（`codegen/templates`）。
+
+### `render<T>(templateName: string, data: T): string`
+
+唯一对外接口：
+
+```ts
+return loadTemplate(templateName)(data)
+```
+
+各 target 只需要这一行调用。
+
+## 没有自定义 helper
+
+模板**没有注册任何 handlebars helper**，只用内置能力：
+
+| 语法 | 用途 |
+| --- | --- |
+| `{{{ }}}` | 三重花括号 + `noEscape`，插入预格式化的 `body` |
+| `{{#each}}` | 遍历 import 清单等数组 |
+
+## 7 个模板
+
+| 模板 | 产物 |
+| --- | --- |
+| `android/LhTokens.kt.hbs` | `LhTokens.kt` **和** `LhDarkTokens.kt`（明暗共用） |
+| `ios/LhTokens.swift.hbs` | `LhTokens.swift` 和 `LhDarkTokens.swift` |
+| `ios/LhShadow.swift.hbs` | `LhShadow.swift`（静态模板，无 body 插槽） |
+| `harmony/LhTokens.ets.hbs` | `LhTokens.ets` 和 `LhDarkTokens.ets` |
+| `harmony/LhShadow.ets.hbs` | `LhShadow.ets`（静态模板） |
+| `c/lh_tokens.h.hbs` | `lh_tokens.h` |
+| `c/lh_dark_tokens.h.hbs` | `lh_dark_tokens.h` |
+
+详见 [模板清单](./templates)。

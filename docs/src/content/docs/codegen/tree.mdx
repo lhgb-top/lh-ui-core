@@ -1,0 +1,81 @@
+---
+title: "构树层 tree.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> 把扁平的 `path -> ResolvedToken` 构造成嵌套树，供各 target 按命名空间层级输出。
+
+## 为什么需要树
+
+令牌在 JSON 里是嵌套的（`color.primary.default`），但装载与解析阶段都是**扁平的 `Map<path, ResolvedToken>`**（方便查重、ref 解析、暗色合并）。到了生成阶段，Kotlin 的 `object Color { object Primary { ... } }`、Swift 的 `enum Color { enum Primary { ... } }`、C 的分节注释都需要**嵌套结构**——所以先构树。
+
+## 类型
+
+```ts
+interface TokenTreeGroup {
+  name: string
+  tokens: { name: string; token: ResolvedToken }[]   // 分组下的直接令牌（按原名保留）
+  children: TokenTreeGroup[]                          // 子分组
+}
+```
+
+转换示例：
+
+```
+color.primary.default  =>
+  { name: 'color', children: [
+      { name: 'primary', children: [
+          { name: 'default', tokens: [{ name: 'default', token }] }
+      ] }
+  ] }
+```
+
+## 函数
+
+### `buildTokenTree(tokens: ResolvedToken[]): TokenTreeGroup[]`
+
+入口。建一个虚拟根，对每个令牌调 `insert(root, segments, token, 0)`，最后返回 `root.children`（虚拟根本身不出现）。
+
+### `insert(group, segments, token, depth): void`
+
+内部递归函数：
+
+```ts
+const name = segments[depth]
+if (depth === segments.length - 1) {
+  group.tokens.push({ name, token })   // 末段：入 tokens
+  return
+}
+let child = group.children.find((c) => c.name === name)
+if (!child) {
+  child = { name, tokens: [], children: [] }
+  group.children.push(child)           // 不存在则建子分组
+}
+insert(child, segments, token, depth + 1)
+```
+
+**同名子分组只建一次**，后续同前缀的令牌复用。
+
+### `pascalCase(name: string): string`
+
+组名转 PascalCase，用于 Kotlin `object` / Swift `enum` / ArkTS `class` 的分组命名：
+
+```ts
+return name.charAt(0).toUpperCase() + name.slice(1)
+```
+
+<Aside type="caution" title="只大写首字母">
+`pascalCase` **不做 camelCase 拆分，只大写首字母**——`fontSize` → `FontSize`、`zIndex` → `ZIndex`。令牌命名本身已经是驼峰，所以这里不需要重新切分单词。
+</Aside>
+
+## 各端怎么用树
+
+| 端 | 用法 |
+| --- | --- |
+| Android | `emitTree` 递归输出 `object PascalCase { ... }`，成员 `val name = literal` |
+| iOS | `emitTree` 递归输出 `public enum PascalCase`，成员 `public static let name = ...` |
+| 鸿蒙 | `emitTree` 递归输出 `class PascalCase`（嵌套类不带 export），成员 `static readonly name: T = ...` |
+| C | 扁平 `#define` 风格，树只用来生成分节注释 `/* --- group.path --- */` |
+
+详见 [五个 target](./targets)。

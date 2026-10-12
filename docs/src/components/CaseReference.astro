@@ -1,0 +1,238 @@
+---
+import type { ComponentCases, GoldenCase } from '../../../codegen/src/types'
+
+interface Props {
+  cases: ComponentCases[]
+}
+
+const { cases } = Astro.props
+
+// 按组件名排序，保证下拉选项稳定
+const sorted = [...cases].sort((a, b) => a.component.localeCompare(b.component))
+
+function pretty(value: unknown): string {
+  return JSON.stringify(value, null, 2)
+}
+
+function actionLabel(action: GoldenCase['when']['action']): string {
+  const labels: Record<GoldenCase['when']['action'], string> = {
+    render: '渲染',
+    click: '点击',
+    input: '输入',
+    focus: '获得焦点',
+    blur: '失去焦点',
+    custom: '自定义',
+  }
+  return labels[action]
+}
+---
+
+<div class="case-reference">
+  <div class="selector-bar">
+    <label for="case-select">选择组件</label>
+    <select id="case-select">
+      {
+        sorted.map((entry) => (
+          <option value={entry.component}>
+            {entry.component}（{entry.cases.length} 条）
+          </option>
+        ))
+      }
+    </select>
+  </div>
+
+  {
+    sorted.map((entry, index) => (
+      <section class="case-panel" data-case={entry.component} hidden={index !== 0}>
+        {entry.cases.map((caseItem) => (
+          <div class="case-card">
+            <div class="case-head">
+              <code class="case-id">{caseItem.id}</code>
+              <span class="case-name">{caseItem.name}</span>
+            </div>
+
+            <div class="case-blocks">
+              <div class="case-block">
+                <h4>given（前置）</h4>
+                {caseItem.given.props || caseItem.given.state ? (
+                  <pre><code>{pretty(caseItem.given)}</code></pre>
+                ) : (
+                  <p class="empty">无前置条件。</p>
+                )}
+              </div>
+
+              <div class="case-block">
+                <h4>when（动作）</h4>
+                <pre><code>{pretty(caseItem.when)}</code></pre>
+                <p class="action-hint">
+                  动作类型：<strong>{actionLabel(caseItem.when.action)}</strong>
+                </p>
+              </div>
+
+              <div class="case-block">
+                <h4>then（断言）</h4>
+                <ul class="then-list">
+                  {caseItem.then.events?.map((event) => (
+                    <li>
+                      事件 <code>{event.name}</code>
+                      <span class={`badge ${event.assertion === 'emitted' ? 'badge-ok' : 'badge-no'}`}>
+                        {event.assertion === 'emitted' ? '触发' : '不触发'}
+                      </span>
+                      {event.times && <span>，期望 {event.times} 次</span>}
+                      {event.payload && (
+                        <span>
+                          ，载荷：<code>{pretty(event.payload)}</code>
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                  {caseItem.then.tokens?.map((token) => (
+                    <li>
+                      令牌 <code>{token.path}</code>
+                      <span class={`badge ${token.applied ? 'badge-ok' : 'badge-no'}`}>
+                        {token.applied ? '应用' : '不应用'}
+                      </span>
+                    </li>
+                  ))}
+                  {caseItem.then.visible === false && <li>渲染结果不可见</li>}
+                  {caseItem.then.enabled === false && <li>渲染结果不可交互（禁用）</li>}
+                  {caseItem.then.text && (
+                    <li>
+                      渲染文本：<code>{caseItem.then.text}</code>
+                    </li>
+                  )}
+                  {caseItem.then.notes && <li>{caseItem.then.notes}</li>}
+                </ul>
+              </div>
+            </div>
+          </div>
+        ))}
+      </section>
+    ))
+  }
+</div>
+
+<script>
+  const select = document.querySelector<HTMLSelectElement>('#case-select')
+  const panels = document.querySelectorAll<HTMLElement>('.case-panel')
+
+  select?.addEventListener('change', () => {
+    panels.forEach((panel) => {
+      panel.hidden = panel.dataset.case !== select.value
+    })
+  })
+</script>
+
+<style>
+  .selector-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  label {
+    font-size: 13px;
+    color: var(--sl-color-gray-3);
+  }
+
+  select {
+    padding: 6px 10px;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 8px;
+    background-color: var(--sl-color-bg);
+    color: var(--sl-color-text);
+    font-size: 14px;
+  }
+
+  .case-card {
+    margin-bottom: 24px;
+    padding: 16px;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 10px;
+  }
+
+  .case-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .case-id {
+    padding: 2px 8px;
+    border-radius: 4px;
+    background-color: var(--sl-color-bg-inline-code);
+    color: var(--sl-color-text);
+    font-size: 12px;
+  }
+
+  .case-name {
+    font-weight: 600;
+  }
+
+  .case-blocks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .case-block h4 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    color: var(--sl-color-gray-3);
+  }
+
+  pre {
+    margin: 0;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: var(--sl-color-bg-inline-code);
+    color: var(--sl-color-text);
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-x: auto;
+  }
+
+  .action-hint {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: var(--sl-color-gray-3);
+  }
+
+  .then-list {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    line-height: 1.9;
+  }
+
+  .then-list code {
+    font-size: 12px;
+  }
+
+  .badge {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 0 6px;
+    border-radius: 4px;
+    font-size: 11px;
+  }
+
+  .badge-ok {
+    background-color: rgba(46, 125, 50, 0.14);
+    color: #2e7d32;
+  }
+
+  .badge-no {
+    background-color: rgba(198, 40, 40, 0.14);
+    color: #c62828;
+  }
+
+  .empty {
+    margin: 0;
+    font-size: 13px;
+    color: var(--sl-color-gray-3);
+  }
+</style>

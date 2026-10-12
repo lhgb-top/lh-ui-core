@@ -1,0 +1,207 @@
+---
+title: "五个 target"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+每个 target 实现 `CodegenTarget` 接口（`{ name, outDir, generate(input): GeneratedFile[] }`），由 [管线](./pipeline) 依次调用。
+
+## 共享的暗色产物构造模式
+
+四个平台 target 用同一套模式把 `tokenSet.dark`（`Map<path, value>`）转成 `ResolvedToken[]`：
+
+```ts
+const darkTokens = [...tokenSet.dark.entries()]
+  .map(([path, value]) => {
+    const base = tokenSet.byPath.get(path)
+    return {
+      path,
+      type: base?.type ?? ('color' as const),   // 明色同名键取类型，否则兜底 color
+      value,
+      description: base?.description,
+    }
+  })
+  .sort((a, b) => a.path.localeCompare(b.path))
+```
+
+然后按 path 排序走同一棵 emit 树。明色产物带 `description` 注释；`spread`（扩展量）在**所有端都被忽略并注释说明**。
+
+---
+
+## android.ts —— Kotlin + Jetpack Compose
+
+**产物**：`dist/android/top/lhgb/ui/tokens/LhTokens.kt` + `LhDarkTokens.kt`
+
+**常量**：`PACKAGE = 'top.lhgb.ui.tokens'`（家族反域名规范，总纲 D20）
+
+### `formatKotlin(path, token): FormatResult`
+
+返回 `{ literal, features }`——`features` 是用到的运行时类型集合，**决定 import 清单**：
+
+| 类型 | 字面量 | features |
+| --- | --- | --- |
+| color | `ComposeColor(0xAARRGGBB)` | `color` |
+| dimension（px） | `${d.value}.${usesSp(path) ? 'sp' : 'dp'}` | `dimension` |
+| dimension（%） | `0.50f  // 50%（分数，由容器尺寸换算）`（`(v/100).toFixed(3)` 后去掉一个尾零） | — |
+| duration | `200  // 200ms（毫秒）` | — |
+| cubicBezier | `CubicBezierEasing(0.4f, 0f, 0.2f, 1f)` | `bezier` |
+| shadow | `Shadow(color = ..., offset = Offset(xf, yf), blurRadius = bf)` | `color`, `shadow` |
+| number / string | 原样 / `JSON.stringify` | — |
+
+### `emitTree(lines, group, indent, features)`
+
+递归输出嵌套 `object PascalCase { ... }`，成员 `val name = literal`，description 作为行尾注释。`features` 在遍历中累积。
+
+### `buildKotlinBody(tokenSet, rootName, features)` / `buildDarkKotlinBody(tokenSet, features)`
+
+明色根 object 名由参数传入（`LhTokens`），**暗色根固定 `LhDarkTokens`**。
+
+### `importsFor(features): string[]`
+
+**import 清单由实际用到的特性决定，没用到就不导入**：
+
+| feature | import |
+| --- | --- |
+| `color` | `androidx.compose.ui.graphics.Color as ComposeColor` |
+| `dimension` | `androidx.compose.ui.unit.dp` + `.sp` |
+| `shadow` | `androidx.compose.ui.graphics.Shadow` + `androidx.compose.ui.geometry.Offset` |
+| `bezier` | `androidx.compose.animation.core.CubicBezierEasing` |
+
+### `renderKotlinFile(body, version, features): string`
+
+把头部「请勿手改」横幅、按 `features` 生成的 import 块与 body 拼成完整 `.kt` 文件。
+
+---
+
+## ios.ts —— Swift + SwiftUI
+
+**产物**：`dist/ios/Sources/LhUITokens/LhTokens.swift` + `LhDarkTokens.swift`，**存在 shadow 令牌时额外生成 `LhShadow.swift`**
+
+### `formatSwift(token): string`
+
+| 类型 | 字面量 |
+| --- | --- |
+| color（a=1） | `SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)` |
+| color（a&lt;1） | 同上 + `.opacity(0.4)` |
+| dimension | `CGFloat(40)`；`%` 输出分数 + 注释 |
+| duration | `0.200  // 0.2s（秒）`——**SwiftUI 动画以秒为单位，构建期换算**（毫秒 ÷ 1000，保留 3 位小数） |
+| cubicBezier | `(x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // 贝塞尔控制点，端自行构造 easing` |
+| shadow | `LhShadow(color:opacity:radius:x:y:)` |
+
+### `swiftMemberName(name): string`
+
+成员名与 Swift 关键字同形时**加反引号**（如 `` `default` ``），否则产物无法编译。
+
+<Aside type="tip" title="为什么只转义成员名">
+`SWIFT_KEYWORDS` 是 45 个 Swift 关键字的集合。**枚举类型名走 `pascalCase` 不会撞关键字**（首字母大写后都不在集合里），**只有成员名需要转义**。
+</Aside>
+
+### `buildSwiftBody(tokenSet, rootName): string` / `buildDarkSwiftBody(tokenSet): string`
+
+拼 `public enum` 根结构：明色根名由参数传入（`LhTokens`），**暗色根固定 `LhDarkTokens`**，内部都靠 `emitTree` 递归填充。文件头横幅在 `iosTarget.generate` 里直接拼。
+
+### `emitTree(lines, group, indent)`
+
+Swift 的无实例命名空间惯用法：嵌套 `public enum PascalCase`，成员 `public static let name = ...`。
+
+---
+
+## harmony.ts —— 鸿蒙 ArkTS + ArkUI
+
+**产物**：`dist/harmony/tokens/LhTokens.ets` + `LhDarkTokens.ets`，**存在 shadow 令牌时额外生成 `LhShadow.ets`**
+
+### `formatEts(token): string`
+
+| 类型 | 字面量 |
+| --- | --- |
+| color | `'#FF2B4C7C'`（ArkUI 接受 `#AARRGGBB` 字符串，走 `toArgbHash`） |
+| dimension | 纯 `vp` 数值；`%` 输出分数 + 注释 |
+| duration | `200  // 200ms（毫秒）` |
+| cubicBezier | `[0.4, 0, 0.2, 1]  // 组件侧以 curves.cubicBezierCurve 消费` |
+| shadow | `{ color: '#...', radius: 8, offsetX: 0, offsetY: 2 }` |
+
+### `typeAnnotation(token): string`
+
+**唯一带类型注解的平台**（ArkTS 是强类型）：
+
+| 类型 | 注解 |
+| --- | --- |
+| color | `ResourceColor` |
+| dimension | `Dimension \| number` |
+| duration / number | `number` |
+| shadow | `LhShadow` |
+| cubicBezier | `number[]` |
+| string | `string` |
+
+### `emitTree(lines, group, indent)`
+
+根 `export class`，**嵌套类不带 export**（ArkTS 类体内不允许 export 声明），成员 `static readonly name: T = literal`。
+
+### `buildEtsBody(tokenSet, rootName): string` / `buildDarkEtsBody(tokenSet): string`
+
+拼 `export class` 根结构：明色根名由参数传入（`LhTokens`），**暗色根固定 `LhDarkTokens`**，内部都靠 `emitTree` 递归填充。文件头横幅在 `harmonyTarget.generate` 里直接拼。
+
+---
+
+## c.ts —— C / C++ 嵌入式
+
+**产物**：`dist/c/include/lh_ui/lh_tokens.h` + `lh_dark_tokens.h`
+
+### `macroName(path): string`
+
+点路径转大写蛇形宏名：先 `.` 转下划线，再给每个大写字母前补下划线，最后全大写。
+
+```
+color.primary.default → LH_COLOR_PRIMARY_DEFAULT
+zIndex.modal          → LH_Z_INDEX_MODAL
+```
+
+### `floatLiteral(value): string`
+
+整数补 `.0f`，避免 `0f` / `2f` 这类**非法 C 浮点后缀**。
+
+### `formatC(token): string`
+
+| 类型 | 字面量 |
+| --- | --- |
+| color | `0xFF2B4C7C` |
+| dimension（整数） | `40` |
+| dimension（小数） | `0.5f` |
+| dimension（%） | `0.500f  /* 50% 分数 */` |
+| duration | `200  /* 200ms 毫秒 */` |
+| cubicBezier | `{ 0.4f, 0.0f, 0.2f, 1.0f }`（静态数组） |
+| shadow | `{ 0xFF000000, 0.0f, 2.0f, 8.0f }`（颜色 + x + y + blur） |
+
+### `emitTree(lines, group, parentPath)`
+
+**扁平 `#define` 风格**（C 没有命名空间），树只用来生成分节注释 `/* --- group.path --- */`。暗色产物 `buildDarkCBody` 更彻底——**直接扁平输出，连树都不构**。
+
+<Aside type="caution" title="C 的暗色机制与众不同">
+`lh_dark_tokens.h.hbs` 的注释写明：**暗色头文件在明色之后 include，同名 `#define` 直接重定义**。与 Kotlin / Swift / ArkTS 的独立 `LhDarkTokens` 命名空间完全不同。
+</Aside>
+
+### 导出
+
+`export { macroName as cMacroName }` —— 供测试与外部消费。
+
+---
+
+## docs.ts —— 文档产物（不经模板）
+
+**产物**：`dist/docs/tokens.md` + `tokens.light.json` + `tokens.dark.json`
+
+**唯一不使用 handlebars 模板的 target**，直接用代码拼字符串。
+
+### `literalValue(token): string`
+
+color 输出 `原值 → #rrggbb`（a&lt;1 时 `→ rgba(r, g, b, a)`），其余直接 `String(value)`。
+
+### `buildTokenTable(input): string`
+
+按 path 的**顶级命名空间分组**输出 markdown 表格「令牌 | 类型 | 明色 | 暗色 | 说明」；`nativeOnly` 标注为「原生新增」；暗色列无覆盖时填 `—`。
+
+### `buildDarkJson(input): string`
+
+暗色覆盖表排序后 `JSON.stringify(..., null, 2)`。
+
+三个产物的用途见 [docs 产物](../artifacts/docs-output)。

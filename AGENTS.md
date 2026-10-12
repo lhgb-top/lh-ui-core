@@ -11,7 +11,8 @@
 - **原生血脉**：**本仓**（JSON 令牌 + 规范 + codegen）→ android / ios / harmony / c。
 
 本仓与 `lh-ui-share` **没有任何代码依赖关系**，两仓各自独立闭环、各自发版。品牌与视觉的统一靠
-`docs/设计语言基线.md` 的人工对齐机制（见家族 AGENTS.md「双血脉」章节），不靠自动同步。
+家族级 `../docs/设计语言基线.md` 的人工对齐机制（见家族 `../AGENTS.md`「双血脉」章节），
+不靠自动同步。注意：该基线文档与家族 AGENTS.md 都在**本仓之外**的父目录，本仓 `docs/` 下没有。
 
 ## 目录职责
 
@@ -20,10 +21,11 @@
 | `tokens/` | **设计令牌唯一真源**（JSON 中性源）。`color.json` / `color-dark.json` / `spacing.json` / `typography.json` / `radius.json` / `shadow.json` / `motion.json` / `z-index.json` / `components.json`，格式由 `tokens/schema.json` 强约束 |
 | `specs/` | **组件契约**（每组件一份 JSON）：props 名 / 类型 / 枚举 / 默认值 / 事件 / 行为说明，格式由 `specs/schema.json` 强约束 |
 | `cases/` | **黄金用例**（每组件一份 JSON）：可跨端翻译的行为级断言，各端测试仓库照此翻译成本地测试，格式由 `cases/schema.json` 强约束 |
-| `codegen/` | codegen 工具（TS/Node）：`src/load.ts` 装载校验、`src/resolve.ts` 引用解析与暗色合并、`src/render.ts` 模板渲染、`src/targets/<platform>.ts` 各端产物生成、`templates/` 各端 handlebars 模板 |
-| `dist/` | codegen 产物（构建生成，**禁止手改**）。四平台令牌包 + `docs/tokens.md` |
-| `scripts/` | 校验与发包脚本：`verify-tokens.mts` / `verify-specs.mts` / `resolve-local-tokens.mjs`（本地联动守卫） / `publish-*.mjs` |
-| `tests/` | codegen 快照测试与令牌元测试 |
+| `codegen/` | codegen 工具（TS/Node）：`src/index.ts` 入口、`src/load.ts` 装载校验、`src/resolve.ts` 引用解析与暗色合并、`src/render.ts` 模板渲染、`src/format.ts` / `src/tree.ts` / `src/types.ts` 辅助、`src/targets/<platform>.ts` 各端产物生成、`templates/` 各端 handlebars 模板 |
+| `dist/` | codegen 产物（构建生成、已在 `.gitignore` 中，**禁止手改**）。`android/` / `ios/` / `harmony/` / `c/` 四平台令牌包 + `docs/tokens.md` 与明暗色 JSON |
+| `scripts/` | 校验与联动脚本：`verify-tokens.mts` / `verify-specs.mts` / `resolve-local-tokens.mjs`（本地联动守卫） |
+| `docs/` | 人类向文档站（Astro Starlight，开发者电子版说明书）：内容在 `docs/src/content/docs/`，六个前缀 `guide/`（介绍 / 结构 / 快速开始 / 红线 / 新增组件 / 本地联动 / 命令 / 技术选型）、`tokens/`、`specs/`、`cases/`、`codegen/`（逐模块逐函数）、`artifacts/` + `deployment.md`；配置在 `docs/astro.config.mjs`；令牌 / 契约 / 用例三个参考页是 `docs/src/pages/` 下的 `.astro`，在构建期直接调 codegen 的 `loadTokenFiles` / `resolveTokens` / `loadSpecs` / `loadCases` 读 JSON 真源渲染。**不是**令牌或规范真源 |
+| `tests/` | codegen 快照测试（`codegen-snapshot.spec.ts`，快照在 `tests/snapshots/<platform>/...`）与令牌元测试（`tokens.spec.ts`） |
 
 ## 红线
 
@@ -36,8 +38,10 @@
 4. **不得依赖 `lh-ui-share`**：两血脉互相独立，不得 import 对方任何内容。令牌的初始值是一次性
    人工搬运的种子（见下文「令牌种子」），不建立任何自动依赖。
 5. **JSON 不得含平台特有语法**：令牌值只允许十六进制色值 / `rgba()` / 纯数字
-   （数值或 `"12px"` 形式的带单位字符串）等中性表达，禁止出现 `var()`、`rem`、`sp`、`dp` 等任何
-   平台专属单位或引用。平台单位换算由各 target 模板负责。
+   （`number` 类型的裸数值，或 `"12px"` / `"50%"` 形式的带单位字符串）等中性表达，禁止出现
+   `var()`、`rem`、`sp`、`dp` 等任何平台专属单位或引用。平台单位换算由各 target 模板负责。
+   注意 `dimension` / `duration` / `shadow` 类型**必须带单位字符串**，裸数值只对 `number` 类型合法
+   （见 `format.ts` 的 `assertTypedValue`）。
 6. **`dist/` 禁止手改**：一切变更改 `tokens/` / `specs/` / `cases/` 或模板，再重跑 codegen。
 
 ## 令牌路径与类型约定
@@ -62,8 +66,8 @@
 ## 令牌种子
 
 本仓 `tokens/*.json` 的初始值是一次性从 `lh-ui-share/styles/theme/common/variables.scss`
-与 `var-dark.scss` 人工抽取的对齐种子（2026-10-10，见 `docs/设计语言基线.md`）。此后两仓
-各自演化，**不再同步**。品牌级令牌（色板、间距尺度）变更必须在该基线文档登记。
+与 `var-dark.scss` 人工抽取的对齐种子（2026-10-10，见家族级 `../docs/设计语言基线.md`）。此后
+两仓各自演化，**不再同步**。品牌级令牌（色板、间距尺度）变更必须在该基线文档登记。
 
 ## 本地联动（家族统一机制）
 
@@ -82,9 +86,17 @@ C 走 CMake `add_subdirectory` 或头文件路径），本仓不强制。
 | 构建（codegen + 校验） | `pnpm build` |
 | 令牌校验（schema + 引用完整性） | `pnpm verify:tokens` |
 | 规范校验（spec 与 cases 一致性） | `pnpm verify:specs` |
-| 单测（快照） | `pnpm test` |
+| 上述两项校验一起跑 | `pnpm verify` |
+| 单测（快照） | `pnpm test`（watch：`pnpm test:watch`） |
 | 类型 | `pnpm typecheck` |
-| Lint | `pnpm lint` |
+| Lint | `pnpm lint`（自动修：`pnpm lint:fix`） |
+| 格式化 JSON / md / yml | `pnpm format` |
+| 文档站本地预览 | `pnpm docs:dev`（Astro Starlight，端口 **5185**，需 Node ≥22.12） |
+| 文档站生产构建 / 预览 | `pnpm docs:build` / `pnpm docs:preview`（base `/lhui/core/`，见 `docs/src/content/docs/deployment.md`） |
+| 发 changeset | `pnpm changeset`（版本：`pnpm changeset:version`） |
+
+改了令牌 / 规范 / 模板后，`dist/` 与 `tests/snapshots/` 都会过期：重跑 `pnpm codegen`
+刷新 `dist/`，再跑 `pnpm test`，必要时 `pnpm test -- -u` 更新快照（快照是断言，别手改）。
 
 ## 新增组件流程（原生血脉）
 
@@ -92,7 +104,7 @@ C 走 CMake `add_subdirectory` 或头文件路径），本仓不强制。
 2. 在 `cases/` 加 `<name>.json` 黄金用例。
 3. 跑 `pnpm verify:specs` 通过校验。
 4. 若组件引入了新的**组件级令牌**（如 `button.height`），在 `tokens/` 相应文件补键，
-   并在 `docs/设计语言基线.md` 登记（若属品牌级令牌）。
+   并在家族级 `../docs/设计语言基线.md` 登记（若属品牌级令牌）。
 5. 发 changeset，core 先发版，各原生端随后升令牌依赖版本并照 `cases/` 翻译测试。
 
 ## Verification is manual
@@ -106,5 +118,5 @@ C 走 CMake `add_subdirectory` 或头文件路径），本仓不强制。
 
 未经用户在当前请求中明确同意，AI 不得执行任何改动 git 状态或历史的指令（commit / push /
 add / reset / revert / restore / checkout -- / stash / merge / rebase / tag / rm --cached）。
-只读指令（status / diff / log / show / branch 查看）不受限。本仓暂未 `git init`，
-初始化与首次提交均需用户明确授权。
+只读指令（status / diff / log / show / branch 查看）不受限。当前默认分支为 `main`，
+提交前先开分支；`dist/` 已被 `.gitignore` 忽略，不要提交产物。
