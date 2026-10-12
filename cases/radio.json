@@ -1,0 +1,67 @@
+{
+  "$schema": "./schema.json",
+  "component": "radio",
+  "cases": [
+    {
+      "id": "tap-unchecked-emits-onchange",
+      "name": "未选中时点击变为选中并触发 onChange",
+      "given": { "props": { "label": "选项", "value": "a" } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onChange", "assertion": "emitted", "times": 1, "payload": { "checked": true } }]
+      }
+    },
+    {
+      "id": "tap-checked-keeps-checked",
+      "name": "已选中时点击保持选中且不触发 onChange",
+      "given": { "props": { "label": "选项", "value": "a", "checked": true } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onChange", "assertion": "notEmitted" }]
+      }
+    },
+    {
+      "id": "disabled-blocks-change",
+      "name": "禁用态不触发 onChange",
+      "given": { "props": { "label": "禁用", "disabled": true } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onChange", "assertion": "notEmitted" }],
+        "enabled": false
+      }
+    },
+    {
+      "id": "checked-uses-primary-tokens",
+      "name": "选中态消费主色令牌",
+      "given": { "props": { "checked": true } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [{ "path": "color.primary.default", "applied": true }]
+      }
+    },
+    {
+      "id": "unchecked-uses-border-token",
+      "name": "未选中态消费描边令牌",
+      "given": { "props": { "checked": false } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "color.border.base", "applied": true },
+          { "path": "color.primary.default", "applied": false }
+        ]
+      }
+    },
+    {
+      "id": "small-size-uses-small-token",
+      "name": "小号尺寸消费 small 尺寸令牌",
+      "given": { "props": { "size": "small" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "radio.size.small", "applied": true },
+          { "path": "radio.size.large", "applied": false }
+        ]
+      }
+    }
+  ]
+}

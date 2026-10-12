@@ -1,0 +1,79 @@
+{
+  "$schema": "./schema.json",
+  "name": "navbar",
+  "component": "LhNavbar",
+  "since": "0.1.0",
+  "description": "导航栏：页面顶部标题栏，左中右三段布局，支持文字与图标两侧按钮。",
+  "props": [
+    {
+      "name": "title",
+      "type": "string",
+      "default": "",
+      "description": "中间标题"
+    },
+    {
+      "name": "leftText",
+      "type": "string",
+      "default": "",
+      "description": "左侧按钮文字；与 leftIcon 二者非空时都显示"
+    },
+    {
+      "name": "leftIcon",
+      "type": "string",
+      "description": "左侧图标名（各端按本地图标体系渲染）"
+    },
+    {
+      "name": "rightText",
+      "type": "string",
+      "default": "",
+      "description": "右侧按钮文字；与 rightIcon 二者非空时都显示"
+    },
+    {
+      "name": "rightIcon",
+      "type": "string",
+      "description": "右侧图标名（各端按本地图标体系渲染）"
+    },
+    {
+      "name": "bordered",
+      "type": "boolean",
+      "default": true,
+      "description": "是否绘制底部分隔线"
+    }
+  ],
+  "events": [
+    {
+      "name": "onLeftClick",
+      "payload": [],
+      "description": "点击左侧区域时触发"
+    },
+    {
+      "name": "onRightClick",
+      "payload": [],
+      "description": "点击右侧区域时触发"
+    }
+  ],
+  "slots": [
+    { "name": "default", "description": "标题内容（覆盖 title prop）" },
+    { "name": "left", "description": "左侧内容（覆盖 leftText/leftIcon）" },
+    { "name": "right", "description": "右侧内容（覆盖 rightText/rightIcon）" }
+  ],
+  "behaviors": [
+    "高度 navbar.height，左右内边距 navbar.paddingHorizontal，底色 color.background.default",
+    "标题取 navbar.titleFontSize + color.text.primary，水平居中于可用宽度",
+    "左侧文字取 color.text.primary，图标尺寸 navbar.iconSize；右侧同之",
+    "bordered 为 true 时在底部绘制分隔线（color.border.lighter，宽 navbar.borderWidth）",
+    "左/右区域存在内容时可点击，分别触发 onLeftClick/onRightClick；无内容时不响应点击",
+    "层级取 zIndex.sticky，宿主将其作为页面顶部固定栏"
+  ],
+  "tokenRefs": [
+    "navbar.height",
+    "navbar.paddingHorizontal",
+    "navbar.titleFontSize",
+    "navbar.iconSize",
+    "navbar.borderWidth",
+    "zIndex.sticky",
+    "color.background.default",
+    "color.text.primary",
+    "color.border.lighter"
+  ]
+}

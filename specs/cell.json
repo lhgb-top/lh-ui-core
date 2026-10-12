@@ -1,0 +1,84 @@
+{
+  "$schema": "./schema.json",
+  "name": "cell",
+  "component": "LhCell",
+  "since": "0.1.0",
+  "description": "单元格：列表行，左侧标题 + 说明、右侧值与箭头，支持必填红星、分隔线与点击。",
+  "props": [
+    {
+      "name": "title",
+      "type": "string",
+      "default": "",
+      "description": "标题（主文字）"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "default": "",
+      "description": "右侧值（次文字，右对齐）"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "",
+      "description": "标题下方的说明文字"
+    },
+    {
+      "name": "bordered",
+      "type": "boolean",
+      "default": true,
+      "description": "是否绘制底部分隔线"
+    },
+    {
+      "name": "clickable",
+      "type": "boolean",
+      "default": false,
+      "description": "是否可点击；为 true 时显示右侧指示箭头并响应点击"
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "是否在标题前显示必填红星（取 color.danger.default）"
+    },
+    {
+      "name": "icon",
+      "type": "string",
+      "description": "左侧图标名（各端按本地图标体系渲染）"
+    }
+  ],
+  "events": [
+    {
+      "name": "onClick",
+      "payload": [],
+      "description": "点击单元格时触发；clickable 为 false 时不触发"
+    }
+  ],
+  "slots": [
+    { "name": "default", "description": "标题内容" },
+    { "name": "value", "description": "右侧值内容" }
+  ],
+  "behaviors": [
+    "块级铺满 layout 传入的可用宽度，高度由内容（标题行 + 可选说明行）与内边距决定",
+    "标题取 cell.fontSizeTitle 与 color.text.primary；说明取 cell.fontSizeLabel 与 color.text.secondary；值取 cell.fontSizeValue 与 color.text.secondary 并右对齐",
+    "required 为 true 时在标题前绘制红星（danger 色）",
+    "icon 非空且后端支持 draw_icon 时，在左侧绘制尺寸 icon.size.medium 的图标",
+    "clickable 为 true 时在右侧绘制指示箭头（两条折线），并响应点击触发 onClick",
+    "bordered 为 true 时在底部绘制一条分隔线（color.border.lighter）"
+  ],
+  "tokenRefs": [
+    "cell.paddingHorizontal",
+    "cell.paddingVertical",
+    "cell.gap",
+    "cell.fontSizeTitle",
+    "cell.fontSizeLabel",
+    "cell.fontSizeValue",
+    "icon.size.medium",
+    "typography.lineHeight.primary",
+    "color.text.primary",
+    "color.text.regular",
+    "color.text.secondary",
+    "color.border.lighter",
+    "color.danger.default"
+  ]
+}

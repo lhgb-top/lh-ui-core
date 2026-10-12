@@ -24,6 +24,31 @@
 | `button.paddingHorizontal.medium` | dimension | 20px | — | 原生新增 |
 | `button.paddingHorizontal.small` | dimension | 16px | — | 原生新增 |
 
+## cell
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `cell.borderWidth` | dimension | 1px | — | 原生新增；底部分隔线宽度 |
+| `cell.fontSizeLabel` | dimension | 13px | — | 说明文字字号 |
+| `cell.fontSizeTitle` | dimension | 14px | — | 标题字号 |
+| `cell.fontSizeValue` | dimension | 14px | — | 右侧值字号 |
+| `cell.gap` | dimension | 8px | — | 标题与说明文字之间的垂直间距 |
+| `cell.paddingHorizontal` | dimension | 16px | — | 单元格左右内边距 |
+| `cell.paddingVertical` | dimension | 8px | — | 单元格上下内边距 |
+
+## checkbox
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `checkbox.borderRadius` | dimension | 2px | — | 复选框圆角 |
+| `checkbox.borderWidth` | dimension | 2px | — | 原生新增 |
+| `checkbox.checkWidth` | dimension | 2px | — | 原生新增；勾形描边宽度 |
+| `checkbox.dashScale` | dimension | 50% | — | 原生新增；不确定态横杠相对方框的宽度比例 |
+| `checkbox.gap` | dimension | 8px | — | 复选框与文字之间的间距 |
+| `checkbox.size.large` | dimension | 24px | — | 原生新增；大号复选框尺寸 |
+| `checkbox.size.medium` | dimension | 20px | — | 原生新增；中号复选框尺寸（默认） |
+| `checkbox.size.small` | dimension | 16px | — | 原生新增；小号复选框尺寸 |
+
 ## color
 
 | 令牌 | 类型 | 明色 | 暗色 | 说明 |
@@ -55,12 +80,12 @@
 | `color.info.bg` | color | #F2F2F2 → #f2f2f2 | #1A1A1A → #1a1a1a |  |
 | `color.info.default` | color | #7A7A7A → #7a7a7a | #8F8F8F → #8f8f8f | 信息色（黛色 — 水墨淡彩） |
 | `color.info.hover` | color | #8F8F8F → #8f8f8f | #A0A0A0 → #a0a0a0 |  |
-| `color.ink` | color | #1A1A1A → #1a1a1a | — | 中性黑（墨） |
+| `color.ink` | color | #1A1A1A → #1a1a1a | #4A4540 → #4a4540 | 中性黑（墨） |
 | `color.jade.active` | color | #4B7A4A → #4b7a4a | #5B8C5A → #5b8c5a |  |
 | `color.jade.bg` | color | #EDF5EC → #edf5ec | #1A2A1A → #1a2a1a |  |
 | `color.jade.default` | color | #5B8C5A → #5b8c5a | #7AAE7A → #7aae7a | 玉色（翠竹清雅） |
 | `color.jade.hover` | color | #7AAE7A → #7aae7a | #9CC89C → #9cc89c |  |
-| `color.onPrimary` | color | #FFFFFF → #ffffff | #FFFFFF → #ffffff | 主色底上的文字色（浅主色预设不应写死白字） |
+| `color.onPrimary` | color | #FFFFFF → #ffffff | — | 主色底上的文字色（浅主色预设不应写死白字） |
 | `color.primary.active` | color | #1F3A5F → #1f3a5f | #2B4C7C → #2b4c7c | 主色按压/选中文字 |
 | `color.primary.bg` | color | #E8EDF3 → #e8edf3 | rgba(61, 100, 158, 0.25) → rgba(61, 100, 158, 0.25) | 主色浅底（选中态底色） |
 | `color.primary.border` | color | #D4DCE8 → #d4dce8 | #2A3A4A → #2a3a4a | 主色描边 |
@@ -71,7 +96,7 @@
 | `color.success.bg` | color | #EDF5EC → #edf5ec | #1A2A1A → #1a2a1a |  |
 | `color.success.default` | color | #5B8C5A → #5b8c5a | #6FA36E → #6fa36e | 成功色（松花绿 — 竹影青翠） |
 | `color.success.hover` | color | #6FA36E → #6fa36e | #82B581 → #82b581 |  |
-| `color.surface` | color | #FAF6F0 → #faf6f0 | — | 中性白（宣纸白） |
+| `color.surface` | color | #FAF6F0 → #faf6f0 | #242018 → #242018 | 中性白（宣纸白） |
 | `color.text.disabled` | color | #C8C8C8 → #c8c8c8 | #5A5250 → #5a5250 | 禁用文字 |
 | `color.text.placeholder` | color | #B0B0B0 → #b0b0b0 | #7A7270 → #7a7270 | 占位文字 |
 | `color.text.primary` | color | #2C2C2C → #2c2c2c | #E8E0D8 → #e8e0d8 | 主要文字 |
@@ -86,6 +111,53 @@
 | `color.warning.default` | color | #C4A35A → #c4a35a | #D4B76F → #d4b76f | 警告色（藤黄 — 秋叶金黄） |
 | `color.warning.hover` | color | #D4B76F → #d4b76f | #E0C680 → #e0c680 |  |
 
+## dialog
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `dialog.borderRadius` | dimension | 2px | — | 对话框圆角 |
+| `dialog.contentFontSize` | dimension | 14px | — | 内容字号 |
+| `dialog.gap` | dimension | 12px | — | 标题与内容的间距 |
+| `dialog.paddingHorizontal` | dimension | 20px | — | 对话框左右内边距 |
+| `dialog.paddingVertical` | dimension | 20px | — | 对话框上下内边距 |
+| `dialog.titleFontSize` | dimension | 16px | — | 标题字号 |
+| `dialog.width` | dimension | 320px | — | 原生新增；对话框内容卡宽度 |
+
+## icon
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `icon.size.large` | dimension | 24px | — | 原生新增；大号图标尺寸 |
+| `icon.size.medium` | dimension | 20px | — | 原生新增；中号图标尺寸（默认） |
+| `icon.size.small` | dimension | 16px | — | 原生新增；小号图标尺寸 |
+
+## input
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `input.borderRadius` | dimension | 2px | — | 输入框圆角 |
+| `input.borderWidth` | dimension | 1px | — | 原生新增 |
+| `input.clearIconSize` | dimension | 16px | — | 原生新增；清除按钮图标尺寸 |
+| `input.focusRingWidth` | dimension | 2px | — | 原生新增；聚焦时的描边宽度 |
+| `input.fontSize.large` | dimension | 16px | — |  |
+| `input.fontSize.medium` | dimension | 14px | — |  |
+| `input.fontSize.small` | dimension | 13px | — |  |
+| `input.height.large` | dimension | 48px | — | 原生新增；大号输入框高度 |
+| `input.height.medium` | dimension | 40px | — | 原生新增；中号输入框高度（默认） |
+| `input.height.small` | dimension | 32px | — | 原生新增；小号输入框高度 |
+| `input.paddingHorizontal.large` | dimension | 20px | — | 原生新增 |
+| `input.paddingHorizontal.medium` | dimension | 16px | — | 原生新增 |
+| `input.paddingHorizontal.small` | dimension | 12px | — | 原生新增 |
+
+## loading
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `loading.size.large` | dimension | 24px | — | 原生新增；大号加载指示器直径 |
+| `loading.size.medium` | dimension | 20px | — | 原生新增；中号加载指示器直径（默认） |
+| `loading.size.small` | dimension | 16px | — | 原生新增；小号加载指示器直径 |
+| `loading.strokeWidth` | dimension | 2px | — | 原生新增；加载环描边宽度 |
+
 ## motion
 
 | 令牌 | 类型 | 明色 | 暗色 | 说明 |
@@ -94,6 +166,37 @@
 | `motion.duration.fast` | duration | 0.25s | — |  |
 | `motion.duration.slow` | duration | 0.4s | — |  |
 | `motion.easing.easeInOut` | cubicBezier | 0.4,0,0.2,1 | — | 标准缓动 cubic-bezier(0.4, 0, 0.2, 1) |
+
+## navbar
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `navbar.borderWidth` | dimension | 1px | — | 原生新增 |
+| `navbar.height` | dimension | 44px | — | 原生新增；导航栏高度 |
+| `navbar.iconSize` | dimension | 20px | — | 原生新增；左右图标尺寸 |
+| `navbar.paddingHorizontal` | dimension | 12px | — | 导航栏左右内边距 |
+| `navbar.titleFontSize` | dimension | 16px | — | 标题字号 |
+
+## picker
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `picker.borderRadius` | dimension | 2px | — | 面板顶部圆角 |
+| `picker.height` | dimension | 260px | — | 原生新增；选择器面板高度 |
+| `picker.itemFontSize` | dimension | 14px | — | 候选项字号 |
+| `picker.itemHeight` | dimension | 40px | — | 原生新增；候选项高度（滚轮单页高度） |
+| `picker.toolbarHeight` | dimension | 44px | — | 原生新增；顶部工具栏高度 |
+
+## radio
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `radio.dotScale` | dimension | 50% | — | 原生新增；内圆点相对外环直径的比例（分数） |
+| `radio.gap` | dimension | 8px | — | 单选框与文字之间的间距 |
+| `radio.ringWidth` | dimension | 2px | — | 原生新增；外环描边宽度 |
+| `radio.size.large` | dimension | 24px | — | 原生新增；大号单选框尺寸 |
+| `radio.size.medium` | dimension | 20px | — | 原生新增；中号单选框尺寸（默认） |
+| `radio.size.small` | dimension | 16px | — | 原生新增；小号单选框尺寸 |
 
 ## radius
 
@@ -123,6 +226,58 @@
 | `spacing.xl` | dimension | 24px | — |  |
 | `spacing.xs` | dimension | 4px | — |  |
 | `spacing.xxl` | dimension | 32px | — |  |
+
+## switch
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `switch.gap` | dimension | 2px | — | 原生新增；滑块与轨道之间的留白 |
+| `switch.height.large` | dimension | 28px | — | 原生新增；大号开关高度 |
+| `switch.height.medium` | dimension | 24px | — | 原生新增；中号开关高度（默认） |
+| `switch.height.small` | dimension | 20px | — | 原生新增；小号开关高度 |
+| `switch.width.large` | dimension | 52px | — | 原生新增；大号开关宽度 |
+| `switch.width.medium` | dimension | 44px | — | 原生新增；中号开关宽度（默认） |
+| `switch.width.small` | dimension | 36px | — | 原生新增；小号开关宽度 |
+
+## tag
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `tag.borderRadius` | dimension | 2px | — | 标签圆角（round 态由组件按高度一半计算） |
+| `tag.borderWidth` | dimension | 1px | — | 原生新增 |
+| `tag.fontSize.large` | dimension | 14px | — |  |
+| `tag.fontSize.medium` | dimension | 13px | — |  |
+| `tag.fontSize.small` | dimension | 12px | — |  |
+| `tag.height.large` | dimension | 28px | — | 原生新增；大号标签高度 |
+| `tag.height.medium` | dimension | 24px | — | 原生新增；中号标签高度（默认） |
+| `tag.height.small` | dimension | 20px | — | 原生新增；小号标签高度 |
+| `tag.paddingHorizontal.large` | dimension | 16px | — | 原生新增 |
+| `tag.paddingHorizontal.medium` | dimension | 12px | — | 原生新增 |
+| `tag.paddingHorizontal.small` | dimension | 8px | — | 原生新增 |
+
+## textarea
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `textarea.borderRadius` | dimension | 2px | — | 多行输入框圆角 |
+| `textarea.borderWidth` | dimension | 1px | — | 原生新增 |
+| `textarea.countFontSize` | dimension | 12px | — | 字数统计字号 |
+| `textarea.focusRingWidth` | dimension | 2px | — | 原生新增；聚焦时的描边宽度 |
+| `textarea.fontSize` | dimension | 14px | — | 多行输入框字号 |
+| `textarea.minHeight` | dimension | 72px | — | 原生新增；无内容时的最小高度（约三行） |
+| `textarea.paddingHorizontal` | dimension | 12px | — | 多行输入框左右内边距 |
+| `textarea.paddingVertical` | dimension | 12px | — | 多行输入框上下内边距 |
+| `textarea.textInset` | dimension | 6px | — | 原生新增；TextEditor 文本容器内嵌补偿（SwiftUI 固定行为，叠加占位文字与字数统计定位用） |
+
+## toast
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `toast.borderRadius` | dimension | 2px | — | 提示圆角 |
+| `toast.fontSize` | dimension | 14px | — | 提示文字字号 |
+| `toast.gap` | dimension | 8px | — | 类型色点与文字之间的间距 |
+| `toast.paddingHorizontal` | dimension | 16px | — | 提示左右内边距 |
+| `toast.paddingVertical` | dimension | 8px | — | 提示上下内边距 |
 
 ## typography
 

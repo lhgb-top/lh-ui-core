@@ -1,0 +1,67 @@
+{
+  "$schema": "./schema.json",
+  "component": "checkbox",
+  "cases": [
+    {
+      "id": "tap-toggles-and-emits-onchange",
+      "name": "点击翻转选中态并触发 onChange",
+      "given": { "props": { "label": "同意" } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onChange", "assertion": "emitted", "times": 1, "payload": { "checked": true } }]
+      }
+    },
+    {
+      "id": "tap-checked-unchecks",
+      "name": "已选中时点击变为未选中",
+      "given": { "props": { "label": "同意", "checked": true } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onChange", "assertion": "emitted", "times": 1, "payload": { "checked": false } }]
+      }
+    },
+    {
+      "id": "disabled-blocks-change",
+      "name": "禁用态不触发 onChange",
+      "given": { "props": { "label": "禁用", "disabled": true } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onChange", "assertion": "notEmitted" }],
+        "enabled": false
+      }
+    },
+    {
+      "id": "checked-uses-primary-tokens",
+      "name": "选中态消费主色令牌",
+      "given": { "props": { "checked": true } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "color.primary.default", "applied": true },
+          { "path": "color.onPrimary", "applied": true }
+        ]
+      }
+    },
+    {
+      "id": "unchecked-uses-border-token",
+      "name": "未选中态消费描边令牌",
+      "given": { "props": { "checked": false } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "color.border.base", "applied": true },
+          { "path": "color.primary.default", "applied": false }
+        ]
+      }
+    },
+    {
+      "id": "indeterminate-becomes-checked",
+      "name": "不确定态点击后变为选中",
+      "given": { "props": { "indeterminate": true } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onChange", "assertion": "emitted", "times": 1, "payload": { "checked": true } }]
+      }
+    }
+  ]
+}

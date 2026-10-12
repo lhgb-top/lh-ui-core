@@ -2,7 +2,7 @@
  * =====================================================================================
  * 本文件由 @lh-ui/core 自动生成（构建期 codegen），请勿手改。
  * 源：@lh-ui/core tokens @ v0.0.1
- * 修改请编辑 lh-ui-core 仓的 tokens/*.json 后重新执行 pnpm codegen。
+ * 修改请编辑 lh-ui-core 仓 tokens/ 目录下的 *.json 后重新执行 pnpm codegen。
  * =====================================================================================
  */
 
@@ -33,6 +33,24 @@
 #define LH_BUTTON_PADDING_HORIZONTAL_LARGE 24
 #define LH_BUTTON_PADDING_HORIZONTAL_MEDIUM 20
 #define LH_BUTTON_PADDING_HORIZONTAL_SMALL 16
+/* --- cell --- */
+#define LH_CELL_BORDER_WIDTH 1  /* 底部分隔线宽度 */
+#define LH_CELL_FONT_SIZE_LABEL 13  /* 说明文字字号 */
+#define LH_CELL_FONT_SIZE_TITLE 14  /* 标题字号 */
+#define LH_CELL_FONT_SIZE_VALUE 14  /* 右侧值字号 */
+#define LH_CELL_GAP 8  /* 标题与说明文字之间的垂直间距 */
+#define LH_CELL_PADDING_HORIZONTAL 16  /* 单元格左右内边距 */
+#define LH_CELL_PADDING_VERTICAL 8  /* 单元格上下内边距 */
+/* --- checkbox --- */
+#define LH_CHECKBOX_BORDER_RADIUS 2  /* 复选框圆角 */
+#define LH_CHECKBOX_BORDER_WIDTH 2
+#define LH_CHECKBOX_CHECK_WIDTH 2  /* 勾形描边宽度 */
+#define LH_CHECKBOX_DASH_SCALE 0.500f  /* 50% 分数 */  /* 不确定态横杠相对方框的宽度比例 */
+#define LH_CHECKBOX_GAP 8  /* 复选框与文字之间的间距 */
+/* --- checkbox.size --- */
+#define LH_CHECKBOX_SIZE_LARGE 24  /* 大号复选框尺寸 */
+#define LH_CHECKBOX_SIZE_MEDIUM 20  /* 中号复选框尺寸（默认） */
+#define LH_CHECKBOX_SIZE_SMALL 16  /* 小号复选框尺寸 */
 /* --- color --- */
 #define LH_COLOR_DECORATION 0x1FB8860B  /* 花纹装饰色 */
 #define LH_COLOR_FOCUS 0xFF2B4C7C  /* 键盘焦点环色，默认跟随主色 */
@@ -103,21 +121,76 @@
 #define LH_COLOR_WARNING_BG 0xFFFBF6EA
 #define LH_COLOR_WARNING_DEFAULT 0xFFC4A35A  /* 警告色（藤黄 — 秋叶金黄） */
 #define LH_COLOR_WARNING_HOVER 0xFFD4B76F
+/* --- dialog --- */
+#define LH_DIALOG_BORDER_RADIUS 2  /* 对话框圆角 */
+#define LH_DIALOG_CONTENT_FONT_SIZE 14  /* 内容字号 */
+#define LH_DIALOG_GAP 12  /* 标题与内容的间距 */
+#define LH_DIALOG_PADDING_HORIZONTAL 20  /* 对话框左右内边距 */
+#define LH_DIALOG_PADDING_VERTICAL 20  /* 对话框上下内边距 */
+#define LH_DIALOG_TITLE_FONT_SIZE 16  /* 标题字号 */
+#define LH_DIALOG_WIDTH 320  /* 对话框内容卡宽度 */
+/* --- icon.size --- */
+#define LH_ICON_SIZE_LARGE 24  /* 大号图标尺寸 */
+#define LH_ICON_SIZE_MEDIUM 20  /* 中号图标尺寸（默认） */
+#define LH_ICON_SIZE_SMALL 16  /* 小号图标尺寸 */
+/* --- input --- */
+#define LH_INPUT_BORDER_RADIUS 2  /* 输入框圆角 */
+#define LH_INPUT_BORDER_WIDTH 1
+#define LH_INPUT_CLEAR_ICON_SIZE 16  /* 清除按钮图标尺寸 */
+#define LH_INPUT_FOCUS_RING_WIDTH 2  /* 聚焦时的描边宽度 */
+/* --- input.fontSize --- */
+#define LH_INPUT_FONT_SIZE_LARGE 16
+#define LH_INPUT_FONT_SIZE_MEDIUM 14
+#define LH_INPUT_FONT_SIZE_SMALL 13
+/* --- input.height --- */
+#define LH_INPUT_HEIGHT_LARGE 48  /* 大号输入框高度 */
+#define LH_INPUT_HEIGHT_MEDIUM 40  /* 中号输入框高度（默认） */
+#define LH_INPUT_HEIGHT_SMALL 32  /* 小号输入框高度 */
+/* --- input.paddingHorizontal --- */
+#define LH_INPUT_PADDING_HORIZONTAL_LARGE 20
+#define LH_INPUT_PADDING_HORIZONTAL_MEDIUM 16
+#define LH_INPUT_PADDING_HORIZONTAL_SMALL 12
+/* --- loading --- */
+#define LH_LOADING_STROKE_WIDTH 2  /* 加载环描边宽度 */
+/* --- loading.size --- */
+#define LH_LOADING_SIZE_LARGE 24  /* 大号加载指示器直径 */
+#define LH_LOADING_SIZE_MEDIUM 20  /* 中号加载指示器直径（默认） */
+#define LH_LOADING_SIZE_SMALL 16  /* 小号加载指示器直径 */
 /* --- motion.duration --- */
 #define LH_MOTION_DURATION_BASE 300  /* 0.3s 毫秒 */
 #define LH_MOTION_DURATION_FAST 250  /* 0.25s 毫秒 */
 #define LH_MOTION_DURATION_SLOW 400  /* 0.4s 毫秒 */
 /* --- motion.easing --- */
-#define LH_MOTION_EASING_EASE_IN_OUT { 0.4f, 0f, 0.2f, 1f }  /* 标准缓动 cubic-bezier(0.4, 0, 0.2, 1) */
+#define LH_MOTION_EASING_EASE_IN_OUT { 0.4f, 0.0f, 0.2f, 1.0f }  /* 标准缓动 cubic-bezier(0.4, 0, 0.2, 1) */
+/* --- navbar --- */
+#define LH_NAVBAR_BORDER_WIDTH 1
+#define LH_NAVBAR_HEIGHT 44  /* 导航栏高度 */
+#define LH_NAVBAR_ICON_SIZE 20  /* 左右图标尺寸 */
+#define LH_NAVBAR_PADDING_HORIZONTAL 12  /* 导航栏左右内边距 */
+#define LH_NAVBAR_TITLE_FONT_SIZE 16  /* 标题字号 */
+/* --- picker --- */
+#define LH_PICKER_BORDER_RADIUS 2  /* 面板顶部圆角 */
+#define LH_PICKER_HEIGHT 260  /* 选择器面板高度 */
+#define LH_PICKER_ITEM_FONT_SIZE 14  /* 候选项字号 */
+#define LH_PICKER_ITEM_HEIGHT 40  /* 候选项高度（滚轮单页高度） */
+#define LH_PICKER_TOOLBAR_HEIGHT 44  /* 顶部工具栏高度 */
+/* --- radio --- */
+#define LH_RADIO_DOT_SCALE 0.500f  /* 50% 分数 */  /* 内圆点相对外环直径的比例（分数） */
+#define LH_RADIO_GAP 8  /* 单选框与文字之间的间距 */
+#define LH_RADIO_RING_WIDTH 2  /* 外环描边宽度 */
+/* --- radio.size --- */
+#define LH_RADIO_SIZE_LARGE 24  /* 大号单选框尺寸 */
+#define LH_RADIO_SIZE_MEDIUM 20  /* 中号单选框尺寸（默认） */
+#define LH_RADIO_SIZE_SMALL 16  /* 小号单选框尺寸 */
 /* --- radius --- */
 #define LH_RADIUS_BASE 2
 #define LH_RADIUS_CIRCLE 0.500f  /* 50% 分数 */  /* 正圆，各端取 min(宽,高)/2 */
 #define LH_RADIUS_ROUND 20  /* 胶囊圆角 */
 #define LH_RADIUS_SMALL 2
 /* --- shadow --- */
-#define LH_SHADOW_BASE { 0x141A1A1A, 0f, 2f, 12f }  /* 扩展量 0px 已忽略 */
-#define LH_SHADOW_LIGHT { 0x0F1A1A1A, 0f, 2f, 4f }  /* 扩展量 0px 已忽略 */
-#define LH_SHADOW_LIGHTER { 0x0A1A1A1A, 0f, 0f, 4f }  /* 扩展量 0px 已忽略 */
+#define LH_SHADOW_BASE { 0x141A1A1A, 0.0f, 2.0f, 12.0f }  /* 扩展量 0px 已忽略 */
+#define LH_SHADOW_LIGHT { 0x0F1A1A1A, 0.0f, 2.0f, 4.0f }  /* 扩展量 0px 已忽略 */
+#define LH_SHADOW_LIGHTER { 0x0A1A1A1A, 0.0f, 0.0f, 4.0f }  /* 扩展量 0px 已忽略 */
 /* --- spacing --- */
 #define LH_SPACING_BASE 16
 #define LH_SPACING_LG 20
@@ -126,6 +199,47 @@
 #define LH_SPACING_XL 24
 #define LH_SPACING_XS 4
 #define LH_SPACING_XXL 32
+/* --- switch --- */
+#define LH_SWITCH_GAP 2  /* 滑块与轨道之间的留白 */
+/* --- switch.height --- */
+#define LH_SWITCH_HEIGHT_LARGE 28  /* 大号开关高度 */
+#define LH_SWITCH_HEIGHT_MEDIUM 24  /* 中号开关高度（默认） */
+#define LH_SWITCH_HEIGHT_SMALL 20  /* 小号开关高度 */
+/* --- switch.width --- */
+#define LH_SWITCH_WIDTH_LARGE 52  /* 大号开关宽度 */
+#define LH_SWITCH_WIDTH_MEDIUM 44  /* 中号开关宽度（默认） */
+#define LH_SWITCH_WIDTH_SMALL 36  /* 小号开关宽度 */
+/* --- tag --- */
+#define LH_TAG_BORDER_RADIUS 2  /* 标签圆角（round 态由组件按高度一半计算） */
+#define LH_TAG_BORDER_WIDTH 1
+/* --- tag.fontSize --- */
+#define LH_TAG_FONT_SIZE_LARGE 14
+#define LH_TAG_FONT_SIZE_MEDIUM 13
+#define LH_TAG_FONT_SIZE_SMALL 12
+/* --- tag.height --- */
+#define LH_TAG_HEIGHT_LARGE 28  /* 大号标签高度 */
+#define LH_TAG_HEIGHT_MEDIUM 24  /* 中号标签高度（默认） */
+#define LH_TAG_HEIGHT_SMALL 20  /* 小号标签高度 */
+/* --- tag.paddingHorizontal --- */
+#define LH_TAG_PADDING_HORIZONTAL_LARGE 16
+#define LH_TAG_PADDING_HORIZONTAL_MEDIUM 12
+#define LH_TAG_PADDING_HORIZONTAL_SMALL 8
+/* --- textarea --- */
+#define LH_TEXTAREA_BORDER_RADIUS 2  /* 多行输入框圆角 */
+#define LH_TEXTAREA_BORDER_WIDTH 1
+#define LH_TEXTAREA_COUNT_FONT_SIZE 12  /* 字数统计字号 */
+#define LH_TEXTAREA_FOCUS_RING_WIDTH 2  /* 聚焦时的描边宽度 */
+#define LH_TEXTAREA_FONT_SIZE 14  /* 多行输入框字号 */
+#define LH_TEXTAREA_MIN_HEIGHT 72  /* 无内容时的最小高度（约三行） */
+#define LH_TEXTAREA_PADDING_HORIZONTAL 12  /* 多行输入框左右内边距 */
+#define LH_TEXTAREA_PADDING_VERTICAL 12  /* 多行输入框上下内边距 */
+#define LH_TEXTAREA_TEXT_INSET 6  /* TextEditor 文本容器内嵌补偿（SwiftUI 固定行为，叠加占位文字与字数统计定位用） */
+/* --- toast --- */
+#define LH_TOAST_BORDER_RADIUS 2  /* 提示圆角 */
+#define LH_TOAST_FONT_SIZE 14  /* 提示文字字号 */
+#define LH_TOAST_GAP 8  /* 类型色点与文字之间的间距 */
+#define LH_TOAST_PADDING_HORIZONTAL 16  /* 提示左右内边距 */
+#define LH_TOAST_PADDING_VERTICAL 8  /* 提示上下内边距 */
 /* --- typography --- */
 #define LH_TYPOGRAPHY_FONT_FAMILY "'Noto Serif SC', 'STSong', 'SimSun', 'Source Han Serif SC', 'PingFang SC', 'Microsoft YaHei', serif"  /* 国风衬线字体栈，各端取首个可用族 */
 /* --- typography.fontSize --- */

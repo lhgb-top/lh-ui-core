@@ -1,0 +1,39 @@
+{
+  "$schema": "./schema.json",
+  "name": "loading",
+  "component": "LhLoading",
+  "since": "0.1.0",
+  "description": "加载指示器：环形旋转动画的静态几何发射，旋转进度交由后端驱动。",
+  "props": [
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["small", "medium", "large"],
+      "default": "medium",
+      "description": "指示器直径，映射到 loading.size.* 令牌"
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": ["primary", "success", "warning", "danger", "info"],
+      "default": "primary",
+      "description": "环色，取对应语义色令牌"
+    }
+  ],
+  "behaviors": [
+    "size 映射：small/medium/large 分别取 loading.size.<size> 直径令牌",
+    "绘制指令为 draw_ring，半径为尺寸一半，描边宽 loading.strokeWidth",
+    "旋转动画由后端驱动（嵌入式朴素调性，指令缓冲层只发几何）"
+  ],
+  "tokenRefs": [
+    "loading.size.small",
+    "loading.size.medium",
+    "loading.size.large",
+    "loading.strokeWidth",
+    "color.primary.default",
+    "color.success.default",
+    "color.warning.default",
+    "color.danger.default",
+    "color.info.default"
+  ]
+}

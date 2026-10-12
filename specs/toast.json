@@ -1,0 +1,61 @@
+{
+  "$schema": "./schema.json",
+  "name": "toast",
+  "component": "LhToast",
+  "since": "0.1.0",
+  "description": "轻提示：自持可见性与计时的墨色胶囊浮层，旋转/淡入等动画交由后端驱动。",
+  "props": [
+    {
+      "name": "type",
+      "type": "enum",
+      "values": ["default", "success", "warning", "danger", "info"],
+      "default": "default",
+      "description": "语义类型；非 default 时在文字前绘制对应语义色圆点"
+    },
+    {
+      "name": "duration",
+      "type": "number",
+      "default": 2000,
+      "description": "自动隐藏时长（毫秒）；宿主每帧调用 tick 推进计时"
+    },
+    {
+      "name": "position",
+      "type": "enum",
+      "values": ["top", "center", "bottom"],
+      "default": "center",
+      "description": "在可用区域内的定位；上下两端留 spacing.xl 边距"
+    }
+  ],
+  "events": [
+    {
+      "name": "onClose",
+      "payload": [],
+      "description": "计时到期自动隐藏时触发；hide() 主动隐藏不触发"
+    }
+  ],
+  "behaviors": [
+    "show(text) 使其可见并重置计时；hide() 立即隐藏但不触发 onClose",
+    "tick(deltaMs) 累加已用时长，达到 duration 时自动隐藏并触发 onClose",
+    "不可见时不发射任何绘制指令",
+    "胶囊底取 color.ink，文字取 color.onPrimary，圆角取 toast.borderRadius",
+    "type 非 default 时在文字前绘制直径为字号的语义色圆点，间距取 toast.gap",
+    "layout 宽度由文字测量得出并封顶可用宽度的 80%，按 position 定位",
+    "指令缓冲层无 z 序：宿主须按 zIndex.toast 在其他内容之后最后绘制"
+  ],
+  "tokenRefs": [
+    "toast.fontSize",
+    "toast.paddingHorizontal",
+    "toast.paddingVertical",
+    "toast.borderRadius",
+    "toast.gap",
+    "typography.lineHeight.primary",
+    "spacing.xl",
+    "zIndex.toast",
+    "color.ink",
+    "color.onPrimary",
+    "color.success.default",
+    "color.warning.default",
+    "color.danger.default",
+    "color.info.default"
+  ]
+}

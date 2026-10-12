@@ -1,0 +1,93 @@
+{
+  "$schema": "./schema.json",
+  "name": "tag",
+  "component": "LhTag",
+  "since": "0.1.0",
+  "description": "标签：小体积状态标记，支持语义类型、尺寸、描边/浅底形态、圆角胶囊与可关闭。",
+  "props": [
+    {
+      "name": "text",
+      "type": "string",
+      "default": "",
+      "description": "标签文字"
+    },
+    {
+      "name": "type",
+      "type": "enum",
+      "values": ["default", "primary", "success", "warning", "danger", "info"],
+      "default": "default",
+      "description": "语义类型，决定底色、文字色与描边色"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["small", "medium", "large"],
+      "default": "medium",
+      "description": "标签尺寸，映射到 tag.height / paddingHorizontal / fontSize 令牌"
+    },
+    {
+      "name": "plain",
+      "type": "boolean",
+      "default": false,
+      "description": "是否为浅底描边形态（实心底 + 白字 vs 语义浅底 + 语义字 + 语义描边）"
+    },
+    {
+      "name": "round",
+      "type": "boolean",
+      "default": false,
+      "description": "是否为胶囊形态（圆角取高度一半）"
+    },
+    {
+      "name": "closable",
+      "type": "boolean",
+      "default": false,
+      "description": "是否显示关闭符；点击关闭符区域触发 onClose"
+    }
+  ],
+  "events": [
+    {
+      "name": "onClose",
+      "payload": [],
+      "description": "点击关闭符时触发"
+    }
+  ],
+  "slots": [
+    { "name": "default", "description": "标签文字内容" }
+  ],
+  "behaviors": [
+    "size 映射：small/medium/large 分别取 tag.height.<size> 等尺寸令牌",
+    "plain 为 false 时：default 类型取 backgroundDefault 底 + textPrimary 字 + borderBase 描边；其余类型取语义色实心底 + onPrimary 字、无描边",
+    "plain 为 true 时：default 类型同上；其余类型取语义 bg 浅底 + 语义 default 字 + 语义 default 描边",
+    "round 为 true 时圆角取高度一半，否则取 tag.borderRadius",
+    "closable 为 true 时在尾部绘制关闭符（两条对角线），点击其区域触发 onClose",
+    "关闭符与文字间距取 spacing.xs"
+  ],
+  "tokenRefs": [
+    "tag.height.small",
+    "tag.height.medium",
+    "tag.height.large",
+    "tag.paddingHorizontal.small",
+    "tag.paddingHorizontal.medium",
+    "tag.paddingHorizontal.large",
+    "tag.fontSize.small",
+    "tag.fontSize.medium",
+    "tag.fontSize.large",
+    "tag.borderWidth",
+    "tag.borderRadius",
+    "spacing.xs",
+    "color.background.default",
+    "color.text.primary",
+    "color.border.base",
+    "color.onPrimary",
+    "color.primary.default",
+    "color.primary.bg",
+    "color.success.default",
+    "color.success.bg",
+    "color.warning.default",
+    "color.warning.bg",
+    "color.danger.default",
+    "color.danger.bg",
+    "color.info.default",
+    "color.info.bg"
+  ]
+}

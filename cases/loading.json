@@ -1,0 +1,58 @@
+{
+  "$schema": "./schema.json",
+  "component": "loading",
+  "cases": [
+    {
+      "id": "medium-size-uses-medium-token",
+      "name": "中号尺寸消费 medium 尺寸令牌",
+      "given": { "props": {} },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "loading.size.medium", "applied": true },
+          { "path": "loading.size.small", "applied": false }
+        ]
+      }
+    },
+    {
+      "id": "large-size-uses-large-token",
+      "name": "大号尺寸消费 large 尺寸令牌",
+      "given": { "props": { "size": "large" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "loading.size.large", "applied": true },
+          { "path": "loading.size.medium", "applied": false }
+        ]
+      }
+    },
+    {
+      "id": "primary-tone-uses-primary-token",
+      "name": "默认色调取主色令牌",
+      "given": { "props": {} },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [{ "path": "color.primary.default", "applied": true }]
+      }
+    },
+    {
+      "id": "success-tone-uses-success-token",
+      "name": "成功色调取成功色令牌",
+      "given": { "props": { "tone": "success" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [{ "path": "color.success.default", "applied": true }]
+      }
+    },
+    {
+      "id": "render-emits-ring-command",
+      "name": "渲染发出一条 RING 指令",
+      "given": { "props": {} },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [{ "path": "loading.strokeWidth", "applied": true }],
+        "notes": "绘制指令流有且仅有一条 RING 指令，半径为尺寸一半"
+      }
+    }
+  ]
+}

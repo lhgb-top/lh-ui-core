@@ -1,0 +1,77 @@
+{
+  "$schema": "./schema.json",
+  "name": "checkbox",
+  "component": "LhCheckbox",
+  "since": "0.1.0",
+  "description": "复选框：三态选中控件，支持勾形与横杠指示、禁用态与文字标签。",
+  "props": [
+    {
+      "name": "checked",
+      "type": "boolean",
+      "default": false,
+      "description": "是否选中"
+    },
+    {
+      "name": "indeterminate",
+      "type": "boolean",
+      "default": false,
+      "description": "是否为不确定态（横杠指示）；点击后变为选中"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "description": "是否禁用；禁用时不响应点击且呈现禁用样式"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "",
+      "description": "文字标签（绘制在方框右侧）"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["small", "medium", "large"],
+      "default": "medium",
+      "description": "方框尺寸，映射到 checkbox.size.* 令牌"
+    }
+  ],
+  "events": [
+    {
+      "name": "onChange",
+      "payload": [
+        { "name": "checked", "type": "boolean", "description": "点击后的新选中态" }
+      ],
+      "description": "点击切换选中态时触发；disabled 为 true 时不触发"
+    }
+  ],
+  "slots": [
+    { "name": "default", "description": "文字标签内容" }
+  ],
+  "behaviors": [
+    "size 映射：small/medium/large 分别取 checkbox.size.<size> 方框尺寸令牌",
+    "未选中：只描边（color.border.base），无填充",
+    "选中/不确定：实心 primary 底 + onPrimary 指示符；选中画勾形（两条折线），不确定画横杠",
+    "disabled：底/边/指示符/文字全部取 disabled.* 令牌，且不响应点击",
+    "点击命中整个行（方框 + 标签区域）：indeterminate 变为选中，否则翻转选中态，并触发 onChange 携带新选中态",
+    "方框与文字间距取 checkbox.gap"
+  ],
+  "tokenRefs": [
+    "checkbox.size.small",
+    "checkbox.size.medium",
+    "checkbox.size.large",
+    "checkbox.borderRadius",
+    "checkbox.borderWidth",
+    "checkbox.checkWidth",
+    "checkbox.gap",
+    "color.primary.default",
+    "color.onPrimary",
+    "color.border.base",
+    "color.disabled.bg",
+    "color.disabled.text",
+    "color.disabled.border",
+    "color.text.primary",
+    "color.text.disabled"
+  ]
+}

@@ -41,6 +41,27 @@ object LhTokens {
       val small = 16.dp
     }
   }
+  object Cell {
+    val borderWidth = 1.dp  // 底部分隔线宽度
+    val fontSizeLabel = 13.sp  // 说明文字字号
+    val fontSizeTitle = 14.sp  // 标题字号
+    val fontSizeValue = 14.sp  // 右侧值字号
+    val gap = 8.dp  // 标题与说明文字之间的垂直间距
+    val paddingHorizontal = 16.dp  // 单元格左右内边距
+    val paddingVertical = 8.dp  // 单元格上下内边距
+  }
+  object Checkbox {
+    val borderRadius = 2.dp  // 复选框圆角
+    val borderWidth = 2.dp
+    val checkWidth = 2.dp  // 勾形描边宽度
+    val dashScale = 0.50f  // 50%（分数，由容器尺寸换算）  // 不确定态横杠相对方框的宽度比例
+    val gap = 8.dp  // 复选框与文字之间的间距
+    object Size {
+      val large = 24.dp  // 大号复选框尺寸
+      val medium = 20.dp  // 中号复选框尺寸（默认）
+      val small = 16.dp  // 小号复选框尺寸
+    }
+  }
   object Color {
     val decoration = ComposeColor(0x1FB8860B)  // 花纹装饰色
     val focus = ComposeColor(0xFF2B4C7C)  // 键盘焦点环色，默认跟随主色
@@ -124,6 +145,51 @@ object LhTokens {
       val hover = ComposeColor(0xFFD4B76F)
     }
   }
+  object Dialog {
+    val borderRadius = 2.dp  // 对话框圆角
+    val contentFontSize = 14.sp  // 内容字号
+    val gap = 12.dp  // 标题与内容的间距
+    val paddingHorizontal = 20.dp  // 对话框左右内边距
+    val paddingVertical = 20.dp  // 对话框上下内边距
+    val titleFontSize = 16.sp  // 标题字号
+    val width = 320.dp  // 对话框内容卡宽度
+  }
+  object Icon {
+    object Size {
+      val large = 24.dp  // 大号图标尺寸
+      val medium = 20.dp  // 中号图标尺寸（默认）
+      val small = 16.dp  // 小号图标尺寸
+    }
+  }
+  object Input {
+    val borderRadius = 2.dp  // 输入框圆角
+    val borderWidth = 1.dp
+    val clearIconSize = 16.dp  // 清除按钮图标尺寸
+    val focusRingWidth = 2.dp  // 聚焦时的描边宽度
+    object FontSize {
+      val large = 16.sp
+      val medium = 14.sp
+      val small = 13.sp
+    }
+    object Height {
+      val large = 48.dp  // 大号输入框高度
+      val medium = 40.dp  // 中号输入框高度（默认）
+      val small = 32.dp  // 小号输入框高度
+    }
+    object PaddingHorizontal {
+      val large = 20.dp
+      val medium = 16.dp
+      val small = 12.dp
+    }
+  }
+  object Loading {
+    val strokeWidth = 2.dp  // 加载环描边宽度
+    object Size {
+      val large = 24.dp  // 大号加载指示器直径
+      val medium = 20.dp  // 中号加载指示器直径（默认）
+      val small = 16.dp  // 小号加载指示器直径
+    }
+  }
   object Motion {
     object Duration {
       val base = 300  // 0.3s（毫秒）
@@ -132,6 +198,30 @@ object LhTokens {
     }
     object Easing {
       val easeInOut = CubicBezierEasing(0.4f, 0f, 0.2f, 1f)  // 标准缓动 cubic-bezier(0.4, 0, 0.2, 1)
+    }
+  }
+  object Navbar {
+    val borderWidth = 1.dp
+    val height = 44.dp  // 导航栏高度
+    val iconSize = 20.dp  // 左右图标尺寸
+    val paddingHorizontal = 12.dp  // 导航栏左右内边距
+    val titleFontSize = 16.sp  // 标题字号
+  }
+  object Picker {
+    val borderRadius = 2.dp  // 面板顶部圆角
+    val height = 260.dp  // 选择器面板高度
+    val itemFontSize = 14.sp  // 候选项字号
+    val itemHeight = 40.dp  // 候选项高度（滚轮单页高度）
+    val toolbarHeight = 44.dp  // 顶部工具栏高度
+  }
+  object Radio {
+    val dotScale = 0.50f  // 50%（分数，由容器尺寸换算）  // 内圆点相对外环直径的比例（分数）
+    val gap = 8.dp  // 单选框与文字之间的间距
+    val ringWidth = 2.dp  // 外环描边宽度
+    object Size {
+      val large = 24.dp  // 大号单选框尺寸
+      val medium = 20.dp  // 中号单选框尺寸（默认）
+      val small = 16.dp  // 小号单选框尺寸
     }
   }
   object Radius {
@@ -153,6 +243,56 @@ object LhTokens {
     val xl = 24.dp
     val xs = 4.dp
     val xxl = 32.dp
+  }
+  object Switch {
+    val gap = 2.dp  // 滑块与轨道之间的留白
+    object Height {
+      val large = 28.dp  // 大号开关高度
+      val medium = 24.dp  // 中号开关高度（默认）
+      val small = 20.dp  // 小号开关高度
+    }
+    object Width {
+      val large = 52.dp  // 大号开关宽度
+      val medium = 44.dp  // 中号开关宽度（默认）
+      val small = 36.dp  // 小号开关宽度
+    }
+  }
+  object Tag {
+    val borderRadius = 2.dp  // 标签圆角（round 态由组件按高度一半计算）
+    val borderWidth = 1.dp
+    object FontSize {
+      val large = 14.sp
+      val medium = 13.sp
+      val small = 12.sp
+    }
+    object Height {
+      val large = 28.dp  // 大号标签高度
+      val medium = 24.dp  // 中号标签高度（默认）
+      val small = 20.dp  // 小号标签高度
+    }
+    object PaddingHorizontal {
+      val large = 16.dp
+      val medium = 12.dp
+      val small = 8.dp
+    }
+  }
+  object Textarea {
+    val borderRadius = 2.dp  // 多行输入框圆角
+    val borderWidth = 1.dp
+    val countFontSize = 12.sp  // 字数统计字号
+    val focusRingWidth = 2.dp  // 聚焦时的描边宽度
+    val fontSize = 14.sp  // 多行输入框字号
+    val minHeight = 72.dp  // 无内容时的最小高度（约三行）
+    val paddingHorizontal = 12.dp  // 多行输入框左右内边距
+    val paddingVertical = 12.dp  // 多行输入框上下内边距
+    val textInset = 6.dp  // TextEditor 文本容器内嵌补偿（SwiftUI 固定行为，叠加占位文字与字数统计定位用）
+  }
+  object Toast {
+    val borderRadius = 2.dp  // 提示圆角
+    val fontSize = 14.sp  // 提示文字字号
+    val gap = 8.dp  // 类型色点与文字之间的间距
+    val paddingHorizontal = 16.dp  // 提示左右内边距
+    val paddingVertical = 8.dp  // 提示上下内边距
   }
   object Typography {
     val fontFamily = "'Noto Serif SC', 'STSong', 'SimSun', 'Source Han Serif SC', 'PingFang SC', 'Microsoft YaHei', serif"  // 国风衬线字体栈，各端取首个可用族

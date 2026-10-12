@@ -1,0 +1,74 @@
+{
+  "$schema": "./schema.json",
+  "component": "dialog",
+  "cases": [
+    {
+      "id": "confirm-emits-onconfirm",
+      "name": "点击确认触发 onConfirm",
+      "given": { "props": { "visible": true, "title": "提示" } },
+      "when": { "action": "click", "target": "confirm" },
+      "then": {
+        "events": [{ "name": "onConfirm", "assertion": "emitted", "times": 1 }]
+      }
+    },
+    {
+      "id": "cancel-emits-oncancel",
+      "name": "点击取消触发 onCancel",
+      "given": { "props": { "visible": true, "title": "提示" } },
+      "when": { "action": "click", "target": "cancel" },
+      "then": {
+        "events": [{ "name": "onCancel", "assertion": "emitted", "times": 1 }]
+      }
+    },
+    {
+      "id": "confirm-also-emits-onclose",
+      "name": "确认后触发 onClose",
+      "given": { "props": { "visible": true, "title": "提示" } },
+      "when": { "action": "click", "target": "confirm" },
+      "then": {
+        "events": [{ "name": "onClose", "assertion": "emitted", "times": 1 }]
+      }
+    },
+    {
+      "id": "closable-overlay-emits-onclose",
+      "name": "可关闭时点遮罩触发 onClose",
+      "given": { "props": { "visible": true, "closable": true } },
+      "when": { "action": "click", "target": "overlay" },
+      "then": {
+        "events": [{ "name": "onClose", "assertion": "emitted", "times": 1 }]
+      }
+    },
+    {
+      "id": "not-closable-blocks-overlay-close",
+      "name": "不可关闭时点遮罩不触发 onClose",
+      "given": { "props": { "visible": true, "closable": false } },
+      "when": { "action": "click", "target": "overlay" },
+      "then": {
+        "events": [{ "name": "onClose", "assertion": "notEmitted" }]
+      }
+    },
+    {
+      "id": "hidden-not-rendered",
+      "name": "不可见时不渲染",
+      "given": { "props": { "visible": false } },
+      "when": { "action": "render" },
+      "then": { "visible": false, "notes": "不发射任何绘制指令" }
+    },
+    {
+      "id": "title-renders-text",
+      "name": "标题被渲染",
+      "given": { "props": { "visible": true, "title": "删除确认" } },
+      "when": { "action": "render" },
+      "then": { "text": "删除确认", "visible": true }
+    },
+    {
+      "id": "danger-type-uses-danger-token",
+      "name": "危险类型确认按钮消费危险色令牌",
+      "given": { "props": { "visible": true, "type": "danger" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [{ "path": "color.danger.default", "applied": true }]
+      }
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "$schema": "./schema.json",
+  "component": "textarea",
+  "cases": [
+    {
+      "id": "input-emits-onvaluechange",
+      "name": "输入文本触发 onValueChange",
+      "given": { "props": { "placeholder": "请输入" } },
+      "when": { "action": "input", "payload": "青花瓷" },
+      "then": {
+        "events": [{ "name": "onValueChange", "assertion": "emitted", "times": 1, "payload": { "value": "青花瓷" } }]
+      }
+    },
+    {
+      "id": "disabled-blocks-input",
+      "name": "禁用态不触发 onValueChange",
+      "given": { "props": { "disabled": true } },
+      "when": { "action": "input", "payload": "青花瓷" },
+      "then": {
+        "events": [{ "name": "onValueChange", "assertion": "notEmitted" }],
+        "enabled": false
+      }
+    },
+    {
+      "id": "showcount-renders-count",
+      "name": "字数统计渲染当前长度",
+      "given": { "props": { "value": "青花", "showCount": true, "maxlength": 10 } },
+      "when": { "action": "render" },
+      "then": {
+        "text": "2/10",
+        "tokens": [{ "path": "textarea.countFontSize", "applied": true }]
+      }
+    },
+    {
+      "id": "showcount-without-maxlength-renders-length-only",
+      "name": "无最大长度时只渲染当前长度",
+      "given": { "props": { "value": "青花瓷", "showCount": true } },
+      "when": { "action": "render" },
+      "then": {
+        "text": "3"
+      }
+    },
+    {
+      "id": "focus-uses-focus-token",
+      "name": "聚焦消费焦点色令牌",
+      "given": { "props": {} },
+      "when": { "action": "focus" },
+      "then": {
+        "events": [{ "name": "onFocus", "assertion": "emitted", "times": 1 }],
+        "tokens": [{ "path": "color.focus", "applied": true }]
+      }
+    },
+    {
+      "id": "maxlength-truncates-input",
+      "name": "最大长度截断超长输入",
+      "given": { "props": { "maxlength": 3 } },
+      "when": { "action": "input", "payload": "青花瓷瓶" },
+      "then": {
+        "events": [{ "name": "onValueChange", "assertion": "emitted", "times": 1, "payload": { "value": "青花瓷" } }]
+      }
+    }
+  ]
+}

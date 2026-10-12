@@ -1,0 +1,63 @@
+{
+  "$schema": "./schema.json",
+  "component": "toast",
+  "cases": [
+    {
+      "id": "show-makes-visible",
+      "name": "show 后可见且渲染文字",
+      "given": { "props": {} },
+      "when": { "action": "custom", "payload": { "call": "show", "text": "已保存" } },
+      "then": { "visible": true, "text": "已保存" }
+    },
+    {
+      "id": "auto-hides-after-duration",
+      "name": "计时到期自动隐藏并触发 onClose",
+      "given": { "props": { "duration": 2000 }, "state": { "visible": true, "elapsed": 0 } },
+      "when": { "action": "custom", "payload": { "call": "tick", "deltaMs": 2500 } },
+      "then": {
+        "visible": false,
+        "events": [{ "name": "onClose", "assertion": "emitted", "times": 1 }]
+      }
+    },
+    {
+      "id": "tick-before-duration-keeps-visible",
+      "name": "计时未到期保持可见且不触发 onClose",
+      "given": { "props": { "duration": 2000 }, "state": { "visible": true, "elapsed": 0 } },
+      "when": { "action": "custom", "payload": { "call": "tick", "deltaMs": 1000 } },
+      "then": {
+        "visible": true,
+        "events": [{ "name": "onClose", "assertion": "notEmitted" }]
+      }
+    },
+    {
+      "id": "hide-is-silent",
+      "name": "hide 主动隐藏不触发 onClose",
+      "given": { "props": {}, "state": { "visible": true } },
+      "when": { "action": "custom", "payload": { "call": "hide" } },
+      "then": {
+        "visible": false,
+        "events": [{ "name": "onClose", "assertion": "notEmitted" }]
+      }
+    },
+    {
+      "id": "success-type-uses-success-token",
+      "name": "成功类型消费成功色令牌",
+      "given": { "props": { "type": "success" }, "state": { "visible": true } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "color.success.default", "applied": true },
+          { "path": "color.ink", "applied": true },
+          { "path": "color.onPrimary", "applied": true }
+        ]
+      }
+    },
+    {
+      "id": "hidden-emits-no-commands",
+      "name": "不可见时不发射绘制指令",
+      "given": { "props": {}, "state": { "visible": false } },
+      "when": { "action": "render" },
+      "then": { "visible": false, "notes": "绘制指令流为空" }
+    }
+  ]
+}

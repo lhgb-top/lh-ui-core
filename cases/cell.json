@@ -1,0 +1,59 @@
+{
+  "$schema": "./schema.json",
+  "component": "cell",
+  "cases": [
+    {
+      "id": "title-and-value-render",
+      "name": "标题与值都被渲染",
+      "given": { "props": { "title": "行标题", "value": "行内容" } },
+      "when": { "action": "render" },
+      "then": { "notes": "绘制指令流包含两条 TEXT 指令，分别为标题与值" }
+    },
+    {
+      "id": "label-renders-secondary-tone",
+      "name": "说明文字取次要文字色令牌",
+      "given": { "props": { "title": "标题", "label": "说明文字" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [{ "path": "color.text.secondary", "applied": true }]
+      }
+    },
+    {
+      "id": "required-uses-danger-token",
+      "name": "必填红星消费危险色令牌",
+      "given": { "props": { "title": "必填项", "required": true } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [{ "path": "color.danger.default", "applied": true }]
+      }
+    },
+    {
+      "id": "bordered-emits-line-command",
+      "name": "分隔线形态发出 LINE 指令",
+      "given": { "props": { "title": "带线", "bordered": true } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [{ "path": "color.border.lighter", "applied": true }],
+        "notes": "绘制指令流末尾有一条底部分隔线指令"
+      }
+    },
+    {
+      "id": "clickable-emits-onclick",
+      "name": "可点击时点击触发 onClick",
+      "given": { "props": { "title": "可点", "clickable": true } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onClick", "assertion": "emitted", "times": 1 }]
+      }
+    },
+    {
+      "id": "not-clickable-no-onclick",
+      "name": "非可点击时不触发 onClick",
+      "given": { "props": { "title": "不可点" } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onClick", "assertion": "notEmitted" }]
+      }
+    }
+  ]
+}

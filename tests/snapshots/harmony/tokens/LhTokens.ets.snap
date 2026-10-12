@@ -32,6 +32,27 @@ export class LhTokens {
       static readonly small: Dimension | number = 16
     }
   }
+  class Cell {
+    static readonly borderWidth: Dimension | number = 1  // 底部分隔线宽度
+    static readonly fontSizeLabel: Dimension | number = 13  // 说明文字字号
+    static readonly fontSizeTitle: Dimension | number = 14  // 标题字号
+    static readonly fontSizeValue: Dimension | number = 14  // 右侧值字号
+    static readonly gap: Dimension | number = 8  // 标题与说明文字之间的垂直间距
+    static readonly paddingHorizontal: Dimension | number = 16  // 单元格左右内边距
+    static readonly paddingVertical: Dimension | number = 8  // 单元格上下内边距
+  }
+  class Checkbox {
+    static readonly borderRadius: Dimension | number = 2  // 复选框圆角
+    static readonly borderWidth: Dimension | number = 2
+    static readonly checkWidth: Dimension | number = 2  // 勾形描边宽度
+    static readonly dashScale: Dimension | number = 0.500  // 50%（分数，由容器尺寸换算）  // 不确定态横杠相对方框的宽度比例
+    static readonly gap: Dimension | number = 8  // 复选框与文字之间的间距
+    class Size {
+      static readonly large: Dimension | number = 24  // 大号复选框尺寸
+      static readonly medium: Dimension | number = 20  // 中号复选框尺寸（默认）
+      static readonly small: Dimension | number = 16  // 小号复选框尺寸
+    }
+  }
   class Color {
     static readonly decoration: ResourceColor = '#1FB8860B'  // 花纹装饰色
     static readonly focus: ResourceColor = '#FF2B4C7C'  // 键盘焦点环色，默认跟随主色
@@ -115,6 +136,51 @@ export class LhTokens {
       static readonly hover: ResourceColor = '#FFD4B76F'
     }
   }
+  class Dialog {
+    static readonly borderRadius: Dimension | number = 2  // 对话框圆角
+    static readonly contentFontSize: Dimension | number = 14  // 内容字号
+    static readonly gap: Dimension | number = 12  // 标题与内容的间距
+    static readonly paddingHorizontal: Dimension | number = 20  // 对话框左右内边距
+    static readonly paddingVertical: Dimension | number = 20  // 对话框上下内边距
+    static readonly titleFontSize: Dimension | number = 16  // 标题字号
+    static readonly width: Dimension | number = 320  // 对话框内容卡宽度
+  }
+  class Icon {
+    class Size {
+      static readonly large: Dimension | number = 24  // 大号图标尺寸
+      static readonly medium: Dimension | number = 20  // 中号图标尺寸（默认）
+      static readonly small: Dimension | number = 16  // 小号图标尺寸
+    }
+  }
+  class Input {
+    static readonly borderRadius: Dimension | number = 2  // 输入框圆角
+    static readonly borderWidth: Dimension | number = 1
+    static readonly clearIconSize: Dimension | number = 16  // 清除按钮图标尺寸
+    static readonly focusRingWidth: Dimension | number = 2  // 聚焦时的描边宽度
+    class FontSize {
+      static readonly large: Dimension | number = 16
+      static readonly medium: Dimension | number = 14
+      static readonly small: Dimension | number = 13
+    }
+    class Height {
+      static readonly large: Dimension | number = 48  // 大号输入框高度
+      static readonly medium: Dimension | number = 40  // 中号输入框高度（默认）
+      static readonly small: Dimension | number = 32  // 小号输入框高度
+    }
+    class PaddingHorizontal {
+      static readonly large: Dimension | number = 20
+      static readonly medium: Dimension | number = 16
+      static readonly small: Dimension | number = 12
+    }
+  }
+  class Loading {
+    static readonly strokeWidth: Dimension | number = 2  // 加载环描边宽度
+    class Size {
+      static readonly large: Dimension | number = 24  // 大号加载指示器直径
+      static readonly medium: Dimension | number = 20  // 中号加载指示器直径（默认）
+      static readonly small: Dimension | number = 16  // 小号加载指示器直径
+    }
+  }
   class Motion {
     class Duration {
       static readonly base: number = 300  // 0.3s（毫秒）
@@ -123,6 +189,30 @@ export class LhTokens {
     }
     class Easing {
       static readonly easeInOut: number[] = [0.4, 0, 0.2, 1]  // 贝塞尔控制点，组件侧以 curves.cubicBezierCurve 消费  // 标准缓动 cubic-bezier(0.4, 0, 0.2, 1)
+    }
+  }
+  class Navbar {
+    static readonly borderWidth: Dimension | number = 1
+    static readonly height: Dimension | number = 44  // 导航栏高度
+    static readonly iconSize: Dimension | number = 20  // 左右图标尺寸
+    static readonly paddingHorizontal: Dimension | number = 12  // 导航栏左右内边距
+    static readonly titleFontSize: Dimension | number = 16  // 标题字号
+  }
+  class Picker {
+    static readonly borderRadius: Dimension | number = 2  // 面板顶部圆角
+    static readonly height: Dimension | number = 260  // 选择器面板高度
+    static readonly itemFontSize: Dimension | number = 14  // 候选项字号
+    static readonly itemHeight: Dimension | number = 40  // 候选项高度（滚轮单页高度）
+    static readonly toolbarHeight: Dimension | number = 44  // 顶部工具栏高度
+  }
+  class Radio {
+    static readonly dotScale: Dimension | number = 0.500  // 50%（分数，由容器尺寸换算）  // 内圆点相对外环直径的比例（分数）
+    static readonly gap: Dimension | number = 8  // 单选框与文字之间的间距
+    static readonly ringWidth: Dimension | number = 2  // 外环描边宽度
+    class Size {
+      static readonly large: Dimension | number = 24  // 大号单选框尺寸
+      static readonly medium: Dimension | number = 20  // 中号单选框尺寸（默认）
+      static readonly small: Dimension | number = 16  // 小号单选框尺寸
     }
   }
   class Radius {
@@ -144,6 +234,56 @@ export class LhTokens {
     static readonly xl: Dimension | number = 24
     static readonly xs: Dimension | number = 4
     static readonly xxl: Dimension | number = 32
+  }
+  class Switch {
+    static readonly gap: Dimension | number = 2  // 滑块与轨道之间的留白
+    class Height {
+      static readonly large: Dimension | number = 28  // 大号开关高度
+      static readonly medium: Dimension | number = 24  // 中号开关高度（默认）
+      static readonly small: Dimension | number = 20  // 小号开关高度
+    }
+    class Width {
+      static readonly large: Dimension | number = 52  // 大号开关宽度
+      static readonly medium: Dimension | number = 44  // 中号开关宽度（默认）
+      static readonly small: Dimension | number = 36  // 小号开关宽度
+    }
+  }
+  class Tag {
+    static readonly borderRadius: Dimension | number = 2  // 标签圆角（round 态由组件按高度一半计算）
+    static readonly borderWidth: Dimension | number = 1
+    class FontSize {
+      static readonly large: Dimension | number = 14
+      static readonly medium: Dimension | number = 13
+      static readonly small: Dimension | number = 12
+    }
+    class Height {
+      static readonly large: Dimension | number = 28  // 大号标签高度
+      static readonly medium: Dimension | number = 24  // 中号标签高度（默认）
+      static readonly small: Dimension | number = 20  // 小号标签高度
+    }
+    class PaddingHorizontal {
+      static readonly large: Dimension | number = 16
+      static readonly medium: Dimension | number = 12
+      static readonly small: Dimension | number = 8
+    }
+  }
+  class Textarea {
+    static readonly borderRadius: Dimension | number = 2  // 多行输入框圆角
+    static readonly borderWidth: Dimension | number = 1
+    static readonly countFontSize: Dimension | number = 12  // 字数统计字号
+    static readonly focusRingWidth: Dimension | number = 2  // 聚焦时的描边宽度
+    static readonly fontSize: Dimension | number = 14  // 多行输入框字号
+    static readonly minHeight: Dimension | number = 72  // 无内容时的最小高度（约三行）
+    static readonly paddingHorizontal: Dimension | number = 12  // 多行输入框左右内边距
+    static readonly paddingVertical: Dimension | number = 12  // 多行输入框上下内边距
+    static readonly textInset: Dimension | number = 6  // TextEditor 文本容器内嵌补偿（SwiftUI 固定行为，叠加占位文字与字数统计定位用）
+  }
+  class Toast {
+    static readonly borderRadius: Dimension | number = 2  // 提示圆角
+    static readonly fontSize: Dimension | number = 14  // 提示文字字号
+    static readonly gap: Dimension | number = 8  // 类型色点与文字之间的间距
+    static readonly paddingHorizontal: Dimension | number = 16  // 提示左右内边距
+    static readonly paddingVertical: Dimension | number = 8  // 提示上下内边距
   }
   class Typography {
     static readonly fontFamily: string = "'Noto Serif SC', 'STSong', 'SimSun', 'Source Han Serif SC', 'PingFang SC', 'Microsoft YaHei', serif"  // 国风衬线字体栈，各端取首个可用族

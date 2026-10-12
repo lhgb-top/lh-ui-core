@@ -1,0 +1,83 @@
+{
+  "$schema": "./schema.json",
+  "component": "input",
+  "cases": [
+    {
+      "id": "input-emits-onvaluechange",
+      "name": "输入文本触发 onValueChange",
+      "given": { "props": { "placeholder": "请输入" } },
+      "when": { "action": "input", "payload": "青花瓷" },
+      "then": {
+        "events": [{ "name": "onValueChange", "assertion": "emitted", "times": 1, "payload": { "value": "青花瓷" } }]
+      }
+    },
+    {
+      "id": "clearable-emits-empty-value",
+      "name": "清除按钮触发 onValueChange 空串",
+      "given": { "props": { "value": "已有", "clearable": true } },
+      "when": { "action": "custom", "payload": { "call": "clear" } },
+      "then": {
+        "events": [{ "name": "onValueChange", "assertion": "emitted", "times": 1, "payload": { "value": "" } }]
+      }
+    },
+    {
+      "id": "disabled-blocks-input",
+      "name": "禁用态不触发 onValueChange",
+      "given": { "props": { "disabled": true } },
+      "when": { "action": "input", "payload": "青花瓷" },
+      "then": {
+        "events": [{ "name": "onValueChange", "assertion": "notEmitted" }],
+        "enabled": false
+      }
+    },
+    {
+      "id": "readonly-blocks-input",
+      "name": "只读态不触发 onValueChange",
+      "given": { "props": { "readonly": true } },
+      "when": { "action": "input", "payload": "青花瓷" },
+      "then": {
+        "events": [{ "name": "onValueChange", "assertion": "notEmitted" }]
+      }
+    },
+    {
+      "id": "placeholder-uses-placeholder-token",
+      "name": "占位文字消费占位色令牌",
+      "given": { "props": { "placeholder": "请输入" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [{ "path": "color.text.placeholder", "applied": true }]
+      }
+    },
+    {
+      "id": "focus-uses-focus-token",
+      "name": "聚焦消费焦点色令牌",
+      "given": { "props": {} },
+      "when": { "action": "focus" },
+      "then": {
+        "events": [{ "name": "onFocus", "assertion": "emitted", "times": 1 }],
+        "tokens": [{ "path": "color.focus", "applied": true }]
+      }
+    },
+    {
+      "id": "small-size-uses-small-tokens",
+      "name": "小号尺寸消费 small 尺寸令牌",
+      "given": { "props": { "size": "small" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "input.height.small", "applied": true },
+          { "path": "input.height.large", "applied": false }
+        ]
+      }
+    },
+    {
+      "id": "maxlength-truncates-input",
+      "name": "最大长度截断超长输入",
+      "given": { "props": { "maxlength": 3 } },
+      "when": { "action": "input", "payload": "青花瓷瓶" },
+      "then": {
+        "events": [{ "name": "onValueChange", "assertion": "emitted", "times": 1, "payload": { "value": "青花瓷" } }]
+      }
+    }
+  ]
+}

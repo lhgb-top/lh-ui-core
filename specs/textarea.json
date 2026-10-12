@@ -1,0 +1,97 @@
+{
+  "$schema": "./schema.json",
+  "name": "textarea",
+  "component": "LhTextarea",
+  "since": "0.1.0",
+  "description": "多行输入框：可伸缩高度的长文本录入，支持占位、字数统计与最大长度。",
+  "props": [
+    {
+      "name": "value",
+      "type": "string",
+      "default": "",
+      "description": "当前文本值（受控）"
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "default": "",
+      "description": "占位提示文字，取 color.text.placeholder 令牌"
+    },
+    {
+      "name": "rows",
+      "type": "number",
+      "default": 3,
+      "description": "初始可见行数；高度随行数与内容增长"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "description": "是否禁用；禁用时不响应输入、不触发 onValueChange 且呈现禁用样式"
+    },
+    {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "description": "是否只读；只读时可聚焦但不接受输入、不触发 onValueChange"
+    },
+    {
+      "name": "showCount",
+      "type": "boolean",
+      "default": false,
+      "description": "是否在右下角显示字数统计（当前长度 / 最大长度）"
+    },
+    {
+      "name": "maxlength",
+      "type": "number",
+      "description": "最大字符数；超出时截断新输入；showCount 时作为分母"
+    }
+  ],
+  "events": [
+    {
+      "name": "onValueChange",
+      "payload": [
+        { "name": "value", "type": "string", "description": "变更后的文本" }
+      ],
+      "description": "文本变化时触发；disabled 或 readonly 为 true 时不触发"
+    },
+    {
+      "name": "onFocus",
+      "payload": [],
+      "description": "获得焦点时触发"
+    },
+    {
+      "name": "onBlur",
+      "payload": [],
+      "description": "失去焦点时触发"
+    }
+  ],
+  "behaviors": [
+    "高度由 rows 决定初始可见行数，内容超出时自动增高（最小高度 textarea.minHeight）",
+    "聚焦时描边色取 color.focus、宽度 textarea.focusRingWidth；失焦回 color.border.base + textarea.borderWidth",
+    "showCount 为 true 时在右下角绘制字数统计，格式「当前/最大」，取 textarea.countFontSize 与 color.text.secondary；未声明 maxlength 时只显示当前长度",
+    "超过 maxlength 的输入被截断，不触发带超长文本的 onValueChange",
+    "disabled 为 true 时取 disabled.* 令牌，不响应输入",
+    "readonly 为 true 时可聚焦但不接受输入，不触发 onValueChange"
+  ],
+  "tokenRefs": [
+    "textarea.paddingVertical",
+    "textarea.paddingHorizontal",
+    "textarea.fontSize",
+    "textarea.borderRadius",
+    "textarea.borderWidth",
+    "textarea.focusRingWidth",
+    "textarea.countFontSize",
+    "textarea.minHeight",
+    "typography.lineHeight.primary",
+    "color.border.base",
+    "color.focus",
+    "color.text.primary",
+    "color.text.placeholder",
+    "color.text.secondary",
+    "color.background.default",
+    "color.disabled.bg",
+    "color.disabled.text",
+    "color.disabled.border"
+  ]
+}

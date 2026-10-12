@@ -1,0 +1,74 @@
+{
+  "$schema": "./schema.json",
+  "component": "picker",
+  "cases": [
+    {
+      "id": "confirm-emits-onconfirm-with-value",
+      "name": "确认触发 onConfirm 并携带选中索引",
+      "given": { "props": { "visible": true, "options": ["甲", "乙", "丙"], "value": 1 } },
+      "when": { "action": "click", "target": "confirm" },
+      "then": {
+        "events": [{ "name": "onConfirm", "assertion": "emitted", "times": 1, "payload": { "value": 1 } }]
+      }
+    },
+    {
+      "id": "confirm-also-emits-onclose",
+      "name": "确认后触发 onClose",
+      "given": { "props": { "visible": true, "options": ["甲", "乙"] } },
+      "when": { "action": "click", "target": "confirm" },
+      "then": {
+        "events": [{ "name": "onClose", "assertion": "emitted", "times": 1 }]
+      }
+    },
+    {
+      "id": "cancel-emits-oncancel",
+      "name": "取消触发 onCancel",
+      "given": { "props": { "visible": true, "options": ["甲", "乙"] } },
+      "when": { "action": "click", "target": "cancel" },
+      "then": {
+        "events": [{ "name": "onCancel", "assertion": "emitted", "times": 1 }]
+      }
+    },
+    {
+      "id": "scroll-emits-onvaluechange",
+      "name": "滚动停止触发 onValueChange",
+      "given": { "props": { "visible": true, "options": ["甲", "乙", "丙"], "value": 0 } },
+      "when": { "action": "custom", "payload": { "call": "scrollTo", "index": 2 } },
+      "then": {
+        "events": [{ "name": "onValueChange", "assertion": "emitted", "times": 1, "payload": { "value": 2 } }]
+      }
+    },
+    {
+      "id": "clamp-negative-value-to-zero",
+      "name": "负索引钳制为 0",
+      "given": { "props": { "visible": true, "options": ["甲", "乙"], "value": -1 } },
+      "when": { "action": "render" },
+      "then": {
+        "notes": "外观选中索引为 0"
+      }
+    },
+    {
+      "id": "clamp-overflow-value-to-last",
+      "name": "越界索引钳制为最后一项",
+      "given": { "props": { "visible": true, "options": ["甲", "乙", "丙"], "value": 99 } },
+      "when": { "action": "render" },
+      "then": {
+        "notes": "外观选中索引为 2"
+      }
+    },
+    {
+      "id": "title-renders-text",
+      "name": "标题被渲染",
+      "given": { "props": { "visible": true, "options": ["甲"], "title": "选择" } },
+      "when": { "action": "render" },
+      "then": { "text": "选择", "visible": true }
+    },
+    {
+      "id": "hidden-not-rendered",
+      "name": "不可见时不渲染",
+      "given": { "props": { "visible": false, "options": ["甲"] } },
+      "when": { "action": "render" },
+      "then": { "visible": false, "notes": "不发射任何绘制指令" }
+    }
+  ]
+}

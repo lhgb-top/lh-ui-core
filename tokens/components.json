@@ -1,33 +1,543 @@
 {
-  "$schema": "./schema.json",
-  "$namespace": "",
-  "$type": "dimension",
-  "$description": "组件级令牌。命名空间为组件名（button.* 等）。移动端尺寸与 web 血脉不完全相同，nativeOnly 标记的为原生血脉新增项",
-  "button": {
-    "height": {
-      "small": { "value": "32px", "description": "小号按钮高度", "nativeOnly": true },
-      "medium": { "value": "40px", "description": "中号按钮高度（默认）", "nativeOnly": true },
-      "large": { "value": "48px", "description": "大号按钮高度", "nativeOnly": true }
-    },
-    "paddingHorizontal": {
-      "small": { "value": "16px", "nativeOnly": true },
-      "medium": { "value": "20px", "nativeOnly": true },
-      "large": { "value": "24px", "nativeOnly": true }
-    },
-    "borderRadius": { "ref": "radius.base", "description": "按钮圆角跟随全局圆角" },
-    "fontSize": {
-      "small": { "ref": "typography.fontSize.small" },
-      "medium": { "ref": "typography.fontSize.base" },
-      "large": { "ref": "typography.fontSize.medium" }
-    },
-    "fontWeight": { "ref": "typography.fontWeight.primary" },
-    "iconSize": {
-      "small": { "value": "16px", "nativeOnly": true },
-      "medium": { "value": "18px", "nativeOnly": true },
-      "large": { "value": "20px", "nativeOnly": true }
-    },
-    "borderWidth": { "value": "1px", "type": "dimension", "nativeOnly": true },
-    "focusRingWidth": { "value": "2px", "type": "dimension", "nativeOnly": true },
-    "focusRingOffset": { "value": "2px", "type": "dimension", "nativeOnly": true }
+ "$schema": "./schema.json",
+ "$namespace": "",
+ "$type": "dimension",
+ "$description": "组件级令牌。命名空间为组件名（button.* 等）。移动端尺寸与 web 血脉不完全相同，nativeOnly 标记的为原生血脉新增项",
+ "button": {
+  "height": {
+   "small": {
+    "value": "32px",
+    "description": "小号按钮高度",
+    "nativeOnly": true
+   },
+   "medium": {
+    "value": "40px",
+    "description": "中号按钮高度（默认）",
+    "nativeOnly": true
+   },
+   "large": {
+    "value": "48px",
+    "description": "大号按钮高度",
+    "nativeOnly": true
+   }
+  },
+  "paddingHorizontal": {
+   "small": {
+    "value": "16px",
+    "nativeOnly": true
+   },
+   "medium": {
+    "value": "20px",
+    "nativeOnly": true
+   },
+   "large": {
+    "value": "24px",
+    "nativeOnly": true
+   }
+  },
+  "borderRadius": {
+   "ref": "radius.base",
+   "description": "按钮圆角跟随全局圆角"
+  },
+  "fontSize": {
+   "small": {
+    "ref": "typography.fontSize.small"
+   },
+   "medium": {
+    "ref": "typography.fontSize.base"
+   },
+   "large": {
+    "ref": "typography.fontSize.medium"
+   }
+  },
+  "fontWeight": {
+   "ref": "typography.fontWeight.primary"
+  },
+  "iconSize": {
+   "small": {
+    "value": "16px",
+    "nativeOnly": true
+   },
+   "medium": {
+    "value": "18px",
+    "nativeOnly": true
+   },
+   "large": {
+    "value": "20px",
+    "nativeOnly": true
+   }
+  },
+  "borderWidth": {
+   "value": "1px",
+   "type": "dimension",
+   "nativeOnly": true
+  },
+  "focusRingWidth": {
+   "value": "2px",
+   "type": "dimension",
+   "nativeOnly": true
+  },
+  "focusRingOffset": {
+   "value": "2px",
+   "type": "dimension",
+   "nativeOnly": true
   }
+ },
+ "icon": {
+  "size": {
+   "small": {
+    "value": "16px",
+    "description": "小号图标尺寸",
+    "nativeOnly": true
+   },
+   "medium": {
+    "value": "20px",
+    "description": "中号图标尺寸（默认）",
+    "nativeOnly": true
+   },
+   "large": {
+    "value": "24px",
+    "description": "大号图标尺寸",
+    "nativeOnly": true
+   }
+  }
+ },
+ "tag": {
+  "height": {
+   "small": {
+    "value": "20px",
+    "description": "小号标签高度",
+    "nativeOnly": true
+   },
+   "medium": {
+    "value": "24px",
+    "description": "中号标签高度（默认）",
+    "nativeOnly": true
+   },
+   "large": {
+    "value": "28px",
+    "description": "大号标签高度",
+    "nativeOnly": true
+   }
+  },
+  "paddingHorizontal": {
+   "small": {
+    "value": "8px",
+    "nativeOnly": true
+   },
+   "medium": {
+    "value": "12px",
+    "nativeOnly": true
+   },
+   "large": {
+    "value": "16px",
+    "nativeOnly": true
+   }
+  },
+  "fontSize": {
+   "small": {
+    "ref": "typography.fontSize.extraSmall"
+   },
+   "medium": {
+    "ref": "typography.fontSize.small"
+   },
+   "large": {
+    "ref": "typography.fontSize.base"
+   }
+  },
+  "borderWidth": {
+   "value": "1px",
+   "type": "dimension",
+   "nativeOnly": true
+  },
+  "borderRadius": {
+   "ref": "radius.small",
+   "description": "标签圆角（round 态由组件按高度一半计算）"
+  }
+ },
+ "cell": {
+  "paddingHorizontal": {
+   "ref": "spacing.base",
+   "description": "单元格左右内边距"
+  },
+  "paddingVertical": {
+   "ref": "spacing.sm",
+   "description": "单元格上下内边距"
+  },
+  "gap": {
+   "ref": "spacing.sm",
+   "description": "标题与说明文字之间的垂直间距"
+  },
+  "fontSizeTitle": {
+   "ref": "typography.fontSize.base",
+   "description": "标题字号"
+  },
+  "fontSizeLabel": {
+   "ref": "typography.fontSize.small",
+   "description": "说明文字字号"
+  },
+  "fontSizeValue": {
+   "ref": "typography.fontSize.base",
+   "description": "右侧值字号"
+  },
+  "borderWidth": {
+   "value": "1px",
+   "type": "dimension",
+   "nativeOnly": true,
+   "description": "底部分隔线宽度"
+  }
+ },
+ "checkbox": {
+  "size": {
+   "small": {
+    "value": "16px",
+    "description": "小号复选框尺寸",
+    "nativeOnly": true
+   },
+   "medium": {
+    "value": "20px",
+    "description": "中号复选框尺寸（默认）",
+    "nativeOnly": true
+   },
+   "large": {
+    "value": "24px",
+    "description": "大号复选框尺寸",
+    "nativeOnly": true
+   }
+  },
+  "borderRadius": {
+   "ref": "radius.small",
+   "description": "复选框圆角"
+  },
+  "borderWidth": {
+   "value": "2px",
+   "type": "dimension",
+   "nativeOnly": true
+  },
+  "checkWidth": {
+   "value": "2px",
+   "type": "dimension",
+   "description": "勾形描边宽度",
+   "nativeOnly": true
+  },
+  "dashScale": {
+   "value": "50%",
+   "description": "不确定态横杠相对方框的宽度比例",
+   "nativeOnly": true
+  },
+  "gap": {
+   "ref": "spacing.sm",
+   "description": "复选框与文字之间的间距"
+  }
+ },
+ "radio": {
+  "size": {
+   "small": {
+    "value": "16px",
+    "description": "小号单选框尺寸",
+    "nativeOnly": true
+   },
+   "medium": {
+    "value": "20px",
+    "description": "中号单选框尺寸（默认）",
+    "nativeOnly": true
+   },
+   "large": {
+    "value": "24px",
+    "description": "大号单选框尺寸",
+    "nativeOnly": true
+   }
+  },
+  "ringWidth": {
+   "value": "2px",
+   "type": "dimension",
+   "description": "外环描边宽度",
+   "nativeOnly": true
+  },
+  "dotScale": {
+   "value": "50%",
+   "description": "内圆点相对外环直径的比例（分数）",
+   "nativeOnly": true
+  },
+  "gap": {
+   "ref": "spacing.sm",
+   "description": "单选框与文字之间的间距"
+  }
+ },
+ "switch": {
+  "width": {
+   "small": {
+    "value": "36px",
+    "description": "小号开关宽度",
+    "nativeOnly": true
+   },
+   "medium": {
+    "value": "44px",
+    "description": "中号开关宽度（默认）",
+    "nativeOnly": true
+   },
+   "large": {
+    "value": "52px",
+    "description": "大号开关宽度",
+    "nativeOnly": true
+   }
+  },
+  "height": {
+   "small": {
+    "value": "20px",
+    "description": "小号开关高度",
+    "nativeOnly": true
+   },
+   "medium": {
+    "value": "24px",
+    "description": "中号开关高度（默认）",
+    "nativeOnly": true
+   },
+   "large": {
+    "value": "28px",
+    "description": "大号开关高度",
+    "nativeOnly": true
+   }
+  },
+  "gap": {
+   "value": "2px",
+   "type": "dimension",
+   "description": "滑块与轨道之间的留白",
+   "nativeOnly": true
+  }
+ },
+ "loading": {
+  "size": {
+   "small": {
+    "value": "16px",
+    "description": "小号加载指示器直径",
+    "nativeOnly": true
+   },
+   "medium": {
+    "value": "20px",
+    "description": "中号加载指示器直径（默认）",
+    "nativeOnly": true
+   },
+   "large": {
+    "value": "24px",
+    "description": "大号加载指示器直径",
+    "nativeOnly": true
+   }
+  },
+  "strokeWidth": {
+   "value": "2px",
+   "type": "dimension",
+   "description": "加载环描边宽度",
+   "nativeOnly": true
+  }
+ },
+ "toast": {
+  "fontSize": {
+   "ref": "typography.fontSize.base",
+   "description": "提示文字字号"
+  },
+  "paddingHorizontal": {
+   "ref": "spacing.base",
+   "description": "提示左右内边距"
+  },
+  "paddingVertical": {
+   "ref": "spacing.sm",
+   "description": "提示上下内边距"
+  },
+  "borderRadius": {
+   "ref": "radius.base",
+   "description": "提示圆角"
+  },
+  "gap": {
+   "ref": "spacing.sm",
+   "description": "类型色点与文字之间的间距"
+  }
+ },
+ "input": {
+  "height": {
+   "small": {
+    "value": "32px",
+    "description": "小号输入框高度",
+    "nativeOnly": true
+   },
+   "medium": {
+    "value": "40px",
+    "description": "中号输入框高度（默认）",
+    "nativeOnly": true
+   },
+   "large": {
+    "value": "48px",
+    "description": "大号输入框高度",
+    "nativeOnly": true
+   }
+  },
+  "paddingHorizontal": {
+   "small": {
+    "value": "12px",
+    "nativeOnly": true
+   },
+   "medium": {
+    "value": "16px",
+    "nativeOnly": true
+   },
+   "large": {
+    "value": "20px",
+    "nativeOnly": true
+   }
+  },
+  "fontSize": {
+   "small": {
+    "ref": "typography.fontSize.small"
+   },
+   "medium": {
+    "ref": "typography.fontSize.base"
+   },
+   "large": {
+    "ref": "typography.fontSize.medium"
+   }
+  },
+  "borderRadius": {
+   "ref": "radius.base",
+   "description": "输入框圆角"
+  },
+  "borderWidth": {
+   "value": "1px",
+   "type": "dimension",
+   "nativeOnly": true
+  },
+  "focusRingWidth": {
+   "value": "2px",
+   "description": "聚焦时的描边宽度",
+   "nativeOnly": true
+  },
+  "clearIconSize": {
+   "value": "16px",
+   "description": "清除按钮图标尺寸",
+   "nativeOnly": true
+  }
+ },
+ "textarea": {
+  "paddingVertical": {
+   "ref": "spacing.md",
+   "description": "多行输入框上下内边距"
+  },
+  "paddingHorizontal": {
+   "ref": "spacing.md",
+   "description": "多行输入框左右内边距"
+  },
+  "fontSize": {
+   "ref": "typography.fontSize.base",
+   "description": "多行输入框字号"
+  },
+  "borderRadius": {
+   "ref": "radius.base",
+   "description": "多行输入框圆角"
+  },
+  "borderWidth": {
+   "value": "1px",
+   "type": "dimension",
+   "nativeOnly": true
+  },
+  "focusRingWidth": {
+   "value": "2px",
+   "description": "聚焦时的描边宽度",
+   "nativeOnly": true
+  },
+  "countFontSize": {
+   "ref": "typography.fontSize.extraSmall",
+   "description": "字数统计字号"
+  },
+  "minHeight": {
+   "value": "72px",
+   "description": "无内容时的最小高度（约三行）",
+   "nativeOnly": true
+  },
+  "textInset": {
+   "value": "6px",
+   "type": "dimension",
+   "nativeOnly": true,
+   "description": "TextEditor 文本容器内嵌补偿（SwiftUI 固定行为，叠加占位文字与字数统计定位用）"
+  }
+ },
+ "dialog": {
+  "width": {
+   "value": "320px",
+   "description": "对话框内容卡宽度",
+   "nativeOnly": true
+  },
+  "borderRadius": {
+   "ref": "radius.base",
+   "description": "对话框圆角"
+  },
+  "paddingHorizontal": {
+   "ref": "spacing.lg",
+   "description": "对话框左右内边距"
+  },
+  "paddingVertical": {
+   "ref": "spacing.lg",
+   "description": "对话框上下内边距"
+  },
+  "titleFontSize": {
+   "ref": "typography.fontSize.medium",
+   "description": "标题字号"
+  },
+  "contentFontSize": {
+   "ref": "typography.fontSize.base",
+   "description": "内容字号"
+  },
+  "gap": {
+   "ref": "spacing.md",
+   "description": "标题与内容的间距"
+  }
+ },
+ "picker": {
+  "height": {
+   "value": "260px",
+   "description": "选择器面板高度",
+   "nativeOnly": true
+  },
+  "itemHeight": {
+   "value": "40px",
+   "description": "候选项高度（滚轮单页高度）",
+   "nativeOnly": true
+  },
+  "toolbarHeight": {
+   "value": "44px",
+   "description": "顶部工具栏高度",
+   "nativeOnly": true
+  },
+  "itemFontSize": {
+   "ref": "typography.fontSize.base",
+   "description": "候选项字号"
+  },
+  "borderRadius": {
+   "ref": "radius.base",
+   "description": "面板顶部圆角"
+  }
+ },
+ "navbar": {
+  "height": {
+   "value": "44px",
+   "description": "导航栏高度",
+   "nativeOnly": true
+  },
+  "paddingHorizontal": {
+   "ref": "spacing.md",
+   "description": "导航栏左右内边距"
+  },
+  "titleFontSize": {
+   "ref": "typography.fontSize.medium",
+   "description": "标题字号"
+  },
+  "iconSize": {
+   "value": "20px",
+   "description": "左右图标尺寸",
+   "nativeOnly": true
+  },
+  "borderWidth": {
+   "value": "1px",
+   "type": "dimension",
+   "nativeOnly": true
+  }
+ }
 }

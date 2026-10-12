@@ -12,8 +12,9 @@ public enum LhDarkTokens {
     public static let decoration = SwiftUI.Color(red: 0.831, green: 0.659, blue: 0.263).opacity(0.080)  // 花纹装饰色
     public static let focus = SwiftUI.Color(red: 0.498, green: 0.651, blue: 0.851)  // 键盘焦点环色，默认跟随主色
     public static let hoverBg = SwiftUI.Color(red: 1.000, green: 1.000, blue: 1.000).opacity(0.080)  // 列表/面板项的中性悬停底色
-    public static let onPrimary = SwiftUI.Color(red: 1.000, green: 1.000, blue: 1.000)  // 主色底上的文字色（浅主色预设不应写死白字）
+    public static let ink = SwiftUI.Color(red: 0.290, green: 0.271, blue: 0.251)  // 中性黑（墨）
     public static let selected = SwiftUI.Color(red: 0.694, green: 0.757, blue: 0.847)  // 选中态文字色，跟随主色按压变体
+    public static let surface = SwiftUI.Color(red: 0.141, green: 0.125, blue: 0.094)  // 中性白（宣纸白）
     public enum Background {
       public static let `default` = SwiftUI.Color(red: 0.165, green: 0.145, blue: 0.125)  // 组件底色（宣纸色）
       public static let disabled = SwiftUI.Color(red: 0.141, green: 0.125, blue: 0.094)

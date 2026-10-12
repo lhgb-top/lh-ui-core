@@ -1,0 +1,113 @@
+{
+  "$schema": "./schema.json",
+  "name": "input",
+  "component": "LhInput",
+  "since": "0.1.0",
+  "description": "输入框：单行文本录入，支持占位、密文、禁用、只读、清除与字数上限。",
+  "props": [
+    {
+      "name": "value",
+      "type": "string",
+      "default": "",
+      "description": "当前文本值（受控）"
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "default": "",
+      "description": "占位提示文字，取 color.text.placeholder 令牌"
+    },
+    {
+      "name": "type",
+      "type": "enum",
+      "values": ["text", "password"],
+      "default": "text",
+      "description": "输入类型；password 时以圆点掩码显示"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["small", "medium", "large"],
+      "default": "medium",
+      "description": "输入框尺寸，映射到 input.height / paddingHorizontal / fontSize 令牌"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "description": "是否禁用；禁用时不响应输入、不触发 onValueChange 且呈现禁用样式"
+    },
+    {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "description": "是否只读；只读时可聚焦但不接受输入、不触发 onValueChange"
+    },
+    {
+      "name": "clearable",
+      "type": "boolean",
+      "default": false,
+      "description": "是否显示清除按钮；value 非空时点击触发 onValueChange(\"\")"
+    },
+    {
+      "name": "maxlength",
+      "type": "number",
+      "description": "最大字符数；超出时截断新输入"
+    }
+  ],
+  "events": [
+    {
+      "name": "onValueChange",
+      "payload": [
+        { "name": "value", "type": "string", "description": "变更后的文本" }
+      ],
+      "description": "文本变化时触发；disabled 或 readonly 为 true 时不触发"
+    },
+    {
+      "name": "onFocus",
+      "payload": [],
+      "description": "获得焦点时触发"
+    },
+    {
+      "name": "onBlur",
+      "payload": [],
+      "description": "失去焦点时触发"
+    }
+  ],
+  "slots": [
+    { "name": "prefix", "description": "输入框前缀内容（左侧非输入区）" },
+    { "name": "suffix", "description": "输入框后缀内容（右侧非输入区）" }
+  ],
+  "behaviors": [
+    "size 映射：small/medium/large 分别取 input.height.<size> / paddingHorizontal.<size> / fontSize.<size> 令牌",
+    "type 为 password 时以圆点掩码显示已有文本",
+    "disabled 为 true 时取 disabled.* 令牌，不响应输入与清除",
+    "readonly 为 true 时可聚焦但不接受输入，不触发 onValueChange",
+    "聚焦时描边色取 color.focus、宽度 input.focusRingWidth；失焦回 color.border.base + input.borderWidth",
+    "clearable 为 true 且 value 非空时在尾部显示清除按钮，点击触发 onValueChange(\"\")",
+    "maxlength 存在时，输入超出长度的字符被截断"
+  ],
+  "tokenRefs": [
+    "input.height.small",
+    "input.height.medium",
+    "input.height.large",
+    "input.paddingHorizontal.small",
+    "input.paddingHorizontal.medium",
+    "input.paddingHorizontal.large",
+    "input.fontSize.small",
+    "input.fontSize.medium",
+    "input.fontSize.large",
+    "input.borderRadius",
+    "input.borderWidth",
+    "input.focusRingWidth",
+    "input.clearIconSize",
+    "color.border.base",
+    "color.focus",
+    "color.text.primary",
+    "color.text.placeholder",
+    "color.background.default",
+    "color.disabled.bg",
+    "color.disabled.text",
+    "color.disabled.border"
+  ]
+}

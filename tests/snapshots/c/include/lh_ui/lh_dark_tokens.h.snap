@@ -34,11 +34,11 @@
 #define LH_COLOR_INFO_BG 0xFF1A1A1A
 #define LH_COLOR_INFO_DEFAULT 0xFF8F8F8F  /* 信息色（黛色 — 水墨淡彩） */
 #define LH_COLOR_INFO_HOVER 0xFFA0A0A0
+#define LH_COLOR_INK 0xFF4A4540  /* 中性黑（墨） */
 #define LH_COLOR_JADE_ACTIVE 0xFF5B8C5A
 #define LH_COLOR_JADE_BG 0xFF1A2A1A
 #define LH_COLOR_JADE_DEFAULT 0xFF7AAE7A  /* 玉色（翠竹清雅） */
 #define LH_COLOR_JADE_HOVER 0xFF9CC89C
-#define LH_COLOR_ON_PRIMARY 0xFFFFFFFF  /* 主色底上的文字色（浅主色预设不应写死白字） */
 #define LH_COLOR_PRIMARY_ACTIVE 0xFF2B4C7C  /* 主色按压/选中文字 */
 #define LH_COLOR_PRIMARY_BG 0x403D649E  /* 主色浅底（选中态底色） */
 #define LH_COLOR_PRIMARY_BORDER 0xFF2A3A4A  /* 主色描边 */
@@ -49,6 +49,7 @@
 #define LH_COLOR_SUCCESS_BG 0xFF1A2A1A
 #define LH_COLOR_SUCCESS_DEFAULT 0xFF6FA36E  /* 成功色（松花绿 — 竹影青翠） */
 #define LH_COLOR_SUCCESS_HOVER 0xFF82B581
+#define LH_COLOR_SURFACE 0xFF242018  /* 中性白（宣纸白） */
 #define LH_COLOR_TEXT_DISABLED 0xFF5A5250  /* 禁用文字 */
 #define LH_COLOR_TEXT_PLACEHOLDER 0xFF7A7270  /* 占位文字 */
 #define LH_COLOR_TEXT_PRIMARY 0xFFE8E0D8  /* 主要文字 */

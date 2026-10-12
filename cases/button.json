@@ -81,6 +81,16 @@
       "given": { "props": { "bgPattern": true } },
       "when": { "action": "render" },
       "then": { "tokens": [{ "path": "color.decoration", "applied": true }] }
+    },
+    {
+      "id": "icon-renders-icon-command",
+      "name": "icon prop 渲染图标指令",
+      "given": { "props": { "icon": "star" }, "state": { "text": "按钮" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [{ "path": "button.iconSize.medium", "applied": true }],
+        "notes": "绘制指令流在 TEXT 之前包含一条 ICON 指令，且位于文字左侧"
+      }
     }
   ]
 }

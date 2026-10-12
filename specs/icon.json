@@ -1,0 +1,55 @@
+{
+  "$schema": "./schema.json",
+  "name": "icon",
+  "component": "LhIcon",
+  "since": "0.1.0",
+  "description": "图标：按名称渲染矢量符号，支持尺寸与语义色调，可点击。",
+  "props": [
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "description": "图标名（各端按本地图标体系解析并渲染）"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["small", "medium", "large"],
+      "default": "medium",
+      "description": "图标尺寸，映射到 icon.size.* 令牌"
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": ["default", "primary", "success", "warning", "danger", "info", "regular", "secondary"],
+      "default": "default",
+      "description": "语义色调；default 为主要文字色，其余取对应语义色"
+    }
+  ],
+  "events": [
+    {
+      "name": "onClick",
+      "payload": [],
+      "description": "点击图标时触发"
+    }
+  ],
+  "behaviors": [
+    "size 映射：small/medium/large 分别取 icon.size.<size> 尺寸令牌",
+    "tone 映射：default 取 color.text.primary；primary/success/warning/danger/info 取对应语义色；regular/secondary 取对应文字色",
+    "绘制指令为 draw_icon，锚点为图标盒子左上角，由后端按 name 解析本地图形资源",
+    "点击在几何命中区域内即触发 onClick"
+  ],
+  "tokenRefs": [
+    "icon.size.small",
+    "icon.size.medium",
+    "icon.size.large",
+    "color.text.primary",
+    "color.text.regular",
+    "color.text.secondary",
+    "color.primary.default",
+    "color.success.default",
+    "color.warning.default",
+    "color.danger.default",
+    "color.info.default"
+  ]
+}

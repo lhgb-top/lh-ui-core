@@ -1,0 +1,101 @@
+{
+  "$schema": "./schema.json",
+  "name": "dialog",
+  "component": "LhDialog",
+  "since": "0.1.0",
+  "description": "对话框：模态浮层，标题 + 内容 + 确认/取消按钮，支持语义类型与遮罩关闭。",
+  "props": [
+    {
+      "name": "visible",
+      "type": "boolean",
+      "default": false,
+      "description": "是否显示；为 false 时不渲染任何内容"
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "default": "",
+      "description": "标题"
+    },
+    {
+      "name": "content",
+      "type": "string",
+      "default": "",
+      "description": "正文内容"
+    },
+    {
+      "name": "type",
+      "type": "enum",
+      "values": ["default", "primary", "success", "warning", "danger", "info"],
+      "default": "default",
+      "description": "语义类型，决定确认按钮的类型（颜色）"
+    },
+    {
+      "name": "confirmText",
+      "type": "string",
+      "default": "确认",
+      "description": "确认按钮文字；为空时不显示确认按钮"
+    },
+    {
+      "name": "cancelText",
+      "type": "string",
+      "default": "取消",
+      "description": "取消按钮文字；为空时不显示取消按钮"
+    },
+    {
+      "name": "closable",
+      "type": "boolean",
+      "default": false,
+      "description": "点击遮罩区域是否触发 onClose"
+    }
+  ],
+  "events": [
+    {
+      "name": "onConfirm",
+      "payload": [],
+      "description": "点击确认按钮时触发"
+    },
+    {
+      "name": "onCancel",
+      "payload": [],
+      "description": "点击取消按钮时触发"
+    },
+    {
+      "name": "onClose",
+      "payload": [],
+      "description": "确认/取消后或（closable 时）点击遮罩触发，宿主据此置 visible 为 false"
+    }
+  ],
+  "slots": [
+    { "name": "default", "description": "正文内容（覆盖 content prop）" },
+    { "name": "title", "description": "标题内容（覆盖 title prop）" },
+    { "name": "footer", "description": "底部按钮区（覆盖默认确认/取消按钮）" }
+  ],
+  "behaviors": [
+    "visible 为 false 时不渲染（不发射任何绘制指令）",
+    "内容卡宽度 dialog.width、圆角 dialog.borderRadius、内边距 dialog.padding*，底色 color.background.default，投影 shadow.base",
+    "遮罩取 color.background.overlay；closable 为 true 时点击遮罩触发 onClose，否则吞掉遮罩点击",
+    "标题取 dialog.titleFontSize + color.text.primary，内容取 dialog.contentFontSize + color.text.regular，间距 dialog.gap",
+    "确认按钮按 type 映射语义色；取消按钮固定 default 类型；确认/取消分别触发 onConfirm/onCancel，随后触发 onClose",
+    "层级取 zIndex.modal（遮罩 zIndex.modalBackdrop），宿主须在其后绘制"
+  ],
+  "tokenRefs": [
+    "dialog.width",
+    "dialog.borderRadius",
+    "dialog.paddingHorizontal",
+    "dialog.paddingVertical",
+    "dialog.titleFontSize",
+    "dialog.contentFontSize",
+    "dialog.gap",
+    "zIndex.modal",
+    "zIndex.modalBackdrop",
+    "shadow.base",
+    "color.background.default",
+    "color.background.overlay",
+    "color.text.primary",
+    "color.text.regular",
+    "color.primary.default",
+    "color.onPrimary",
+    "color.border.base"
+  ]
+}

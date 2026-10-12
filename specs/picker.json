@@ -1,0 +1,100 @@
+{
+  "$schema": "./schema.json",
+  "name": "picker",
+  "component": "LhPicker",
+  "since": "0.1.0",
+  "description": "选择器：底部弹出的单列滚轮，工具栏确认/取消 + 中央高亮指示器。",
+  "props": [
+    {
+      "name": "visible",
+      "type": "boolean",
+      "default": false,
+      "description": "是否显示；为 false 时不渲染任何内容"
+    },
+    {
+      "name": "options",
+      "type": "array",
+      "items": { "type": "string", "description": "候选项显示文本" },
+      "required": true,
+      "description": "候选项文本数组（单列）"
+    },
+    {
+      "name": "value",
+      "type": "number",
+      "default": 0,
+      "description": "选中项索引（0 基）；越界时钳制到候选项范围内"
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "default": "",
+      "description": "工具栏中间的标题"
+    },
+    {
+      "name": "confirmText",
+      "type": "string",
+      "default": "确认",
+      "description": "确认按钮文字"
+    },
+    {
+      "name": "cancelText",
+      "type": "string",
+      "default": "取消",
+      "description": "取消按钮文字"
+    }
+  ],
+  "events": [
+    {
+      "name": "onValueChange",
+      "payload": [
+        { "name": "value", "type": "number", "description": "滚动停止后的选中索引" }
+      ],
+      "description": "滚轮停止且选中项变化时触发"
+    },
+    {
+      "name": "onConfirm",
+      "payload": [
+        { "name": "value", "type": "number", "description": "当前选中索引" }
+      ],
+      "description": "点击确认按钮时触发，携带当前选中索引"
+    },
+    {
+      "name": "onCancel",
+      "payload": [],
+      "description": "点击取消按钮时触发"
+    },
+    {
+      "name": "onClose",
+      "payload": [],
+      "description": "确认/取消后触发，宿主据此置 visible 为 false"
+    }
+  ],
+  "slots": [
+    { "name": "default", "description": "滚轮内容区（覆盖默认候选项渲染）" },
+    { "name": "toolbar", "description": "工具栏（覆盖默认确认/标题/取消）" }
+  ],
+  "behaviors": [
+    "visible 为 false 时不渲染（不发射任何绘制指令）",
+    "面板高度 picker.height，从底部弹出，顶部圆角 picker.borderRadius，底色 color.background.default",
+    "工具栏高度 picker.toolbarHeight：左取消、中标题、右确认；点击确认触发 onConfirm(当前索引) 后触发 onClose，取消触发 onCancel 后触发 onClose",
+    "候选项高度 picker.itemHeight、字号 picker.itemFontSize；中央指示器为两条水平线（color.border.lighter），间距 = picker.itemHeight",
+    "滚轮滚动停止后，最靠近中央指示器的项成为选中项，变化时触发 onValueChange(新索引)",
+    "value 越界时钳制：负数取 0，大于候选项数 - 1 取最后一项",
+    "遮罩取 color.background.overlay，层级取 zIndex.modal / zIndex.modalBackdrop"
+  ],
+  "tokenRefs": [
+    "picker.height",
+    "picker.itemHeight",
+    "picker.toolbarHeight",
+    "picker.itemFontSize",
+    "picker.borderRadius",
+    "zIndex.modal",
+    "zIndex.modalBackdrop",
+    "color.background.default",
+    "color.background.overlay",
+    "color.text.primary",
+    "color.text.secondary",
+    "color.primary.default",
+    "color.border.lighter"
+  ]
+}

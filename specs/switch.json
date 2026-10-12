@@ -1,0 +1,64 @@
+{
+  "$schema": "./schema.json",
+  "name": "switch",
+  "component": "LhSwitch",
+  "since": "0.1.0",
+  "description": "开关：胶囊轨道 + 圆形滑块的两态切换控件，支持加载态占位。",
+  "props": [
+    {
+      "name": "checked",
+      "type": "boolean",
+      "default": false,
+      "description": "是否开启"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "description": "是否禁用；禁用时不响应点击且呈现禁用样式"
+    },
+    {
+      "name": "loading",
+      "type": "boolean",
+      "default": false,
+      "description": "是否加载中；加载中滑块位置显示加载环且不响应点击"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["small", "medium", "large"],
+      "default": "medium",
+      "description": "开关尺寸，映射到 switch.width / switch.height 令牌"
+    }
+  ],
+  "events": [
+    {
+      "name": "onChange",
+      "payload": [
+        { "name": "checked", "type": "boolean", "description": "点击后的新开关态" }
+      ],
+      "description": "点击切换开关态时触发；disabled 或 loading 为 true 时不触发"
+    }
+  ],
+  "behaviors": [
+    "size 映射：small/medium/large 分别取 switch.width.<size> 与 switch.height.<size> 令牌",
+    "轨道为胶囊（圆角取高度一半）：开启取 color.primary.default，关闭取 color.border.base，禁用取 color.disabled.bg",
+    "滑块为圆形（直径 = 高度 - 2 × switch.gap），取 color.onPrimary；禁用时取 color.text.disabled",
+    "loading 为 true 时滑块位置改画加载环（主色），且不响应点击",
+    "点击命中轨道区域：翻转开关态并触发 onChange 携带新开关态"
+  ],
+  "tokenRefs": [
+    "switch.width.small",
+    "switch.width.medium",
+    "switch.width.large",
+    "switch.height.small",
+    "switch.height.medium",
+    "switch.height.large",
+    "switch.gap",
+    "color.primary.default",
+    "color.onPrimary",
+    "color.border.base",
+    "color.disabled.bg",
+    "color.text.disabled"
+  ]
+}

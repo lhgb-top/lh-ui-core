@@ -35,6 +35,27 @@ public enum LhTokens {
       public static let small = CGFloat(16)
     }
   }
+  public enum Cell {
+    public static let borderWidth = CGFloat(1)  // 底部分隔线宽度
+    public static let fontSizeLabel = CGFloat(13)  // 说明文字字号
+    public static let fontSizeTitle = CGFloat(14)  // 标题字号
+    public static let fontSizeValue = CGFloat(14)  // 右侧值字号
+    public static let gap = CGFloat(8)  // 标题与说明文字之间的垂直间距
+    public static let paddingHorizontal = CGFloat(16)  // 单元格左右内边距
+    public static let paddingVertical = CGFloat(8)  // 单元格上下内边距
+  }
+  public enum Checkbox {
+    public static let borderRadius = CGFloat(2)  // 复选框圆角
+    public static let borderWidth = CGFloat(2)
+    public static let checkWidth = CGFloat(2)  // 勾形描边宽度
+    public static let dashScale = 0.500  // 50%（分数，由容器尺寸换算）  // 不确定态横杠相对方框的宽度比例
+    public static let gap = CGFloat(8)  // 复选框与文字之间的间距
+    public enum Size {
+      public static let large = CGFloat(24)  // 大号复选框尺寸
+      public static let medium = CGFloat(20)  // 中号复选框尺寸（默认）
+      public static let small = CGFloat(16)  // 小号复选框尺寸
+    }
+  }
   public enum Color {
     public static let decoration = SwiftUI.Color(red: 0.722, green: 0.525, blue: 0.043).opacity(0.120)  // 花纹装饰色
     public static let focus = SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)  // 键盘焦点环色，默认跟随主色
@@ -118,6 +139,51 @@ public enum LhTokens {
       public static let hover = SwiftUI.Color(red: 0.831, green: 0.718, blue: 0.435)
     }
   }
+  public enum Dialog {
+    public static let borderRadius = CGFloat(2)  // 对话框圆角
+    public static let contentFontSize = CGFloat(14)  // 内容字号
+    public static let gap = CGFloat(12)  // 标题与内容的间距
+    public static let paddingHorizontal = CGFloat(20)  // 对话框左右内边距
+    public static let paddingVertical = CGFloat(20)  // 对话框上下内边距
+    public static let titleFontSize = CGFloat(16)  // 标题字号
+    public static let width = CGFloat(320)  // 对话框内容卡宽度
+  }
+  public enum Icon {
+    public enum Size {
+      public static let large = CGFloat(24)  // 大号图标尺寸
+      public static let medium = CGFloat(20)  // 中号图标尺寸（默认）
+      public static let small = CGFloat(16)  // 小号图标尺寸
+    }
+  }
+  public enum Input {
+    public static let borderRadius = CGFloat(2)  // 输入框圆角
+    public static let borderWidth = CGFloat(1)
+    public static let clearIconSize = CGFloat(16)  // 清除按钮图标尺寸
+    public static let focusRingWidth = CGFloat(2)  // 聚焦时的描边宽度
+    public enum FontSize {
+      public static let large = CGFloat(16)
+      public static let medium = CGFloat(14)
+      public static let small = CGFloat(13)
+    }
+    public enum Height {
+      public static let large = CGFloat(48)  // 大号输入框高度
+      public static let medium = CGFloat(40)  // 中号输入框高度（默认）
+      public static let small = CGFloat(32)  // 小号输入框高度
+    }
+    public enum PaddingHorizontal {
+      public static let large = CGFloat(20)
+      public static let medium = CGFloat(16)
+      public static let small = CGFloat(12)
+    }
+  }
+  public enum Loading {
+    public static let strokeWidth = CGFloat(2)  // 加载环描边宽度
+    public enum Size {
+      public static let large = CGFloat(24)  // 大号加载指示器直径
+      public static let medium = CGFloat(20)  // 中号加载指示器直径（默认）
+      public static let small = CGFloat(16)  // 小号加载指示器直径
+    }
+  }
   public enum Motion {
     public enum Duration {
       public static let base = 0.300  // 0.3s（秒）
@@ -128,6 +194,30 @@ public enum LhTokens {
       public static let easeInOut = (x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // 贝塞尔控制点，端自行构造 easing  // 标准缓动 cubic-bezier(0.4, 0, 0.2, 1)
     }
   }
+  public enum Navbar {
+    public static let borderWidth = CGFloat(1)
+    public static let height = CGFloat(44)  // 导航栏高度
+    public static let iconSize = CGFloat(20)  // 左右图标尺寸
+    public static let paddingHorizontal = CGFloat(12)  // 导航栏左右内边距
+    public static let titleFontSize = CGFloat(16)  // 标题字号
+  }
+  public enum Picker {
+    public static let borderRadius = CGFloat(2)  // 面板顶部圆角
+    public static let height = CGFloat(260)  // 选择器面板高度
+    public static let itemFontSize = CGFloat(14)  // 候选项字号
+    public static let itemHeight = CGFloat(40)  // 候选项高度（滚轮单页高度）
+    public static let toolbarHeight = CGFloat(44)  // 顶部工具栏高度
+  }
+  public enum Radio {
+    public static let dotScale = 0.500  // 50%（分数，由容器尺寸换算）  // 内圆点相对外环直径的比例（分数）
+    public static let gap = CGFloat(8)  // 单选框与文字之间的间距
+    public static let ringWidth = CGFloat(2)  // 外环描边宽度
+    public enum Size {
+      public static let large = CGFloat(24)  // 大号单选框尺寸
+      public static let medium = CGFloat(20)  // 中号单选框尺寸（默认）
+      public static let small = CGFloat(16)  // 小号单选框尺寸
+    }
+  }
   public enum Radius {
     public static let base = CGFloat(2)
     public static let circle = 0.500  // 50%（分数，由容器尺寸换算）  // 正圆，各端取 min(宽,高)/2
@@ -135,9 +225,9 @@ public enum LhTokens {
     public static let small = CGFloat(2)
   }
   public enum Shadow {
-    public static let base = LhShadow(color: SwiftUI.Color(red: 0.102, green: 0.102, blue: 0.102, opacity: 0.080, radius: 12, x: 0, y: 2)  // 扩展量 0px SwiftUI 不支持，已忽略
-    public static let light = LhShadow(color: SwiftUI.Color(red: 0.102, green: 0.102, blue: 0.102, opacity: 0.060, radius: 4, x: 0, y: 2)  // 扩展量 0px SwiftUI 不支持，已忽略
-    public static let lighter = LhShadow(color: SwiftUI.Color(red: 0.102, green: 0.102, blue: 0.102, opacity: 0.040, radius: 4, x: 0, y: 0)  // 扩展量 0px SwiftUI 不支持，已忽略
+    public static let base = LhShadow(color: SwiftUI.Color(red: 0.102, green: 0.102, blue: 0.102, opacity: 0.080), opacity: 0.080, radius: 12, x: 0, y: 2)  // 扩展量 0px SwiftUI 不支持，已忽略
+    public static let light = LhShadow(color: SwiftUI.Color(red: 0.102, green: 0.102, blue: 0.102, opacity: 0.060), opacity: 0.060, radius: 4, x: 0, y: 2)  // 扩展量 0px SwiftUI 不支持，已忽略
+    public static let lighter = LhShadow(color: SwiftUI.Color(red: 0.102, green: 0.102, blue: 0.102, opacity: 0.040), opacity: 0.040, radius: 4, x: 0, y: 0)  // 扩展量 0px SwiftUI 不支持，已忽略
   }
   public enum Spacing {
     public static let base = CGFloat(16)
@@ -147,6 +237,56 @@ public enum LhTokens {
     public static let xl = CGFloat(24)
     public static let xs = CGFloat(4)
     public static let xxl = CGFloat(32)
+  }
+  public enum Switch {
+    public static let gap = CGFloat(2)  // 滑块与轨道之间的留白
+    public enum Height {
+      public static let large = CGFloat(28)  // 大号开关高度
+      public static let medium = CGFloat(24)  // 中号开关高度（默认）
+      public static let small = CGFloat(20)  // 小号开关高度
+    }
+    public enum Width {
+      public static let large = CGFloat(52)  // 大号开关宽度
+      public static let medium = CGFloat(44)  // 中号开关宽度（默认）
+      public static let small = CGFloat(36)  // 小号开关宽度
+    }
+  }
+  public enum Tag {
+    public static let borderRadius = CGFloat(2)  // 标签圆角（round 态由组件按高度一半计算）
+    public static let borderWidth = CGFloat(1)
+    public enum FontSize {
+      public static let large = CGFloat(14)
+      public static let medium = CGFloat(13)
+      public static let small = CGFloat(12)
+    }
+    public enum Height {
+      public static let large = CGFloat(28)  // 大号标签高度
+      public static let medium = CGFloat(24)  // 中号标签高度（默认）
+      public static let small = CGFloat(20)  // 小号标签高度
+    }
+    public enum PaddingHorizontal {
+      public static let large = CGFloat(16)
+      public static let medium = CGFloat(12)
+      public static let small = CGFloat(8)
+    }
+  }
+  public enum Textarea {
+    public static let borderRadius = CGFloat(2)  // 多行输入框圆角
+    public static let borderWidth = CGFloat(1)
+    public static let countFontSize = CGFloat(12)  // 字数统计字号
+    public static let focusRingWidth = CGFloat(2)  // 聚焦时的描边宽度
+    public static let fontSize = CGFloat(14)  // 多行输入框字号
+    public static let minHeight = CGFloat(72)  // 无内容时的最小高度（约三行）
+    public static let paddingHorizontal = CGFloat(12)  // 多行输入框左右内边距
+    public static let paddingVertical = CGFloat(12)  // 多行输入框上下内边距
+    public static let textInset = CGFloat(6)  // TextEditor 文本容器内嵌补偿（SwiftUI 固定行为，叠加占位文字与字数统计定位用）
+  }
+  public enum Toast {
+    public static let borderRadius = CGFloat(2)  // 提示圆角
+    public static let fontSize = CGFloat(14)  // 提示文字字号
+    public static let gap = CGFloat(8)  // 类型色点与文字之间的间距
+    public static let paddingHorizontal = CGFloat(16)  // 提示左右内边距
+    public static let paddingVertical = CGFloat(8)  // 提示上下内边距
   }
   public enum Typography {
     public static let fontFamily = "'Noto Serif SC', 'STSong', 'SimSun', 'Source Han Serif SC', 'PingFang SC', 'Microsoft YaHei', serif"  // 国风衬线字体栈，各端取首个可用族

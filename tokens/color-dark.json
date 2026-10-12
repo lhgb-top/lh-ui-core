@@ -1,7 +1,7 @@
 {
   "$schema": "./schema.json",
   "$namespace": "color",
-  "$description": "国风暗色主题覆盖。种子取自 lh-ui-share/styles/theme/common/var-dark.scss（2026-10-10）。仅声明需要覆盖的键，未覆盖键沿用 color.json。原 web 暗色中的 color-mix 表达式已构建期预计算为字面色值（见 docs/设计语言基线.md）",
+  "$description": "国风暗色主题覆盖。种子取自 lh-ui-share/styles/theme/common/var-dark.scss（2026-10-10）。仅声明与明色不同的键，未覆盖键沿用 color.json。原 web 暗色中的 color-mix 表达式已构建期预计算为字面色值（见 docs/设计语言基线.md）",
   "$type": "color",
   "$dark": true,
   "primary": {
@@ -11,7 +11,6 @@
     "bg": { "value": "rgba(61, 100, 158, 0.25)", "description": "预计算自 color-mix(primary 25%, transparent)" },
     "border": { "value": "#2A3A4A" }
   },
-  "onPrimary": { "value": "#FFFFFF" },
   "selected": { "value": "#B1C1D8", "description": "预计算自 color-mix(primary 40%, #fff)，暗色面板对比度 5.2:1" },
   "hoverBg": { "value": "rgba(255, 255, 255, 0.08)", "description": "暗色下必须比面板背景亮" },
   "success": {
@@ -77,5 +76,7 @@
     "disabled": { "value": "#242018" },
     "overlay": { "value": "rgba(10, 8, 6, 0.7)" }
   },
-  "focus": { "value": "#7FA6D9", "description": "暗色焦点环提亮" }
+  "focus": { "value": "#7FA6D9", "description": "暗色焦点环提亮" },
+  "surface": { "value": "#242018", "description": "暗色表面（深墨）" },
+  "ink": { "value": "#4A4540", "description": "暗色墨底提亮：toast 深底需与页面底 #2A2520 拉开层次，同时保白字对比度约 9.4:1" }
 }

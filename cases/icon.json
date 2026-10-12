@@ -1,0 +1,52 @@
+{
+  "$schema": "./schema.json",
+  "component": "icon",
+  "cases": [
+    {
+      "id": "click-emits-onclick",
+      "name": "点击触发 onClick",
+      "given": { "props": { "name": "star" } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onClick", "assertion": "emitted", "times": 1 }]
+      }
+    },
+    {
+      "id": "default-tone-uses-text-primary",
+      "name": "默认色调取主要文字色令牌",
+      "given": { "props": { "name": "star", "tone": "default" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [{ "path": "color.text.primary", "applied": true }]
+      }
+    },
+    {
+      "id": "primary-tone-uses-primary-token",
+      "name": "主色调取主色令牌",
+      "given": { "props": { "name": "star", "tone": "primary" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [{ "path": "color.primary.default", "applied": true }]
+      }
+    },
+    {
+      "id": "small-size-uses-small-token",
+      "name": "小号尺寸消费 small 尺寸令牌",
+      "given": { "props": { "name": "star", "size": "small" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "icon.size.small", "applied": true },
+          { "path": "icon.size.large", "applied": false }
+        ]
+      }
+    },
+    {
+      "id": "render-emits-icon-command",
+      "name": "渲染发出一条 draw_icon 指令",
+      "given": { "props": { "name": "star" } },
+      "when": { "action": "render" },
+      "then": { "notes": "绘制指令流有且仅有一条 ICON 指令，且携带图标名" }
+    }
+  ]
+}

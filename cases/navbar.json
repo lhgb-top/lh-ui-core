@@ -1,0 +1,58 @@
+{
+  "$schema": "./schema.json",
+  "component": "navbar",
+  "cases": [
+    {
+      "id": "title-renders-text",
+      "name": "标题被渲染",
+      "given": { "props": { "title": "青花瓷" } },
+      "when": { "action": "render" },
+      "then": { "text": "青花瓷", "visible": true }
+    },
+    {
+      "id": "leftclick-emits-onleftclick",
+      "name": "点击左侧触发 onLeftClick",
+      "given": { "props": { "title": "标题", "leftText": "返回" } },
+      "when": { "action": "click", "target": "left" },
+      "then": {
+        "events": [{ "name": "onLeftClick", "assertion": "emitted", "times": 1 }]
+      }
+    },
+    {
+      "id": "rightclick-emits-onrightclick",
+      "name": "点击右侧触发 onRightClick",
+      "given": { "props": { "title": "标题", "rightText": "编辑" } },
+      "when": { "action": "click", "target": "right" },
+      "then": {
+        "events": [{ "name": "onRightClick", "assertion": "emitted", "times": 1 }]
+      }
+    },
+    {
+      "id": "no-left-content-no-onleftclick",
+      "name": "无左侧内容时不触发 onLeftClick",
+      "given": { "props": { "title": "标题" } },
+      "when": { "action": "click", "target": "left" },
+      "then": {
+        "events": [{ "name": "onLeftClick", "assertion": "notEmitted" }]
+      }
+    },
+    {
+      "id": "bordered-uses-border-token",
+      "name": "带分隔线消费描边令牌",
+      "given": { "props": { "title": "标题", "bordered": true } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [{ "path": "color.border.lighter", "applied": true }]
+      }
+    },
+    {
+      "id": "height-uses-navbar-height-token",
+      "name": "高度消费导航栏高度令牌",
+      "given": { "props": { "title": "标题" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [{ "path": "navbar.height", "applied": true }]
+      }
+    }
+  ]
+}

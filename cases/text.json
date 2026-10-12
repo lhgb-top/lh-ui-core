@@ -1,0 +1,65 @@
+{
+  "$schema": "./schema.json",
+  "component": "text",
+  "cases": [
+    {
+      "id": "default-level-uses-base-tokens",
+      "name": "默认级别消费 base 排版令牌",
+      "given": { "props": { "content": "青花瓷" } },
+      "when": { "action": "render" },
+      "then": {
+        "text": "青花瓷",
+        "visible": true,
+        "tokens": [
+          { "path": "typography.fontSize.base", "applied": true },
+          { "path": "typography.fontWeight.primary", "applied": true },
+          { "path": "typography.lineHeight.primary", "applied": true },
+          { "path": "color.text.primary", "applied": true }
+        ]
+      }
+    },
+    {
+      "id": "large-level-uses-large-token",
+      "name": "大级别消费 large 字号令牌",
+      "given": { "props": { "content": "标题", "level": "large" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "typography.fontSize.large", "applied": true },
+          { "path": "typography.fontSize.base", "applied": false }
+        ]
+      }
+    },
+    {
+      "id": "bold-weight-uses-bold-token",
+      "name": "粗体消费 bold 字重令牌",
+      "given": { "props": { "content": "加重", "weight": "bold" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "typography.fontWeight.bold", "applied": true },
+          { "path": "typography.fontWeight.primary", "applied": false }
+        ]
+      }
+    },
+    {
+      "id": "secondary-tone-uses-text-secondary",
+      "name": "次要色调取次要文字色令牌",
+      "given": { "props": { "content": "说明", "tone": "secondary" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "color.text.secondary", "applied": true },
+          { "path": "color.text.primary", "applied": false }
+        ]
+      }
+    },
+    {
+      "id": "render-emits-single-text-command",
+      "name": "渲染发出一条 TEXT 指令",
+      "given": { "props": { "content": "一行文字" } },
+      "when": { "action": "render" },
+      "then": { "notes": "绘制指令流有且仅有一条 TEXT 指令" }
+    }
+  ]
+}

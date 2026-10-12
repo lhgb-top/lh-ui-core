@@ -1,0 +1,71 @@
+{
+  "$schema": "./schema.json",
+  "name": "text",
+  "component": "LhText",
+  "since": "0.1.0",
+  "description": "文本：消费全局排版令牌的展示型原语，支持字号级别、字重、色调与对齐。",
+  "props": [
+    {
+      "name": "content",
+      "type": "string",
+      "default": "",
+      "description": "文本内容"
+    },
+    {
+      "name": "level",
+      "type": "enum",
+      "values": ["extraLarge", "large", "medium", "base", "small", "extraSmall"],
+      "default": "base",
+      "description": "字号级别，映射到 typography.fontSize.* 令牌"
+    },
+    {
+      "name": "weight",
+      "type": "enum",
+      "values": ["primary", "bold"],
+      "default": "primary",
+      "description": "字重，映射到 typography.fontWeight.* 令牌"
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": ["primary", "regular", "secondary", "placeholder", "disabled", "selected"],
+      "default": "primary",
+      "description": "文字色调，映射到 color.text.* 或 color.selected 令牌"
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": ["start", "center", "end"],
+      "default": "start",
+      "description": "水平对齐方式（在 layout 计算出的行盒内对齐）"
+    }
+  ],
+  "behaviors": [
+    "level 映射：extraLarge/large/medium/base/small/extraSmall 分别取 typography.fontSize.<level> 令牌",
+    "weight 映射：primary/bold 分别取 typography.fontWeight.<weight> 令牌",
+    "tone 映射：取 color.text.<tone> 令牌；selected 取 color.selected",
+    "行高取 typography.lineHeight.primary，layout 高度 = 字号 × 行高",
+    "绘制指令为 draw_text，align 决定文字在行盒宽度内的水平定位",
+    "字重当前只进外观结构体供后端选字面，draw_text 指令暂不携带字重"
+  ],
+  "slots": [
+    { "name": "default", "description": "文本内容" }
+  ],
+  "tokenRefs": [
+    "typography.fontSize.extraLarge",
+    "typography.fontSize.large",
+    "typography.fontSize.medium",
+    "typography.fontSize.base",
+    "typography.fontSize.small",
+    "typography.fontSize.extraSmall",
+    "typography.fontWeight.primary",
+    "typography.fontWeight.bold",
+    "typography.lineHeight.primary",
+    "color.text.primary",
+    "color.text.regular",
+    "color.text.secondary",
+    "color.text.placeholder",
+    "color.text.disabled",
+    "color.selected"
+  ]
+}

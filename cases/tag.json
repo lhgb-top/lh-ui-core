@@ -1,0 +1,67 @@
+{
+  "$schema": "./schema.json",
+  "component": "tag",
+  "cases": [
+    {
+      "id": "default-type-renders-text",
+      "name": "默认类型渲染文字内容",
+      "given": { "props": { "text": "标签" } },
+      "when": { "action": "render" },
+      "then": { "text": "标签", "visible": true }
+    },
+    {
+      "id": "primary-type-uses-primary-tokens",
+      "name": "主色类型消费主色令牌",
+      "given": { "props": { "text": "主色", "type": "primary" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "color.primary.default", "applied": true },
+          { "path": "color.onPrimary", "applied": true }
+        ]
+      }
+    },
+    {
+      "id": "plain-uses-bg-tokens",
+      "name": "浅底形态消费语义浅底令牌",
+      "given": { "props": { "text": "浅底", "type": "success", "plain": true } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "color.success.bg", "applied": true },
+          { "path": "color.success.default", "applied": true }
+        ]
+      }
+    },
+    {
+      "id": "small-size-uses-small-tokens",
+      "name": "小号尺寸消费 small 尺寸令牌",
+      "given": { "props": { "text": "小", "size": "small" } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "tag.height.small", "applied": true },
+          { "path": "tag.height.large", "applied": false }
+        ]
+      }
+    },
+    {
+      "id": "round-makes-radius-half-height",
+      "name": "胶囊态圆角为高度一半",
+      "given": { "props": { "text": "胶囊", "round": true } },
+      "when": { "action": "render" },
+      "then": {
+        "notes": "外观圆角 == 高度 / 2，而非 tag.borderRadius"
+      }
+    },
+    {
+      "id": "closable-tap-emits-onclose",
+      "name": "可关闭时点击关闭符触发 onClose",
+      "given": { "props": { "text": "可关", "closable": true } },
+      "when": { "action": "click", "target": "close" },
+      "then": {
+        "events": [{ "name": "onClose", "assertion": "emitted", "times": 1 }]
+      }
+    }
+  ]
+}

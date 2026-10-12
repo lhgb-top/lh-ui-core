@@ -1,0 +1,68 @@
+{
+  "$schema": "./schema.json",
+  "component": "switch",
+  "cases": [
+    {
+      "id": "tap-toggles-and-emits-onchange",
+      "name": "点击翻转开关态并触发 onChange",
+      "given": { "props": {} },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onChange", "assertion": "emitted", "times": 1, "payload": { "checked": true } }]
+      }
+    },
+    {
+      "id": "tap-checked-turns-off",
+      "name": "开启态点击变为关闭",
+      "given": { "props": { "checked": true } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onChange", "assertion": "emitted", "times": 1, "payload": { "checked": false } }]
+      }
+    },
+    {
+      "id": "disabled-blocks-change",
+      "name": "禁用态不触发 onChange",
+      "given": { "props": { "disabled": true } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onChange", "assertion": "notEmitted" }],
+        "enabled": false
+      }
+    },
+    {
+      "id": "loading-blocks-change",
+      "name": "加载态不触发 onChange",
+      "given": { "props": { "loading": true } },
+      "when": { "action": "click" },
+      "then": {
+        "events": [{ "name": "onChange", "assertion": "notEmitted" }],
+        "enabled": false
+      }
+    },
+    {
+      "id": "checked-uses-primary-token",
+      "name": "开启态轨道消费主色令牌",
+      "given": { "props": { "checked": true } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "color.primary.default", "applied": true },
+          { "path": "color.border.base", "applied": false }
+        ]
+      }
+    },
+    {
+      "id": "unchecked-uses-border-token",
+      "name": "关闭态轨道消费描边令牌",
+      "given": { "props": { "checked": false } },
+      "when": { "action": "render" },
+      "then": {
+        "tokens": [
+          { "path": "color.border.base", "applied": true },
+          { "path": "color.primary.default", "applied": false }
+        ]
+      }
+    }
+  ]
+}
