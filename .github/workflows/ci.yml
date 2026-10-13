@@ -1,0 +1,26 @@
+name: CI
+
+# 每次推 master 或提 PR 时跑全量门禁：lint / typecheck / test / codegen+verify / docs。
+# core 是原生血脉的构建期中心，codegen 产物 dist/ 被 gitignore，CI 每次重新生成。
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      - run: pnpm docs:build

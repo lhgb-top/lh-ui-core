@@ -10,15 +10,15 @@ import { loadCases, loadSpecs, loadTokenFiles, readVersion } from './load'
 import { resolveTokens } from './resolve'
 import type { CodegenInput, CodegenTarget } from './types'
 import { androidTarget } from './targets/android'
-import { cTarget } from './targets/c'
 import { docsTarget } from './targets/docs'
 import { harmonyTarget } from './targets/harmony'
 import { iosTarget } from './targets/ios'
+import { windowsTarget } from './targets/windows'
 
 const ROOT = resolvePath(import.meta.dirname, '..', '..')
 const DIST = resolvePath(ROOT, 'dist')
 
-const targets: CodegenTarget[] = [androidTarget, iosTarget, harmonyTarget, cTarget, docsTarget]
+const targets: CodegenTarget[] = [androidTarget, iosTarget, harmonyTarget, windowsTarget, docsTarget]
 
 function main(): void {
   const version = readVersion()

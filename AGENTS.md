@@ -1,6 +1,6 @@
 # AGENTS.md — lh-ui-core 仓
 
-> 原生血脉的构建期中心。本仓是 `lh-ui` 家族**原生分支**（android / ios / harmony / c）的
+> 原生血脉的构建期中心。本仓是 `lh-ui` 家族**原生分支**（android / ios / harmony / windows）的
 > 设计令牌真源、组件契约与黄金用例所在地，只做**构建期**的事，**不向任何原生端交付运行时代码**。
 
 ## 本仓在家族中的位置
@@ -8,7 +8,7 @@
 家族有两条互相独立、不得关联的血脉：
 
 - **web 血脉**：`lh-ui-share`（TS core + SCSS 唯一样式源）→ plus / vue2 / react / uniapp。
-- **原生血脉**：**本仓**（JSON 令牌 + 规范 + codegen）→ android / ios / harmony / c。
+- **原生血脉**：**本仓**（JSON 令牌 + 规范 + codegen）→ android / ios / harmony / windows。
 
 本仓与 `lh-ui-share` **没有任何代码依赖关系**，两仓各自独立闭环、各自发版。品牌与视觉的统一靠
 家族级 `../docs/设计语言基线.md` 的人工对齐机制（见家族 `../AGENTS.md`「双血脉」章节），
@@ -22,7 +22,7 @@
 | `specs/` | **组件契约**（每组件一份 JSON）：props 名 / 类型 / 枚举 / 默认值 / 事件 / 行为说明，格式由 `specs/schema.json` 强约束 |
 | `cases/` | **黄金用例**（每组件一份 JSON）：可跨端翻译的行为级断言，各端测试仓库照此翻译成本地测试，格式由 `cases/schema.json` 强约束 |
 | `codegen/` | codegen 工具（TS/Node）：`src/index.ts` 入口、`src/load.ts` 装载校验、`src/resolve.ts` 引用解析与暗色合并、`src/render.ts` 模板渲染、`src/format.ts` / `src/tree.ts` / `src/types.ts` 辅助、`src/targets/<platform>.ts` 各端产物生成、`templates/` 各端 handlebars 模板 |
-| `dist/` | codegen 产物（构建生成、已在 `.gitignore` 中，**禁止手改**）。`android/` / `ios/` / `harmony/` / `c/` 四平台令牌包 + `docs/tokens.md` 与明暗色 JSON |
+| `dist/` | codegen 产物（构建生成、已在 `.gitignore` 中，**禁止手改**）。`android/` / `ios/` / `harmony/` / `windows/` 四平台令牌包 + `docs/tokens.md` 与明暗色 JSON |
 | `scripts/` | 校验与联动脚本：`verify-tokens.mts` / `verify-specs.mts` / `resolve-local-tokens.mjs`（本地联动守卫） |
 | `docs/` | 人类向文档站（Astro Starlight，开发者电子版说明书）：内容在 `docs/src/content/docs/`，六个前缀 `guide/`（介绍 / 结构 / 快速开始 / 红线 / 新增组件 / 本地联动 / 命令 / 技术选型）、`tokens/`、`specs/`、`cases/`、`codegen/`（逐模块逐函数）、`artifacts/` + `deployment.md`；配置在 `docs/astro.config.mjs`；令牌 / 契约 / 用例三个参考页是 `docs/src/pages/` 下的 `.astro`，在构建期直接调 codegen 的 `loadTokenFiles` / `resolveTokens` / `loadSpecs` / `loadCases` 读 JSON 真源渲染。**不是**令牌或规范真源 |
 | `tests/` | codegen 快照测试（`codegen-snapshot.spec.ts`，快照在 `tests/snapshots/<platform>/...`）与令牌元测试（`tokens.spec.ts`） |
@@ -30,8 +30,8 @@
 ## 红线
 
 1. **只生骨架，不生实现**：codegen 只产出令牌绑定、props 枚举与类型、默认值常量。
-   **禁止生成任何 UI 实现**（不生成 Composable 体、SwiftUI View 体、ArkUI 组件体、C 组件函数体）。
-   UI 实现全部留在各原生仓手写。越界即为违规。
+   **禁止生成任何 UI 实现**（不生成 Composable 体、SwiftUI View 体、ArkUI 组件体、
+   WinUI UserControl 体）。UI 实现全部留在各原生仓手写。越界即为违规。
 2. **令牌唯一源是 `tokens/*.json`**：任何平台、任何组件不得绕过本仓另定令牌值。各原生仓只能
    消费 `dist/` 产物或对应平台的已发包，禁止手写色值 / 间距 / 字号。
 3. **运行时零 JS**：本仓的 TS 代码只存在于构建期工具链，**产物中不得出现任何 JavaScript**。
@@ -59,8 +59,9 @@
   类型随目标取 `number`，而非 components.json 的文件级 `dimension`）。
 - 分组（含文件根）可声明 `$type` 覆盖整组默认类型（如 typography.json 的 `fontSize` 组标 `$type: dimension`）。
 - **产物包名 / 标识符规范（总纲 D20）**：平台包名一律反域名 `top.lhgb.ui`——android target 产出
-  `package top.lhgb.ui.tokens`，dist 路径 `dist/android/top/lhgb/ui/tokens/`；自有常量/类/枚举
-  一律 LH 前缀（Kotlin/Swift/ArkTS `Lh*`，C 宏 `LH_*`，按各语言惯例定大小写）。
+  `package top.lhgb.ui.tokens`，dist 路径 `dist/android/top/lhgb/ui/tokens/`；windows target 产出
+  `namespace Top.Lhgb.Ui.Tokens`，dist 路径 `dist/windows/Tokens/`；自有常量/类/枚举
+  一律 LH 前缀（Kotlin/Swift/ArkTS/C# `Lh*`，按各语言惯例定大小写）。
   npm / ohpm 的 `@lh-ui/*` scope 不受此约束（npm 不使用反域名）。
 
 ## 令牌种子

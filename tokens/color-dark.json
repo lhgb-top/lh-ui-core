@@ -13,6 +13,11 @@
   },
   "selected": { "value": "#B1C1D8", "description": "预计算自 color-mix(primary 40%, #fff)，暗色面板对比度 5.2:1" },
   "hoverBg": { "value": "rgba(255, 255, 255, 0.08)", "description": "暗色下必须比面板背景亮" },
+  "disabled": {
+    "bg": { "value": "#332D27", "description": "暗色禁用底色，比面板底 #2A2520 略亮以可分辨" },
+    "text": { "value": "#5A5250", "description": "暗色禁用文字，与 text.disabled 同值" },
+    "border": { "value": "#3A3530", "description": "暗色禁用描边，比底色略亮" }
+  },
   "success": {
     "default": { "value": "#6FA36E" },
     "hover": { "value": "#82B581" },

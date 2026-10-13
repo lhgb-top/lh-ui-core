@@ -17,7 +17,7 @@ import {
 } from '../codegen/src/format'
 import { resolveTokens } from '../codegen/src/resolve'
 import { loadTokenFiles } from '../codegen/src/load'
-import { cMacroName } from '../codegen/src/targets/c'
+import { csTokenPath } from '../codegen/src/targets/windows'
 
 describe('format 解析', () => {
   it('解析十六进制色值', () => {
@@ -102,10 +102,10 @@ describe('resolve 引用解析', () => {
   })
 })
 
-describe('C 宏命名', () => {
-  it('点路径转大写蛇形', () => {
-    expect(cMacroName('color.primary.default')).toBe('LH_COLOR_PRIMARY_DEFAULT')
-    expect(cMacroName('button.fontSize.medium')).toBe('LH_BUTTON_FONT_SIZE_MEDIUM')
+describe('C# 令牌路径命名', () => {
+  it('点路径转 PascalCase 嵌套路径', () => {
+    expect(csTokenPath('color.primary.default')).toBe('LhTokens.Color.Primary.Default')
+    expect(csTokenPath('button.fontSize.medium')).toBe('LhTokens.Button.FontSize.Medium')
   })
 })
 

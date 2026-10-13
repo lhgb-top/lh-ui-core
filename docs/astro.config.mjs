@@ -1,7 +1,7 @@
 // =====================================================================================
 // lh-ui-core 开发者文档站（Astro Starlight）。
 //
-// 家族约定：部署前缀 /lhui/core/（与 android / ios / harmony / c 四站同体系），
+// 家族约定：部署前缀 /lhui/core/（与 android / ios / harmony / windows 四站同体系），
 // dev 端口 5185。base / sitemap / favicon 均由 Starlight 从 site + base 推导。
 //
 // 关键约定说明：
@@ -46,7 +46,7 @@ export default defineConfig({
       pagefind: true,
       customCss: ['./src/styles/custom.css'],
       // Starlight 0.33 起 social 改为链接数组，不再是按平台命名的对象
-      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/lhgb/lh-ui' }],
+      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/lhgb-top/lh-ui-core' }],
       sidebar: [
         {
           label: '指南',
@@ -107,7 +107,7 @@ export default defineConfig({
             { label: 'Android 产物', slug: 'artifacts/android' },
             { label: 'iOS 产物', slug: 'artifacts/ios' },
             { label: '鸿蒙产物', slug: 'artifacts/harmony' },
-            { label: 'C 产物', slug: 'artifacts/c' },
+            { label: 'Windows 产物', slug: 'artifacts/windows' },
             { label: 'docs 产物', slug: 'artifacts/docs-output' },
           ],
         },

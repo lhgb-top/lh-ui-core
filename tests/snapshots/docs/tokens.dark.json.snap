@@ -12,6 +12,9 @@
   "color.danger.default": "#C45050",
   "color.danger.hover": "#D46060",
   "color.decoration": "rgba(212, 168, 67, 0.08)",
+  "color.disabled.bg": "#332D27",
+  "color.disabled.border": "#3A3530",
+  "color.disabled.text": "#5A5250",
   "color.focus": "#7FA6D9",
   "color.gold.active": "#B8860B",
   "color.gold.bg": "#2A241A",
@@ -51,5 +54,15 @@
   "color.warning.active": "#C4A35A",
   "color.warning.bg": "#2A251A",
   "color.warning.default": "#D4B76F",
-  "color.warning.hover": "#E0C680"
+  "color.warning.hover": "#E0C680",
+  "docs.card.background": "#242018",
+  "docs.card.borderColor": "#2A2520",
+  "docs.code.background": "#2A2520",
+  "docs.code.textColor": "#C8C0B8",
+  "docs.heading.color": "#E8E0D8",
+  "docs.prose.secondaryColor": "#A09890",
+  "docs.prose.textColor": "#C8C0B8",
+  "docs.table.borderColor": "#2A2520",
+  "docs.table.headerBg": "#1E1A16",
+  "docs.table.headerTextColor": "#E8E0D8"
 }

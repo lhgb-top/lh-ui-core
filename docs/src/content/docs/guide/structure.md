@@ -56,7 +56,7 @@ codegen/
 │   ├── format.ts     中性值解析 / 各端格式化
 │   ├── tree.ts       扁平 path → 嵌套树
 │   ├── render.ts     Handlebars 封装
-│   └── targets/      android / ios / harmony / c / docs 五个 target
+│   └── targets/      android / ios / harmony / windows / docs 五个 target
 └── templates/        各端 handlebars 模板（7 个 .hbs）
 ```
 

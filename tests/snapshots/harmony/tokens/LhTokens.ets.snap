@@ -145,6 +145,44 @@ export class LhTokens {
     static readonly titleFontSize: Dimension | number = 16  // 标题字号
     static readonly width: Dimension | number = 320  // 对话框内容卡宽度
   }
+  class Docs {
+    class Card {
+      static readonly background: ResourceColor = '#FFFAF6F0'  // 卡片底色
+      static readonly borderColor: ResourceColor = '#FFEEE9E2'  // 卡片描边色
+      static readonly borderRadius: Dimension | number = 8
+      static readonly borderWidth: Dimension | number = 1
+      static readonly padding: Dimension | number = 16
+    }
+    class Code {
+      static readonly background: ResourceColor = '#FFFAF6F0'  // 代码块底色
+      static readonly borderRadius: Dimension | number = 4  // 代码块圆角
+      static readonly fontFamily: string = "'Source Code Pro', 'JetBrains Mono', 'Consolas', 'Courier New', monospace"  // 代码块等宽字体栈，各端取首个可用族
+      static readonly fontSize: Dimension | number = 13  // 代码块字号
+      static readonly paddingX: Dimension | number = 12
+      static readonly paddingY: Dimension | number = 12
+      static readonly textColor: ResourceColor = '#FF5A5A5A'  // 代码块文字色
+    }
+    class Heading {
+      static readonly color: ResourceColor = '#FF2C2C2C'  // 标题文字色
+      static readonly fontSizeH1: Dimension | number = 20  // 一级标题（页面标题）
+      static readonly fontSizeH2: Dimension | number = 18  // 二级标题（章节）
+      static readonly fontSizeH3: Dimension | number = 16  // 三级标题（小节）
+    }
+    class Prose {
+      static readonly fontSize: Dimension | number = 14  // 正文字号
+      static readonly secondaryColor: ResourceColor = '#FF8A8A8A'  // 次要说明文字色
+      static readonly textColor: ResourceColor = '#FF5A5A5A'  // 正文文字色
+    }
+    class Table {
+      static readonly borderColor: ResourceColor = '#FFEEE9E2'  // 表格分割线色
+      static readonly borderWidth: Dimension | number = 1  // 表格分割线宽
+      static readonly cellPaddingX: Dimension | number = 12
+      static readonly cellPaddingY: Dimension | number = 8
+      static readonly fontSize: Dimension | number = 13  // 表格文字字号
+      static readonly headerBg: ResourceColor = '#FFF5F0EB'  // 表头行底色
+      static readonly headerTextColor: ResourceColor = '#FF2C2C2C'  // 表头行文字色
+    }
+  }
   class Icon {
     class Size {
       static readonly large: Dimension | number = 24  // 大号图标尺寸

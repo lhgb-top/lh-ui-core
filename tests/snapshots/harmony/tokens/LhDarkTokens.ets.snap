@@ -30,6 +30,11 @@ export class LhDarkTokens {
       static readonly default: ResourceColor = '#FFC45050'  // 危险色（朱砂 — 印泥朱红）
       static readonly hover: ResourceColor = '#FFD46060'
     }
+    class Disabled {
+      static readonly bg: ResourceColor = '#FF332D27'  // 禁用底色
+      static readonly border: ResourceColor = '#FF3A3530'  // 禁用描边色
+      static readonly text: ResourceColor = '#FF5A5250'  // 禁用文字色
+    }
     class Gold {
       static readonly active: ResourceColor = '#FFB8860B'
       static readonly bg: ResourceColor = '#FF2A241A'
@@ -80,6 +85,28 @@ export class LhDarkTokens {
       static readonly bg: ResourceColor = '#FF2A251A'
       static readonly default: ResourceColor = '#FFD4B76F'  // 警告色（藤黄 — 秋叶金黄）
       static readonly hover: ResourceColor = '#FFE0C680'
+    }
+  }
+  class Docs {
+    class Card {
+      static readonly background: ResourceColor = '#FF242018'  // 卡片底色
+      static readonly borderColor: ResourceColor = '#FF2A2520'  // 卡片描边色
+    }
+    class Code {
+      static readonly background: ResourceColor = '#FF2A2520'  // 代码块底色
+      static readonly textColor: ResourceColor = '#FFC8C0B8'  // 代码块文字色
+    }
+    class Heading {
+      static readonly color: ResourceColor = '#FFE8E0D8'  // 标题文字色
+    }
+    class Prose {
+      static readonly secondaryColor: ResourceColor = '#FFA09890'  // 次要说明文字色
+      static readonly textColor: ResourceColor = '#FFC8C0B8'  // 正文文字色
+    }
+    class Table {
+      static readonly borderColor: ResourceColor = '#FF2A2520'  // 表格分割线色
+      static readonly headerBg: ResourceColor = '#FF1E1A16'  // 表头行底色
+      static readonly headerTextColor: ResourceColor = '#FFE8E0D8'  // 表头行文字色
     }
   }
 }

@@ -66,9 +66,9 @@
 | `color.danger.default` | color | #B23A3A → #b23a3a | #C45050 → #c45050 | 危险色（朱砂 — 印泥朱红） |
 | `color.danger.hover` | color | #C45050 → #c45050 | #D46060 → #d46060 |  |
 | `color.decoration` | color | rgba(184, 134, 11, 0.12) → rgba(184, 134, 11, 0.12) | rgba(212, 168, 67, 0.08) → rgba(212, 168, 67, 0.08) | 花纹装饰色 |
-| `color.disabled.bg` | color | #EDE8E0 → #ede8e0 | — | 禁用底色 |
-| `color.disabled.border` | color | #E5E0D8 → #e5e0d8 | — | 禁用描边色 |
-| `color.disabled.text` | color | #C8C8C8 → #c8c8c8 | — | 禁用文字色 |
+| `color.disabled.bg` | color | #EDE8E0 → #ede8e0 | #332D27 → #332d27 | 禁用底色 |
+| `color.disabled.border` | color | #E5E0D8 → #e5e0d8 | #3A3530 → #3a3530 | 禁用描边色 |
+| `color.disabled.text` | color | #C8C8C8 → #c8c8c8 | #5A5250 → #5a5250 | 禁用文字色 |
 | `color.focus` | color | #2B4C7C → #2b4c7c | #7FA6D9 → #7fa6d9 | 键盘焦点环色，默认跟随主色 |
 | `color.gold.active` | color | #9A7208 → #9a7208 | #B8860B → #b8860b |  |
 | `color.gold.bg` | color | #FBF6EA → #fbf6ea | #2A241A → #2a241a |  |
@@ -122,6 +122,37 @@
 | `dialog.paddingVertical` | dimension | 20px | — | 对话框上下内边距 |
 | `dialog.titleFontSize` | dimension | 16px | — | 标题字号 |
 | `dialog.width` | dimension | 320px | — | 原生新增；对话框内容卡宽度 |
+
+## docs
+
+| 令牌 | 类型 | 明色 | 暗色 | 说明 |
+| --- | --- | --- | --- | --- |
+| `docs.card.background` | color | #FAF6F0 → #faf6f0 | #242018 → #242018 | 卡片底色 |
+| `docs.card.borderColor` | color | #EEE9E2 → #eee9e2 | #2A2520 → #2a2520 | 卡片描边色 |
+| `docs.card.borderRadius` | dimension | 8px | — |  |
+| `docs.card.borderWidth` | dimension | 1px | — |  |
+| `docs.card.padding` | dimension | 16px | — |  |
+| `docs.code.background` | color | #FAF6F0 → #faf6f0 | #2A2520 → #2a2520 | 代码块底色 |
+| `docs.code.borderRadius` | dimension | 4px | — | 代码块圆角 |
+| `docs.code.fontFamily` | string | 'Source Code Pro', 'JetBrains Mono', 'Consolas', 'Courier New', monospace | — | 代码块等宽字体栈，各端取首个可用族 |
+| `docs.code.fontSize` | dimension | 13px | — | 代码块字号 |
+| `docs.code.paddingX` | dimension | 12px | — |  |
+| `docs.code.paddingY` | dimension | 12px | — |  |
+| `docs.code.textColor` | color | #5A5A5A → #5a5a5a | #C8C0B8 → #c8c0b8 | 代码块文字色 |
+| `docs.heading.color` | color | #2C2C2C → #2c2c2c | #E8E0D8 → #e8e0d8 | 标题文字色 |
+| `docs.heading.fontSizeH1` | dimension | 20px | — | 一级标题（页面标题） |
+| `docs.heading.fontSizeH2` | dimension | 18px | — | 二级标题（章节） |
+| `docs.heading.fontSizeH3` | dimension | 16px | — | 三级标题（小节） |
+| `docs.prose.fontSize` | dimension | 14px | — | 正文字号 |
+| `docs.prose.secondaryColor` | color | #8A8A8A → #8a8a8a | #A09890 → #a09890 | 次要说明文字色 |
+| `docs.prose.textColor` | color | #5A5A5A → #5a5a5a | #C8C0B8 → #c8c0b8 | 正文文字色 |
+| `docs.table.borderColor` | color | #EEE9E2 → #eee9e2 | #2A2520 → #2a2520 | 表格分割线色 |
+| `docs.table.borderWidth` | dimension | 1px | — | 表格分割线宽 |
+| `docs.table.cellPaddingX` | dimension | 12px | — |  |
+| `docs.table.cellPaddingY` | dimension | 8px | — |  |
+| `docs.table.fontSize` | dimension | 13px | — | 表格文字字号 |
+| `docs.table.headerBg` | color | #F5F0EB → #f5f0eb | #1E1A16 → #1e1a16 | 表头行底色 |
+| `docs.table.headerTextColor` | color | #2C2C2C → #2c2c2c | #E8E0D8 → #e8e0d8 | 表头行文字色 |
 
 ## icon
 

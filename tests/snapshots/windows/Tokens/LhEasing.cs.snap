@@ -1,0 +1,10 @@
+// =====================================================================================
+// 本文件由 @lh-ui/core 自动生成（构建期 codegen），请勿手改。
+// 源：@lh-ui/core tokens @ v0.0.1
+// 缓动令牌的端侧载体（WinUI 无 cubic-bezier 直接对应，以只读记录结构承载控制点）。
+// =====================================================================================
+
+namespace Top.Lhgb.Ui.Tokens;
+
+/// <summary>缓动令牌结构。组件侧自行构造 KeySpline / SplineEase / DropShadow 动画。</summary>
+public readonly record struct LhEasing(double X1, double Y1, double X2, double Y2);

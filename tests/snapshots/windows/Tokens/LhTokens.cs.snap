@@ -1,0 +1,356 @@
+// =====================================================================================
+// 本文件由 @lh-ui/core 自动生成（构建期 codegen），请勿手改。
+// 源：@lh-ui/core tokens @ v0.0.1
+// 修改请编辑 lh-ui-core 仓的 tokens/*.json 后重新执行 pnpm codegen。
+// =====================================================================================
+
+namespace Top.Lhgb.Ui.Tokens;
+
+public static class LhTokens {
+  public static class Button {
+    public static readonly double BorderRadius = 2.0;  // 按钮圆角跟随全局圆角
+    public static readonly double BorderWidth = 1.0;
+    public static readonly double FocusRingOffset = 2.0;
+    public static readonly double FocusRingWidth = 2.0;
+    public static readonly int FontWeight = 400;
+    public static class FontSize {
+      public static readonly double Large = 16.0;
+      public static readonly double Medium = 14.0;
+      public static readonly double Small = 13.0;
+    }
+    public static class Height {
+      public static readonly double Large = 48.0;  // 大号按钮高度
+      public static readonly double Medium = 40.0;  // 中号按钮高度（默认）
+      public static readonly double Small = 32.0;  // 小号按钮高度
+    }
+    public static class IconSize {
+      public static readonly double Large = 20.0;
+      public static readonly double Medium = 18.0;
+      public static readonly double Small = 16.0;
+    }
+    public static class PaddingHorizontal {
+      public static readonly double Large = 24.0;
+      public static readonly double Medium = 20.0;
+      public static readonly double Small = 16.0;
+    }
+  }
+  public static class Cell {
+    public static readonly double BorderWidth = 1.0;  // 底部分隔线宽度
+    public static readonly double FontSizeLabel = 13.0;  // 说明文字字号
+    public static readonly double FontSizeTitle = 14.0;  // 标题字号
+    public static readonly double FontSizeValue = 14.0;  // 右侧值字号
+    public static readonly double Gap = 8.0;  // 标题与说明文字之间的垂直间距
+    public static readonly double PaddingHorizontal = 16.0;  // 单元格左右内边距
+    public static readonly double PaddingVertical = 8.0;  // 单元格上下内边距
+  }
+  public static class Checkbox {
+    public static readonly double BorderRadius = 2.0;  // 复选框圆角
+    public static readonly double BorderWidth = 2.0;
+    public static readonly double CheckWidth = 2.0;  // 勾形描边宽度
+    public static readonly double DashScale = 0.50;  // 50%（分数，由容器尺寸换算）；不确定态横杠相对方框的宽度比例
+    public static readonly double Gap = 8.0;  // 复选框与文字之间的间距
+    public static class Size {
+      public static readonly double Large = 24.0;  // 大号复选框尺寸
+      public static readonly double Medium = 20.0;  // 中号复选框尺寸（默认）
+      public static readonly double Small = 16.0;  // 小号复选框尺寸
+    }
+  }
+  public static class Color {
+    public static readonly Windows.UI.Color Decoration = Windows.UI.Color.FromArgb(0x1F, 0xB8, 0x86, 0x0B);  // 花纹装饰色
+    public static readonly Windows.UI.Color Focus = Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C);  // 键盘焦点环色，默认跟随主色
+    public static readonly Windows.UI.Color HoverBg = Windows.UI.Color.FromArgb(0x0D, 0x00, 0x00, 0x00);  // 列表/面板项的中性悬停底色
+    public static readonly Windows.UI.Color Ink = Windows.UI.Color.FromArgb(0xFF, 0x1A, 0x1A, 0x1A);  // 中性黑（墨）
+    public static readonly Windows.UI.Color OnPrimary = Windows.UI.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);  // 主色底上的文字色（浅主色预设不应写死白字）
+    public static readonly Windows.UI.Color Selected = Windows.UI.Color.FromArgb(0xFF, 0x1F, 0x3A, 0x5F);  // 选中态文字色，跟随主色按压变体
+    public static readonly Windows.UI.Color Surface = Windows.UI.Color.FromArgb(0xFF, 0xFA, 0xF6, 0xF0);  // 中性白（宣纸白）
+    public static class Background {
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0xFA, 0xF6, 0xF0);  // 组件底色（宣纸色）
+      public static readonly Windows.UI.Color Disabled = Windows.UI.Color.FromArgb(0xFF, 0xED, 0xE8, 0xE0);
+      public static readonly Windows.UI.Color Overlay = Windows.UI.Color.FromArgb(0x66, 0x1A, 0x1A, 0x1A);  // 遮罩层底色
+      public static readonly Windows.UI.Color Page = Windows.UI.Color.FromArgb(0xFF, 0xF5, 0xF0, 0xEB);  // 页面底色
+    }
+    public static class Border {
+      public static readonly Windows.UI.Color Base = Windows.UI.Color.FromArgb(0xFF, 0xD8, 0xD3, 0xCC);  // 基础描边
+      public static readonly Windows.UI.Color ExtraLight = Windows.UI.Color.FromArgb(0xFF, 0xF5, 0xF0, 0xEB);
+      public static readonly Windows.UI.Color Light = Windows.UI.Color.FromArgb(0xFF, 0xE5, 0xE0, 0xD8);
+      public static readonly Windows.UI.Color Lighter = Windows.UI.Color.FromArgb(0xFF, 0xEE, 0xE9, 0xE2);
+    }
+    public static class Danger {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0x9A, 0x30, 0x30);
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0xFD, 0xF0, 0xF0);
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0xB2, 0x3A, 0x3A);  // 危险色（朱砂 — 印泥朱红）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0xC4, 0x50, 0x50);
+    }
+    public static class Disabled {
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0xED, 0xE8, 0xE0);  // 禁用底色
+      public static readonly Windows.UI.Color Border = Windows.UI.Color.FromArgb(0xFF, 0xE5, 0xE0, 0xD8);  // 禁用描边色
+      public static readonly Windows.UI.Color Text = Windows.UI.Color.FromArgb(0xFF, 0xC8, 0xC8, 0xC8);  // 禁用文字色
+    }
+    public static class Gold {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0x9A, 0x72, 0x08);
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0xFB, 0xF6, 0xEA);
+      public static readonly Windows.UI.Color Border = Windows.UI.Color.FromArgb(0xFF, 0xFD, 0xFA, 0xF3);
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0xB8, 0x86, 0x0B);  // 金色点缀（华贵古韵）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0xD4, 0xA8, 0x43);
+    }
+    public static class Info {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0x6A, 0x6A, 0x6A);
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0xF2, 0xF2, 0xF2);
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0x7A, 0x7A, 0x7A);  // 信息色（黛色 — 水墨淡彩）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0x8F, 0x8F, 0x8F);
+    }
+    public static class Jade {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0x4B, 0x7A, 0x4A);
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0xED, 0xF5, 0xEC);
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0x5B, 0x8C, 0x5A);  // 玉色（翠竹清雅）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0x7A, 0xAE, 0x7A);
+    }
+    public static class Primary {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0x1F, 0x3A, 0x5F);  // 主色按压/选中文字
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0xE8, 0xED, 0xF3);  // 主色浅底（选中态底色）
+      public static readonly Windows.UI.Color Border = Windows.UI.Color.FromArgb(0xFF, 0xD4, 0xDC, 0xE8);  // 主色描边
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C);  // 主色（靛蓝 — 青花瓷之蓝）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0x3D, 0x64, 0x9E);  // 主色悬停
+    }
+    public static class Success {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0x4B, 0x7A, 0x4A);
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0xED, 0xF5, 0xEC);
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0x5B, 0x8C, 0x5A);  // 成功色（松花绿 — 竹影青翠）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0x6F, 0xA3, 0x6E);
+    }
+    public static class Text {
+      public static readonly Windows.UI.Color Disabled = Windows.UI.Color.FromArgb(0xFF, 0xC8, 0xC8, 0xC8);  // 禁用文字
+      public static readonly Windows.UI.Color Placeholder = Windows.UI.Color.FromArgb(0xFF, 0xB0, 0xB0, 0xB0);  // 占位文字
+      public static readonly Windows.UI.Color Primary = Windows.UI.Color.FromArgb(0xFF, 0x2C, 0x2C, 0x2C);  // 主要文字
+      public static readonly Windows.UI.Color Regular = Windows.UI.Color.FromArgb(0xFF, 0x5A, 0x5A, 0x5A);  // 常规文字
+      public static readonly Windows.UI.Color Secondary = Windows.UI.Color.FromArgb(0xFF, 0x8A, 0x8A, 0x8A);  // 次要文字
+    }
+    public static class Vermilion {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0xA9, 0x2E, 0x26);
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0xFD, 0xF0, 0xEE);
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0xC4, 0x3A, 0x31);  // 朱砂点缀（印泥朱红）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0xE8, 0x5D, 0x4A);
+    }
+    public static class Warning {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0xB3, 0x92, 0x4A);
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0xFB, 0xF6, 0xEA);
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0xC4, 0xA3, 0x5A);  // 警告色（藤黄 — 秋叶金黄）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0xD4, 0xB7, 0x6F);
+    }
+  }
+  public static class Dialog {
+    public static readonly double BorderRadius = 2.0;  // 对话框圆角
+    public static readonly double ContentFontSize = 14.0;  // 内容字号
+    public static readonly double Gap = 12.0;  // 标题与内容的间距
+    public static readonly double PaddingHorizontal = 20.0;  // 对话框左右内边距
+    public static readonly double PaddingVertical = 20.0;  // 对话框上下内边距
+    public static readonly double TitleFontSize = 16.0;  // 标题字号
+    public static readonly double Width = 320.0;  // 对话框内容卡宽度
+  }
+  public static class Docs {
+    public static class Card {
+      public static readonly Windows.UI.Color Background = Windows.UI.Color.FromArgb(0xFF, 0xFA, 0xF6, 0xF0);  // 卡片底色
+      public static readonly Windows.UI.Color BorderColor = Windows.UI.Color.FromArgb(0xFF, 0xEE, 0xE9, 0xE2);  // 卡片描边色
+      public static readonly double BorderRadius = 8.0;
+      public static readonly double BorderWidth = 1.0;
+      public static readonly double Padding = 16.0;
+    }
+    public static class Code {
+      public static readonly Windows.UI.Color Background = Windows.UI.Color.FromArgb(0xFF, 0xFA, 0xF6, 0xF0);  // 代码块底色
+      public static readonly double BorderRadius = 4.0;  // 代码块圆角
+      public static readonly string FontFamily = "'Source Code Pro', 'JetBrains Mono', 'Consolas', 'Courier New', monospace";  // 代码块等宽字体栈，各端取首个可用族
+      public static readonly double FontSize = 13.0;  // 代码块字号
+      public static readonly double PaddingX = 12.0;
+      public static readonly double PaddingY = 12.0;
+      public static readonly Windows.UI.Color TextColor = Windows.UI.Color.FromArgb(0xFF, 0x5A, 0x5A, 0x5A);  // 代码块文字色
+    }
+    public static class Heading {
+      public static readonly Windows.UI.Color Color = Windows.UI.Color.FromArgb(0xFF, 0x2C, 0x2C, 0x2C);  // 标题文字色
+      public static readonly double FontSizeH1 = 20.0;  // 一级标题（页面标题）
+      public static readonly double FontSizeH2 = 18.0;  // 二级标题（章节）
+      public static readonly double FontSizeH3 = 16.0;  // 三级标题（小节）
+    }
+    public static class Prose {
+      public static readonly double FontSize = 14.0;  // 正文字号
+      public static readonly Windows.UI.Color SecondaryColor = Windows.UI.Color.FromArgb(0xFF, 0x8A, 0x8A, 0x8A);  // 次要说明文字色
+      public static readonly Windows.UI.Color TextColor = Windows.UI.Color.FromArgb(0xFF, 0x5A, 0x5A, 0x5A);  // 正文文字色
+    }
+    public static class Table {
+      public static readonly Windows.UI.Color BorderColor = Windows.UI.Color.FromArgb(0xFF, 0xEE, 0xE9, 0xE2);  // 表格分割线色
+      public static readonly double BorderWidth = 1.0;  // 表格分割线宽
+      public static readonly double CellPaddingX = 12.0;
+      public static readonly double CellPaddingY = 8.0;
+      public static readonly double FontSize = 13.0;  // 表格文字字号
+      public static readonly Windows.UI.Color HeaderBg = Windows.UI.Color.FromArgb(0xFF, 0xF5, 0xF0, 0xEB);  // 表头行底色
+      public static readonly Windows.UI.Color HeaderTextColor = Windows.UI.Color.FromArgb(0xFF, 0x2C, 0x2C, 0x2C);  // 表头行文字色
+    }
+  }
+  public static class Icon {
+    public static class Size {
+      public static readonly double Large = 24.0;  // 大号图标尺寸
+      public static readonly double Medium = 20.0;  // 中号图标尺寸（默认）
+      public static readonly double Small = 16.0;  // 小号图标尺寸
+    }
+  }
+  public static class Input {
+    public static readonly double BorderRadius = 2.0;  // 输入框圆角
+    public static readonly double BorderWidth = 1.0;
+    public static readonly double ClearIconSize = 16.0;  // 清除按钮图标尺寸
+    public static readonly double FocusRingWidth = 2.0;  // 聚焦时的描边宽度
+    public static class FontSize {
+      public static readonly double Large = 16.0;
+      public static readonly double Medium = 14.0;
+      public static readonly double Small = 13.0;
+    }
+    public static class Height {
+      public static readonly double Large = 48.0;  // 大号输入框高度
+      public static readonly double Medium = 40.0;  // 中号输入框高度（默认）
+      public static readonly double Small = 32.0;  // 小号输入框高度
+    }
+    public static class PaddingHorizontal {
+      public static readonly double Large = 20.0;
+      public static readonly double Medium = 16.0;
+      public static readonly double Small = 12.0;
+    }
+  }
+  public static class Loading {
+    public static readonly double StrokeWidth = 2.0;  // 加载环描边宽度
+    public static class Size {
+      public static readonly double Large = 24.0;  // 大号加载指示器直径
+      public static readonly double Medium = 20.0;  // 中号加载指示器直径（默认）
+      public static readonly double Small = 16.0;  // 小号加载指示器直径
+    }
+  }
+  public static class Motion {
+    public static class Duration {
+      public static readonly int Base = 300;  // 0.3s（毫秒）
+      public static readonly int Fast = 250;  // 0.25s（毫秒）
+      public static readonly int Slow = 400;  // 0.4s（毫秒）
+    }
+    public static class Easing {
+      public static readonly LhEasing EaseInOut = new LhEasing(0.4, 0, 0.2, 1);  // 贝塞尔控制点，组件侧以 KeySpline / SplineEase 消费；标准缓动 cubic-bezier(0.4, 0, 0.2, 1)
+    }
+  }
+  public static class Navbar {
+    public static readonly double BorderWidth = 1.0;
+    public static readonly double Height = 44.0;  // 导航栏高度
+    public static readonly double IconSize = 20.0;  // 左右图标尺寸
+    public static readonly double PaddingHorizontal = 12.0;  // 导航栏左右内边距
+    public static readonly double TitleFontSize = 16.0;  // 标题字号
+  }
+  public static class Picker {
+    public static readonly double BorderRadius = 2.0;  // 面板顶部圆角
+    public static readonly double Height = 260.0;  // 选择器面板高度
+    public static readonly double ItemFontSize = 14.0;  // 候选项字号
+    public static readonly double ItemHeight = 40.0;  // 候选项高度（滚轮单页高度）
+    public static readonly double ToolbarHeight = 44.0;  // 顶部工具栏高度
+  }
+  public static class Radio {
+    public static readonly double DotScale = 0.50;  // 50%（分数，由容器尺寸换算）；内圆点相对外环直径的比例（分数）
+    public static readonly double Gap = 8.0;  // 单选框与文字之间的间距
+    public static readonly double RingWidth = 2.0;  // 外环描边宽度
+    public static class Size {
+      public static readonly double Large = 24.0;  // 大号单选框尺寸
+      public static readonly double Medium = 20.0;  // 中号单选框尺寸（默认）
+      public static readonly double Small = 16.0;  // 小号单选框尺寸
+    }
+  }
+  public static class Radius {
+    public static readonly double Base = 2.0;
+    public static readonly double Circle = 0.50;  // 50%（分数，由容器尺寸换算）；正圆，各端取 min(宽,高)/2
+    public static readonly double Round = 20.0;  // 胶囊圆角
+    public static readonly double Small = 2.0;
+  }
+  public static class Shadow {
+    public static readonly LhShadow Base = new LhShadow(Windows.UI.Color.FromArgb(0x14, 0x1A, 0x1A, 0x1A), 0.0, 2.0, 12.0);  // 扩展量 0px WinUI DropShadow 不支持，已忽略
+    public static readonly LhShadow Light = new LhShadow(Windows.UI.Color.FromArgb(0x0F, 0x1A, 0x1A, 0x1A), 0.0, 2.0, 4.0);  // 扩展量 0px WinUI DropShadow 不支持，已忽略
+    public static readonly LhShadow Lighter = new LhShadow(Windows.UI.Color.FromArgb(0x0A, 0x1A, 0x1A, 0x1A), 0.0, 0.0, 4.0);  // 扩展量 0px WinUI DropShadow 不支持，已忽略
+  }
+  public static class Spacing {
+    public static readonly double Base = 16.0;
+    public static readonly double Lg = 20.0;
+    public static readonly double Md = 12.0;
+    public static readonly double Sm = 8.0;
+    public static readonly double Xl = 24.0;
+    public static readonly double Xs = 4.0;
+    public static readonly double Xxl = 32.0;
+  }
+  public static class Switch {
+    public static readonly double Gap = 2.0;  // 滑块与轨道之间的留白
+    public static class Height {
+      public static readonly double Large = 28.0;  // 大号开关高度
+      public static readonly double Medium = 24.0;  // 中号开关高度（默认）
+      public static readonly double Small = 20.0;  // 小号开关高度
+    }
+    public static class Width {
+      public static readonly double Large = 52.0;  // 大号开关宽度
+      public static readonly double Medium = 44.0;  // 中号开关宽度（默认）
+      public static readonly double Small = 36.0;  // 小号开关宽度
+    }
+  }
+  public static class Tag {
+    public static readonly double BorderRadius = 2.0;  // 标签圆角（round 态由组件按高度一半计算）
+    public static readonly double BorderWidth = 1.0;
+    public static class FontSize {
+      public static readonly double Large = 14.0;
+      public static readonly double Medium = 13.0;
+      public static readonly double Small = 12.0;
+    }
+    public static class Height {
+      public static readonly double Large = 28.0;  // 大号标签高度
+      public static readonly double Medium = 24.0;  // 中号标签高度（默认）
+      public static readonly double Small = 20.0;  // 小号标签高度
+    }
+    public static class PaddingHorizontal {
+      public static readonly double Large = 16.0;
+      public static readonly double Medium = 12.0;
+      public static readonly double Small = 8.0;
+    }
+  }
+  public static class Textarea {
+    public static readonly double BorderRadius = 2.0;  // 多行输入框圆角
+    public static readonly double BorderWidth = 1.0;
+    public static readonly double CountFontSize = 12.0;  // 字数统计字号
+    public static readonly double FocusRingWidth = 2.0;  // 聚焦时的描边宽度
+    public static readonly double FontSize = 14.0;  // 多行输入框字号
+    public static readonly double MinHeight = 72.0;  // 无内容时的最小高度（约三行）
+    public static readonly double PaddingHorizontal = 12.0;  // 多行输入框左右内边距
+    public static readonly double PaddingVertical = 12.0;  // 多行输入框上下内边距
+    public static readonly double TextInset = 6.0;  // TextEditor 文本容器内嵌补偿（SwiftUI 固定行为，叠加占位文字与字数统计定位用）
+  }
+  public static class Toast {
+    public static readonly double BorderRadius = 2.0;  // 提示圆角
+    public static readonly double FontSize = 14.0;  // 提示文字字号
+    public static readonly double Gap = 8.0;  // 类型色点与文字之间的间距
+    public static readonly double PaddingHorizontal = 16.0;  // 提示左右内边距
+    public static readonly double PaddingVertical = 8.0;  // 提示上下内边距
+  }
+  public static class Typography {
+    public static readonly string FontFamily = "'Noto Serif SC', 'STSong', 'SimSun', 'Source Han Serif SC', 'PingFang SC', 'Microsoft YaHei', serif";  // 国风衬线字体栈，各端取首个可用族
+    public static class FontSize {
+      public static readonly double Base = 14.0;  // 正文基准字号
+      public static readonly double ExtraLarge = 20.0;  // 字号 特大
+      public static readonly double ExtraSmall = 12.0;
+      public static readonly double Large = 18.0;
+      public static readonly double Medium = 16.0;
+      public static readonly double Small = 13.0;
+    }
+    public static class FontWeight {
+      public static readonly int Bold = 600;  // 加粗字重
+      public static readonly int Primary = 400;  // 常规字重
+    }
+    public static class LineHeight {
+      public static readonly double Primary = 1.8;  // 正文行高
+    }
+  }
+  public static class ZIndex {
+    public static readonly int Dropdown = 1000;
+    public static readonly int Fixed = 1030;
+    public static readonly int Modal = 1050;
+    public static readonly int ModalBackdrop = 1040;
+    public static readonly int Normal = 1;
+    public static readonly int Popover = 1060;
+    public static readonly int Sticky = 1020;
+    public static readonly int Toast = 2000;  // 原生血脉新增：轻提示层级（web 血脉对应 tooltip 位）
+  }
+}

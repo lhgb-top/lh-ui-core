@@ -17,7 +17,7 @@ title: "介绍"
 ```
 lh-ui 家族
 ├── web 血脉：lh-ui-share（TS core + SCSS 唯一样式源）→ plus / vue2 / react / uniapp
-└── 原生血脉：本仓（JSON 令牌 + 规范 + codegen）→ android / ios / harmony / c
+└── 原生血脉：本仓（JSON 令牌 + 规范 + codegen）→ android / ios / harmony / windows
 ```
 
 本仓与 `lh-ui-share` **没有任何代码依赖关系**，两仓各自独立闭环、各自发版。品牌与视觉的统一靠家族文档仓 `docs/设计语言基线.md` 的人工对齐机制，不靠自动同步。
@@ -40,7 +40,7 @@ codegen 只消费**令牌**生成四端骨架；**契约**与**用例**目前由
 
 ## 谁应该读本文档
 
-- **原生端开发者**（android / ios / harmony / c）：了解 `dist/` 产物的命名约定、单位换算与暗色机制，知道令牌从哪来、值怎么算出来的。
+- **原生端开发者**（android / ios / harmony / windows）：了解 `dist/` 产物的命名约定、单位换算与暗色机制，知道令牌从哪来、值怎么算出来的。
 - **本仓维护者**：了解 codegen 管线每个模块的职责与函数，能改模板、加令牌、加组件。
 
 ## 下一步

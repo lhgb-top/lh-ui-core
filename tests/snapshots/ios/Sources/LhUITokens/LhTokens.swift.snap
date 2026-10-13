@@ -148,6 +148,44 @@ public enum LhTokens {
     public static let titleFontSize = CGFloat(16)  // 标题字号
     public static let width = CGFloat(320)  // 对话框内容卡宽度
   }
+  public enum Docs {
+    public enum Card {
+      public static let background = SwiftUI.Color(red: 0.980, green: 0.965, blue: 0.941)  // 卡片底色
+      public static let borderColor = SwiftUI.Color(red: 0.933, green: 0.914, blue: 0.886)  // 卡片描边色
+      public static let borderRadius = CGFloat(8)
+      public static let borderWidth = CGFloat(1)
+      public static let padding = CGFloat(16)
+    }
+    public enum Code {
+      public static let background = SwiftUI.Color(red: 0.980, green: 0.965, blue: 0.941)  // 代码块底色
+      public static let borderRadius = CGFloat(4)  // 代码块圆角
+      public static let fontFamily = "'Source Code Pro', 'JetBrains Mono', 'Consolas', 'Courier New', monospace"  // 代码块等宽字体栈，各端取首个可用族
+      public static let fontSize = CGFloat(13)  // 代码块字号
+      public static let paddingX = CGFloat(12)
+      public static let paddingY = CGFloat(12)
+      public static let textColor = SwiftUI.Color(red: 0.353, green: 0.353, blue: 0.353)  // 代码块文字色
+    }
+    public enum Heading {
+      public static let color = SwiftUI.Color(red: 0.173, green: 0.173, blue: 0.173)  // 标题文字色
+      public static let fontSizeH1 = CGFloat(20)  // 一级标题（页面标题）
+      public static let fontSizeH2 = CGFloat(18)  // 二级标题（章节）
+      public static let fontSizeH3 = CGFloat(16)  // 三级标题（小节）
+    }
+    public enum Prose {
+      public static let fontSize = CGFloat(14)  // 正文字号
+      public static let secondaryColor = SwiftUI.Color(red: 0.541, green: 0.541, blue: 0.541)  // 次要说明文字色
+      public static let textColor = SwiftUI.Color(red: 0.353, green: 0.353, blue: 0.353)  // 正文文字色
+    }
+    public enum Table {
+      public static let borderColor = SwiftUI.Color(red: 0.933, green: 0.914, blue: 0.886)  // 表格分割线色
+      public static let borderWidth = CGFloat(1)  // 表格分割线宽
+      public static let cellPaddingX = CGFloat(12)
+      public static let cellPaddingY = CGFloat(8)
+      public static let fontSize = CGFloat(13)  // 表格文字字号
+      public static let headerBg = SwiftUI.Color(red: 0.961, green: 0.941, blue: 0.922)  // 表头行底色
+      public static let headerTextColor = SwiftUI.Color(red: 0.173, green: 0.173, blue: 0.173)  // 表头行文字色
+    }
+  }
   public enum Icon {
     public enum Size {
       public static let large = CGFloat(24)  // 大号图标尺寸

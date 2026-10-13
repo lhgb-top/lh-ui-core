@@ -1,0 +1,114 @@
+// =====================================================================================
+// 本文件由 @lh-ui/core 自动生成（构建期 codegen），请勿手改。
+// 源：@lh-ui/core tokens @ v0.0.1
+// 修改请编辑 lh-ui-core 仓的 tokens/*.json 后重新执行 pnpm codegen。
+// =====================================================================================
+
+namespace Top.Lhgb.Ui.Tokens;
+
+public static class LhDarkTokens {
+  public static class Color {
+    public static readonly Windows.UI.Color Decoration = Windows.UI.Color.FromArgb(0x14, 0xD4, 0xA8, 0x43);  // 花纹装饰色
+    public static readonly Windows.UI.Color Focus = Windows.UI.Color.FromArgb(0xFF, 0x7F, 0xA6, 0xD9);  // 键盘焦点环色，默认跟随主色
+    public static readonly Windows.UI.Color HoverBg = Windows.UI.Color.FromArgb(0x14, 0xFF, 0xFF, 0xFF);  // 列表/面板项的中性悬停底色
+    public static readonly Windows.UI.Color Ink = Windows.UI.Color.FromArgb(0xFF, 0x4A, 0x45, 0x40);  // 中性黑（墨）
+    public static readonly Windows.UI.Color Selected = Windows.UI.Color.FromArgb(0xFF, 0xB1, 0xC1, 0xD8);  // 选中态文字色，跟随主色按压变体
+    public static readonly Windows.UI.Color Surface = Windows.UI.Color.FromArgb(0xFF, 0x24, 0x20, 0x18);  // 中性白（宣纸白）
+    public static class Background {
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x25, 0x20);  // 组件底色（宣纸色）
+      public static readonly Windows.UI.Color Disabled = Windows.UI.Color.FromArgb(0xFF, 0x24, 0x20, 0x18);
+      public static readonly Windows.UI.Color Overlay = Windows.UI.Color.FromArgb(0xB3, 0x0A, 0x08, 0x06);  // 遮罩层底色
+      public static readonly Windows.UI.Color Page = Windows.UI.Color.FromArgb(0xFF, 0x1E, 0x1A, 0x16);  // 页面底色
+    }
+    public static class Border {
+      public static readonly Windows.UI.Color Base = Windows.UI.Color.FromArgb(0xFF, 0x3A, 0x35, 0x30);  // 基础描边
+      public static readonly Windows.UI.Color ExtraLight = Windows.UI.Color.FromArgb(0xFF, 0x24, 0x20, 0x18);
+      public static readonly Windows.UI.Color Light = Windows.UI.Color.FromArgb(0xFF, 0x30, 0x2B, 0x28);
+      public static readonly Windows.UI.Color Lighter = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x25, 0x20);
+    }
+    public static class Danger {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0xB2, 0x3A, 0x3A);
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x1A, 0x1A);
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0xC4, 0x50, 0x50);  // 危险色（朱砂 — 印泥朱红）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0xD4, 0x60, 0x60);
+    }
+    public static class Disabled {
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0x33, 0x2D, 0x27);  // 禁用底色
+      public static readonly Windows.UI.Color Border = Windows.UI.Color.FromArgb(0xFF, 0x3A, 0x35, 0x30);  // 禁用描边色
+      public static readonly Windows.UI.Color Text = Windows.UI.Color.FromArgb(0xFF, 0x5A, 0x52, 0x50);  // 禁用文字色
+    }
+    public static class Gold {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0xB8, 0x86, 0x0B);
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x24, 0x1A);
+      public static readonly Windows.UI.Color Border = Windows.UI.Color.FromArgb(0xFF, 0x3A, 0x2E, 0x1A);
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0xD4, 0xA8, 0x43);  // 金色点缀（华贵古韵）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0xE8, 0xC3, 0x5C);
+    }
+    public static class Info {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0x7A, 0x7A, 0x7A);
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0x1A, 0x1A, 0x1A);
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0x8F, 0x8F, 0x8F);  // 信息色（黛色 — 水墨淡彩）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0xA0, 0xA0, 0xA0);
+    }
+    public static class Jade {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0x5B, 0x8C, 0x5A);
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0x1A, 0x2A, 0x1A);
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0x7A, 0xAE, 0x7A);  // 玉色（翠竹清雅）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0x9C, 0xC8, 0x9C);
+    }
+    public static class Primary {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C);  // 主色按压/选中文字
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0x40, 0x3D, 0x64, 0x9E);  // 主色浅底（选中态底色）
+      public static readonly Windows.UI.Color Border = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x3A, 0x4A);  // 主色描边
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0x3D, 0x64, 0x9E);  // 主色（靛蓝 — 青花瓷之蓝）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0x50, 0x78, 0xAB);  // 主色悬停
+    }
+    public static class Success {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0x5B, 0x8C, 0x5A);
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0x1A, 0x2A, 0x1A);
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0x6F, 0xA3, 0x6E);  // 成功色（松花绿 — 竹影青翠）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0x82, 0xB5, 0x81);
+    }
+    public static class Text {
+      public static readonly Windows.UI.Color Disabled = Windows.UI.Color.FromArgb(0xFF, 0x5A, 0x52, 0x50);  // 禁用文字
+      public static readonly Windows.UI.Color Placeholder = Windows.UI.Color.FromArgb(0xFF, 0x7A, 0x72, 0x70);  // 占位文字
+      public static readonly Windows.UI.Color Primary = Windows.UI.Color.FromArgb(0xFF, 0xE8, 0xE0, 0xD8);  // 主要文字
+      public static readonly Windows.UI.Color Regular = Windows.UI.Color.FromArgb(0xFF, 0xC8, 0xC0, 0xB8);  // 常规文字
+      public static readonly Windows.UI.Color Secondary = Windows.UI.Color.FromArgb(0xFF, 0xA0, 0x98, 0x90);  // 次要文字
+    }
+    public static class Vermilion {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0xC4, 0x3A, 0x31);
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x1A, 0x18);
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0xE8, 0x5D, 0x4A);  // 朱砂点缀（印泥朱红）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0xFF, 0x7B, 0x6B);
+    }
+    public static class Warning {
+      public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0xC4, 0xA3, 0x5A);
+      public static readonly Windows.UI.Color Bg = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x25, 0x1A);
+      public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0xD4, 0xB7, 0x6F);  // 警告色（藤黄 — 秋叶金黄）
+      public static readonly Windows.UI.Color Hover = Windows.UI.Color.FromArgb(0xFF, 0xE0, 0xC6, 0x80);
+    }
+  }
+  public static class Docs {
+    public static class Card {
+      public static readonly Windows.UI.Color Background = Windows.UI.Color.FromArgb(0xFF, 0x24, 0x20, 0x18);  // 卡片底色
+      public static readonly Windows.UI.Color BorderColor = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x25, 0x20);  // 卡片描边色
+    }
+    public static class Code {
+      public static readonly Windows.UI.Color Background = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x25, 0x20);  // 代码块底色
+      public static readonly Windows.UI.Color TextColor = Windows.UI.Color.FromArgb(0xFF, 0xC8, 0xC0, 0xB8);  // 代码块文字色
+    }
+    public static class Heading {
+      public static readonly Windows.UI.Color Color = Windows.UI.Color.FromArgb(0xFF, 0xE8, 0xE0, 0xD8);  // 标题文字色
+    }
+    public static class Prose {
+      public static readonly Windows.UI.Color SecondaryColor = Windows.UI.Color.FromArgb(0xFF, 0xA0, 0x98, 0x90);  // 次要说明文字色
+      public static readonly Windows.UI.Color TextColor = Windows.UI.Color.FromArgb(0xFF, 0xC8, 0xC0, 0xB8);  // 正文文字色
+    }
+    public static class Table {
+      public static readonly Windows.UI.Color BorderColor = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x25, 0x20);  // 表格分割线色
+      public static readonly Windows.UI.Color HeaderBg = Windows.UI.Color.FromArgb(0xFF, 0x1E, 0x1A, 0x16);  // 表头行底色
+      public static readonly Windows.UI.Color HeaderTextColor = Windows.UI.Color.FromArgb(0xFF, 0xE8, 0xE0, 0xD8);  // 表头行文字色
+    }
+  }
+}

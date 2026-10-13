@@ -3,8 +3,8 @@
 > lh-ui 原生血脉的构建期中心。设计令牌（JSON 真源）+ 组件契约 + 黄金用例 + 跨端 codegen。
 
 本仓 **不是** 运行时依赖。它只在构建期工作：把平台无关的令牌与组件契约，生成到
-Android（Kotlin）/ iOS（Swift）/ 鸿蒙（ArkTS）/ C 四个原生端的语言骨架，再由各端 UI 库
-手写实现。原生端运行时零 JavaScript。
+Android（Kotlin）/ iOS（Swift）/ 鸿蒙（ArkTS）/ Windows（C# + WinUI 3）四个原生端的语言骨架，
+再由各端 UI 库手写实现。原生端运行时零 JavaScript。
 
 ## 与 web 血脉的关系
 
@@ -13,7 +13,7 @@ Android（Kotlin）/ iOS（Swift）/ 鸿蒙（ArkTS）/ C 四个原生端的语�
 ```
 lh-ui 家族
 ├── web 血脉（现有）：lh-ui-share(TS core + SCSS) → plus / vue2 / react / uniapp
-└── 原生血脉（本仓）：lh-ui-core(JSON 令牌 + 规范 + codegen) → android / ios / harmony / c
+└── 原生血脉（本仓）：lh-ui-core(JSON 令牌 + 规范 + codegen) → android / ios / harmony / windows
 ```
 
 本仓与 `lh-ui-share` 无任何代码依赖。品牌与视觉统一靠 `docs/设计语言基线.md` 人工对齐。

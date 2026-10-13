@@ -154,6 +154,44 @@ object LhTokens {
     val titleFontSize = 16.sp  // 标题字号
     val width = 320.dp  // 对话框内容卡宽度
   }
+  object Docs {
+    object Card {
+      val background = ComposeColor(0xFFFAF6F0)  // 卡片底色
+      val borderColor = ComposeColor(0xFFEEE9E2)  // 卡片描边色
+      val borderRadius = 8.dp
+      val borderWidth = 1.dp
+      val padding = 16.dp
+    }
+    object Code {
+      val background = ComposeColor(0xFFFAF6F0)  // 代码块底色
+      val borderRadius = 4.dp  // 代码块圆角
+      val fontFamily = "'Source Code Pro', 'JetBrains Mono', 'Consolas', 'Courier New', monospace"  // 代码块等宽字体栈，各端取首个可用族
+      val fontSize = 13.sp  // 代码块字号
+      val paddingX = 12.dp
+      val paddingY = 12.dp
+      val textColor = ComposeColor(0xFF5A5A5A)  // 代码块文字色
+    }
+    object Heading {
+      val color = ComposeColor(0xFF2C2C2C)  // 标题文字色
+      val fontSizeH1 = 20.sp  // 一级标题（页面标题）
+      val fontSizeH2 = 18.sp  // 二级标题（章节）
+      val fontSizeH3 = 16.sp  // 三级标题（小节）
+    }
+    object Prose {
+      val fontSize = 14.sp  // 正文字号
+      val secondaryColor = ComposeColor(0xFF8A8A8A)  // 次要说明文字色
+      val textColor = ComposeColor(0xFF5A5A5A)  // 正文文字色
+    }
+    object Table {
+      val borderColor = ComposeColor(0xFFEEE9E2)  // 表格分割线色
+      val borderWidth = 1.dp  // 表格分割线宽
+      val cellPaddingX = 12.dp
+      val cellPaddingY = 8.dp
+      val fontSize = 13.sp  // 表格文字字号
+      val headerBg = ComposeColor(0xFFF5F0EB)  // 表头行底色
+      val headerTextColor = ComposeColor(0xFF2C2C2C)  // 表头行文字色
+    }
+  }
   object Icon {
     object Size {
       val large = 24.dp  // 大号图标尺寸

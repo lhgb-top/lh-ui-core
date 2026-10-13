@@ -1,0 +1,26 @@
+{
+  "$schema": "./schema.json",
+  "$namespace": "docs",
+  "$description": "文档 UI 暗色覆盖。仅声明与明色不同的颜色键，未覆盖键沿用 docs.json；尺寸类令牌暗色不覆盖（与家族并列对象模型一致）",
+  "$dark": true,
+  "code": {
+    "background": { "ref": "color.background.default", "description": "暗色代码块底色（取暗色背景令牌）" },
+    "textColor": { "ref": "color.text.regular" }
+  },
+  "table": {
+    "borderColor": { "ref": "color.border.lighter" },
+    "headerBg": { "ref": "color.background.page" },
+    "headerTextColor": { "ref": "color.text.primary" }
+  },
+  "heading": {
+    "color": { "ref": "color.text.primary" }
+  },
+  "card": {
+    "background": { "ref": "color.surface" },
+    "borderColor": { "ref": "color.border.lighter" }
+  },
+  "prose": {
+    "textColor": { "ref": "color.text.regular" },
+    "secondaryColor": { "ref": "color.text.secondary" }
+  }
+}

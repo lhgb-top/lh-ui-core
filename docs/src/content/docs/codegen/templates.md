@@ -2,7 +2,7 @@
 title: "模板清单"
 ---
 
-`codegen/templates/` 下共 **7 个 Handlebars 模板**，**没有注册任何自定义 helper**（只用内置的 `{{#each}}` 和三重花括号 `{{{ }}}`）。
+`codegen/templates/` 下共 **8 个 Handlebars 模板**，**没有注册任何自定义 helper**（只用内置的 `{{#each}}` 和三重花括号 `{{{ }}}`）。
 
 ## 模板 → 产物 → 数据字段
 
@@ -13,8 +13,9 @@ title: "模板清单"
 | `ios/LhShadow.swift.hbs` | `LhShadow.swift`（静态模板，无 body 插槽） | `{ version, source }` |
 | `harmony/LhTokens.ets.hbs` | `LhTokens.ets` 和 `LhDarkTokens.ets` | `{ version, source, body }` |
 | `harmony/LhShadow.ets.hbs` | `LhShadow.ets`（静态模板） | `{ version, source }` |
-| `c/lh_tokens.h.hbs` | `lh_tokens.h` | `{ version, source, body }` |
-| `c/lh_dark_tokens.h.hbs` | `lh_dark_tokens.h` | `{ version, source, body }` |
+| `windows/LhTokens.cs.hbs` | `LhTokens.cs` 和 `LhDarkTokens.cs` | `{ version, source, namespace, body }` |
+| `windows/LhShadow.cs.hbs` | `LhShadow.cs`（静态模板） | `{ version, source, namespace }` |
+| `windows/LhEasing.cs.hbs` | `LhEasing.cs`（静态模板） | `{ version, source, namespace }` |
 
 ## 统一头部横幅
 
@@ -32,18 +33,11 @@ title: "模板清单"
 
 ## 明暗共用模板
 
-**android / ios / harmony 的明色与暗色产物共用同一个模板**，区别只在喂进去的 `body`（根 object / enum / class 名不同）。
+**android / ios / harmony / windows 的明色与暗色产物共用同一个模板**，区别只在喂进去的 `body`（根 object / enum / class 名不同）。
 
-C 的两个模板分开，因为暗色语义完全不同：
+## 静态模板（载体结构）
 
-```handlebars
-{{!-- c/lh_dark_tokens.h.hbs --}}
-/* 暗色覆盖：以下宏在明色令牌之后包含，覆盖同名定义 */
-```
-
-## 静态模板（LhShadow）
-
-`ios/LhShadow.swift.hbs` 和 `harmony/LhShadow.ets.hbs` **没有 body 插槽**，内容完全静态：
+`ios/LhShadow.swift.hbs`、`harmony/LhShadow.ets.hbs`、`windows/LhShadow.cs.hbs`、`windows/LhEasing.cs.hbs` **没有 body 插槽**，内容完全静态：
 
 ```handlebars
 {{!-- harmony/LhShadow.ets.hbs --}}
@@ -57,7 +51,12 @@ export interface LhShadow {
 }
 ```
 
-因为 SwiftUI 和 ArkUI 都没有「复合投影」类型，需要端侧载体；而 C / Android 的投影是内联结构或平台 API，不需要额外文件。
+因为 SwiftUI / ArkUI / WinUI 都没有「复合投影」或「贝塞尔」的直接对应类型，需要端侧载体；而 Android 的投影是平台 API，不需要额外文件。Windows 的两个载体都是 `readonly record struct`：
+
+```handlebars
+{{!-- windows/LhShadow.cs.hbs --}}
+public readonly record struct LhShadow(Windows.UI.Color Color, double OffsetX, double OffsetY, double BlurRadius);
+```
 
 ## 模板示例
 
@@ -75,23 +74,18 @@ package {{{package}}}
 ```
 
 ```handlebars
-{{!-- c/lh_tokens.h.hbs --}}
-/* 头部横幅… */
+{{!-- windows/LhTokens.cs.hbs --}}
+// 头部横幅…
 
-#ifndef LH_UI_TOKENS_H
-#define LH_UI_TOKENS_H
-
-/* 色值为 0xAARRGGBB；尺寸为逻辑像素（整型或浮点）；时长为毫秒 */
+namespace {{{namespace}}};
 
 {{{body}}}
-
-#endif /* LH_UI_TOKENS_H */
 ```
 
 ## 设计原则
 
-- **薄模板**：只负责文件骨架（头部注释、package / import、守卫开合），逐令牌的字面量格式化全在 target 的 TS 里完成后以 `body` 喂给模板。详见 [渲染层](./render)。
-- **`noEscape: true`**：模板含 `<` `>` `#` 等字符（`#ifndef`、`#define`），必须关闭 HTML 转义。
+- **薄模板**：只负责文件骨架（头部注释、package / namespace、守卫开合），逐令牌的字面量格式化全在 target 的 TS 里完成后以 `body` 喂给模板。详见 [渲染层](./render)。
+- **`noEscape: true`**：模板含 `<` `>` `#` 等字符（`#ifndef`、`#define`、泛型尖括号），必须关闭 HTML 转义。
 - **编译缓存**：`render.ts` 的 `loadTemplate` 缓存编译结果，避免重复编译。
 
 ## 如何新增一个模板

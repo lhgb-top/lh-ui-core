@@ -143,46 +143,59 @@ Swift 的无实例命名空间惯用法：嵌套 `public enum PascalCase`，成�
 
 ---
 
-## c.ts —— C / C++ 嵌入式
+## windows.ts —— Windows C# + WinUI 3
 
-**产物**：`dist/c/include/lh_ui/lh_tokens.h` + `lh_dark_tokens.h`
+**产物**：`dist/windows/Tokens/LhTokens.cs` + `LhDarkTokens.cs`，**存在 shadow 令牌时额外生成 `LhShadow.cs`，存在贝塞尔令牌时额外生成 `LhEasing.cs`**
 
-### `macroName(path): string`
+命名空间 `Top.Lhgb.Ui.Tokens`（反域名，总纲 D20）。
 
-点路径转大写蛇形宏名：先 `.` 转下划线，再给每个大写字母前补下划线，最后全大写。
+### `toCsColor(c): string`
 
-```
-color.primary.default → LH_COLOR_PRIMARY_DEFAULT
-zIndex.modal          → LH_Z_INDEX_MODAL
-```
+颜色转 WinUI 工厂调用：`Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C)`。
 
-### `floatLiteral(value): string`
+<Aside type="caution" title="为什么是 Windows.UI.Color 而不是 Microsoft.UI.Color">
+Windows App SDK 1.6 及以下**不存在** `Microsoft.UI.Color` 结构体；颜色表 `Microsoft.UI.Colors`（Black / Transparent 等）的属性返回的也是 `Windows.UI.Color`。因此令牌侧一律用 `Windows.UI.Color`——它自带 `FromArgb` 工厂，且与 Colors 表类型一致。
+</Aside>
 
-整数补 `.0f`，避免 `0f` / `2f` 这类**非法 C 浮点后缀**。
+### `doubleLiteral(value): string`
 
-### `formatC(token): string`
+整数补 `.0` 后缀（8 → `8.0`），避免隐式类型转换歧义。
 
-| 类型 | 字面量 |
-| --- | --- |
-| color | `0xFF2B4C7C` |
-| dimension（整数） | `40` |
-| dimension（小数） | `0.5f` |
-| dimension（%） | `0.500f  /* 50% 分数 */` |
-| duration | `200  /* 200ms 毫秒 */` |
-| cubicBezier | `{ 0.4f, 0.0f, 0.2f, 1.0f }`（静态数组） |
-| shadow | `{ 0xFF000000, 0.0f, 2.0f, 8.0f }`（颜色 + x + y + blur） |
+### `formatCs(token): FormatResult`
 
-### `emitTree(lines, group, parentPath)`
+| 类型 | C# 字面量 | 字段类型 |
+| --- | --- | --- |
+| color | `Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C)` | `Windows.UI.Color` |
+| dimension（整数） | `40.0` | `double` |
+| dimension（小数） | `0.5` | `double` |
+| dimension（%） | `0.500  // 50%（分数，由容器尺寸换算）` | `double` |
+| duration | `200  // 200ms（毫秒）` | `int` |
+| cubicBezier | `new LhEasing(0.4, 0, 0.2, 1)` | `LhEasing` |
+| shadow | `new LhShadow(0xFF..., 0.0, 2.0, 8.0)` | `LhShadow` |
+| number | `400` / `1.8` | `int` / `double` |
+| string | `"Source Code Pro, ..."` | `string` |
 
-**扁平 `#define` 风格**（C 没有命名空间），树只用来生成分节注释 `/* --- group.path --- */`。暗色产物 `buildDarkCBody` 更彻底——**直接扁平输出，连树都不构**。
+`note`（单位 / 换算说明）与 `description` 合并为一条行内注释；**分号必须落在 literal 与注释之间**，否则带注释的 literal（分数 / 时长 / 贝塞尔 / 投影）会让分号被注释吞掉（CS1002）。
 
-<Aside type="caution" title="C 的暗色机制与众不同">
-`lh_dark_tokens.h.hbs` 的注释写明：**暗色头文件在明色之后 include，同名 `#define` 直接重定义**。与 Kotlin / Swift / ArkTS 的独立 `LhDarkTokens` 命名空间完全不同。
+### `csMemberName(name): string`
+
+转 **PascalCase**：`default → Default`、`extraLarge → ExtraLarge`。顺带规避 `default` / `base` 等 C# 上下文关键字（分组名同样走 `pascalCase`）。
+
+### `emitTree(lines, group, indent)`
+
+嵌套 `public static class` 表达令牌层级（C# 的静态类即命名空间惯用法），成员 `public static readonly T Name = literal;`。
+
+### `buildCsBody(tokenSet, rootName)` / `buildDarkCsBody(tokenSet)`
+
+明色根名由参数传入（`LhTokens`），**暗色根固定 `LhDarkTokens`**，内部都靠 `emitTree` 递归填充。文件头横幅在 `windowsTarget.generate` 里由 `windows/LhTokens.cs.hbs` 渲染。
+
+<Aside type="note" title="暗色：并列对象">
+`LhDarkTokens` 是与 `LhTokens` 并列的独立对象——暗色只覆盖颜色，尺寸 / 动效 / 圆角暗色不变，组件需要暗色尺寸时取明色对象的值。与 android / ios / harmony 三端形态一致。
 </Aside>
 
 ### 导出
 
-`export { macroName as cMacroName }` —— 供测试与外部消费。
+`export { csTokenPath }` —— 点路径转 `LhTokens.Color.Primary.Default`，供测试与外部消费。
 
 ---
 

@@ -10,10 +10,10 @@ import { loadCases, loadSpecs, loadTokenFiles, readVersion } from '../codegen/sr
 import { resolveTokens } from '../codegen/src/resolve'
 import type { CodegenInput } from '../codegen/src/types'
 import { androidTarget } from '../codegen/src/targets/android'
-import { cTarget } from '../codegen/src/targets/c'
 import { docsTarget } from '../codegen/src/targets/docs'
 import { harmonyTarget } from '../codegen/src/targets/harmony'
 import { iosTarget } from '../codegen/src/targets/ios'
+import { windowsTarget } from '../codegen/src/targets/windows'
 
 function buildInput(): CodegenInput {
   const { tokenSet } = resolveTokens(loadTokenFiles())
@@ -44,9 +44,9 @@ describe('codegen 产物快照', () => {
     }
   })
 
-  it('c（头文件）', async () => {
-    for (const file of cTarget.generate(buildInput())) {
-      await expect(file.content).toMatchFileSnapshot(`./snapshots/c/${file.relativePath}.snap`)
+  it('windows（C#）', async () => {
+    for (const file of windowsTarget.generate(buildInput())) {
+      await expect(file.content).toMatchFileSnapshot(`./snapshots/windows/${file.relativePath}.snap`)
     }
   })
 
@@ -64,7 +64,7 @@ describe('codegen 产物不变式', () => {
       ...androidTarget.generate(input),
       ...iosTarget.generate(input),
       ...harmonyTarget.generate(input),
-      ...cTarget.generate(input),
+      ...windowsTarget.generate(input),
     ]
     for (const file of allFiles) {
       expect(file.content).not.toMatch(/\brequire\s*\(/)
@@ -79,7 +79,7 @@ describe('codegen 产物不变式', () => {
       ...androidTarget.generate(input),
       ...iosTarget.generate(input),
       ...harmonyTarget.generate(input),
-      ...cTarget.generate(input),
+      ...windowsTarget.generate(input),
     ]
     for (const file of allFiles) {
       expect(file.content).toContain('@lh-ui/core')

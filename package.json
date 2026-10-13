@@ -4,6 +4,16 @@
   "private": true,
   "type": "module",
   "description": "lh-ui 原生血脉的构建期中心：设计令牌（JSON 真源）+ 组件契约 + 黄金用例 + 跨端 codegen",
+  "license": "Apache-2.0",
+  "author": "lhgb <i@lhgb.top>",
+  "homepage": "https://www.lhgb.top/lhui/core/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lhgb-top/lh-ui-core.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lhgb-top/lh-ui-core/issues"
+  },
   "engines": {
     "node": ">=22.12"
   },
@@ -23,6 +33,7 @@
     "changeset": "changeset",
     "changeset:status": "changeset status",
     "changeset:version": "changeset version",
+    "release:push": "node scripts/push-release.mjs",
     "docs:dev": "astro dev --root docs --port 5185",
     "docs:build": "astro build --root docs",
     "docs:preview": "astro preview --root docs --port 5185"

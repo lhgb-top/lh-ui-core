@@ -84,6 +84,6 @@ pnpm docs:preview    # 预览生产构建
 - Android：`dist/android/` 下的 Kotlin 文件
 - iOS：`dist/ios/` 下的 Swift 文件
 - 鸿蒙：`dist/harmony/` 下的 ArkTS 文件
-- C：`dist/c/` 下的头文件
+- Windows：`dist/windows/` 下的 C# 文件
 
 本地联动（改令牌即时生效、不发版）的机制见 [本地联动](./local-linking)。

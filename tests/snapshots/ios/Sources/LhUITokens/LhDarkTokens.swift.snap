@@ -33,6 +33,11 @@ public enum LhDarkTokens {
       public static let `default` = SwiftUI.Color(red: 0.769, green: 0.314, blue: 0.314)  // 危险色（朱砂 — 印泥朱红）
       public static let hover = SwiftUI.Color(red: 0.831, green: 0.376, blue: 0.376)
     }
+    public enum Disabled {
+      public static let bg = SwiftUI.Color(red: 0.200, green: 0.176, blue: 0.153)  // 禁用底色
+      public static let border = SwiftUI.Color(red: 0.227, green: 0.208, blue: 0.188)  // 禁用描边色
+      public static let text = SwiftUI.Color(red: 0.353, green: 0.322, blue: 0.314)  // 禁用文字色
+    }
     public enum Gold {
       public static let active = SwiftUI.Color(red: 0.722, green: 0.525, blue: 0.043)
       public static let bg = SwiftUI.Color(red: 0.165, green: 0.141, blue: 0.102)
@@ -83,6 +88,28 @@ public enum LhDarkTokens {
       public static let bg = SwiftUI.Color(red: 0.165, green: 0.145, blue: 0.102)
       public static let `default` = SwiftUI.Color(red: 0.831, green: 0.718, blue: 0.435)  // 警告色（藤黄 — 秋叶金黄）
       public static let hover = SwiftUI.Color(red: 0.878, green: 0.776, blue: 0.502)
+    }
+  }
+  public enum Docs {
+    public enum Card {
+      public static let background = SwiftUI.Color(red: 0.141, green: 0.125, blue: 0.094)  // 卡片底色
+      public static let borderColor = SwiftUI.Color(red: 0.165, green: 0.145, blue: 0.125)  // 卡片描边色
+    }
+    public enum Code {
+      public static let background = SwiftUI.Color(red: 0.165, green: 0.145, blue: 0.125)  // 代码块底色
+      public static let textColor = SwiftUI.Color(red: 0.784, green: 0.753, blue: 0.722)  // 代码块文字色
+    }
+    public enum Heading {
+      public static let color = SwiftUI.Color(red: 0.910, green: 0.878, blue: 0.847)  // 标题文字色
+    }
+    public enum Prose {
+      public static let secondaryColor = SwiftUI.Color(red: 0.627, green: 0.596, blue: 0.565)  // 次要说明文字色
+      public static let textColor = SwiftUI.Color(red: 0.784, green: 0.753, blue: 0.722)  // 正文文字色
+    }
+    public enum Table {
+      public static let borderColor = SwiftUI.Color(red: 0.165, green: 0.145, blue: 0.125)  // 表格分割线色
+      public static let headerBg = SwiftUI.Color(red: 0.118, green: 0.102, blue: 0.086)  // 表头行底色
+      public static let headerTextColor = SwiftUI.Color(red: 0.910, green: 0.878, blue: 0.847)  // 表头行文字色
     }
   }
 }

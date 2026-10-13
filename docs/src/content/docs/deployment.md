@@ -2,7 +2,7 @@
 title: "部署说明"
 ---
 
-本文档站按家族约定部署在 `www.lhgb.top` 的 `/lhui/core/` 前缀下（与 android / ios / harmony / c 四站同体系）。
+本文档站按家族约定部署在 `www.lhgb.top` 的 `/lhui/core/` 前缀下（与 android / ios / harmony / windows 四站同体系）。
 
 站点框架是 **Astro Starlight**（2026-10-12 由 VitePress 迁移而来，选型记录见 [文档站技术选型](./guide/tech-choice)）。
 
@@ -74,7 +74,7 @@ Astro 的 `base` 在 dev server 下同样生效（与 VitePress 靠 `.env.develo
 | lh-ui-android | 5181 | `/lhui/android/` |
 | lh-ui-ios | 5182 | `/lhui/ios/` |
 | lh-ui-harmony | 5183 | `/lhui/harmony/` |
-| lh-ui-c | 5184 | `/lhui/c/` |
+| lh-ui-windows | 5186 | `/lhui/windows/` |
 | **lh-ui-core（本站）** | **5185** | **`/lhui/core/`** |
 
 家族部署的权威参考在 `lh-ui/docs` 仓的 `部署/nginx-lhui.conf.md`；本文档是本仓自存的一份操作手册。部署生效后应同步更新家族总览表（本次改动不含跨仓修改）。
