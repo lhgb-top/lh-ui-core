@@ -6,16 +6,26 @@
   "description": "加载指示器：环形旋转动画的静态几何发射，旋转进度交由后端驱动。",
   "props": [
     {
-      "name": "size",
+      "name": "lhSize",
       "type": "enum",
-      "values": ["small", "medium", "large"],
+      "values": [
+        "small",
+        "medium",
+        "large"
+      ],
       "default": "medium",
       "description": "指示器直径，映射到 loading.size.* 令牌"
     },
     {
       "name": "tone",
       "type": "enum",
-      "values": ["primary", "success", "warning", "danger", "info"],
+      "values": [
+        "primary",
+        "success",
+        "warning",
+        "danger",
+        "info"
+      ],
       "default": "primary",
       "description": "环色，取对应语义色令牌"
     }

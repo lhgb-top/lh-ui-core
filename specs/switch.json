@@ -24,9 +24,13 @@
       "description": "是否加载中；加载中滑块位置显示加载环且不响应点击"
     },
     {
-      "name": "size",
+      "name": "lhSize",
       "type": "enum",
-      "values": ["small", "medium", "large"],
+      "values": [
+        "small",
+        "medium",
+        "large"
+      ],
       "default": "medium",
       "description": "开关尺寸，映射到 switch.width / switch.height 令牌"
     }
@@ -35,7 +39,11 @@
     {
       "name": "onChange",
       "payload": [
-        { "name": "checked", "type": "boolean", "description": "点击后的新开关态" }
+        {
+          "name": "checked",
+          "type": "boolean",
+          "description": "点击后的新开关态"
+        }
       ],
       "description": "点击切换开关态时触发；disabled 或 loading 为 true 时不触发"
     }

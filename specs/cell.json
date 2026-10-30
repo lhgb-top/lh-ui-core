@@ -49,14 +49,20 @@
   ],
   "events": [
     {
-      "name": "onClick",
+      "name": "lhOnClick",
       "payload": [],
       "description": "点击单元格时触发；clickable 为 false 时不触发"
     }
   ],
   "slots": [
-    { "name": "default", "description": "标题内容" },
-    { "name": "value", "description": "右侧值内容" }
+    {
+      "name": "default",
+      "description": "标题内容"
+    },
+    {
+      "name": "value",
+      "description": "右侧值内容"
+    }
   ],
   "behaviors": [
     "块级铺满 layout 传入的可用宽度，高度由内容（标题行 + 可选说明行）与内边距决定",

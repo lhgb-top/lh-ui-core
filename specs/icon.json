@@ -12,23 +12,36 @@
       "description": "图标名（各端按本地图标体系解析并渲染）"
     },
     {
-      "name": "size",
+      "name": "lhSize",
       "type": "enum",
-      "values": ["small", "medium", "large"],
+      "values": [
+        "small",
+        "medium",
+        "large"
+      ],
       "default": "medium",
       "description": "图标尺寸，映射到 icon.size.* 令牌"
     },
     {
       "name": "tone",
       "type": "enum",
-      "values": ["default", "primary", "success", "warning", "danger", "info", "regular", "secondary"],
+      "values": [
+        "default",
+        "primary",
+        "success",
+        "warning",
+        "danger",
+        "info",
+        "regular",
+        "secondary"
+      ],
       "default": "default",
       "description": "语义色调；default 为主要文字色，其余取对应语义色"
     }
   ],
   "events": [
     {
-      "name": "onClick",
+      "name": "lhOnClick",
       "payload": [],
       "description": "点击图标时触发"
     }

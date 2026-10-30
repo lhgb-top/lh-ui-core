@@ -51,17 +51,21 @@
     {
       "name": "onValueChange",
       "payload": [
-        { "name": "value", "type": "string", "description": "变更后的文本" }
+        {
+          "name": "value",
+          "type": "string",
+          "description": "变更后的文本"
+        }
       ],
       "description": "文本变化时触发；disabled 或 readonly 为 true 时不触发"
     },
     {
-      "name": "onFocus",
+      "name": "lhOnFocus",
       "payload": [],
       "description": "获得焦点时触发"
     },
     {
-      "name": "onBlur",
+      "name": "lhOnBlur",
       "payload": [],
       "description": "失去焦点时触发"
     }

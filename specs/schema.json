@@ -90,7 +90,7 @@
     "event": {
       "type": "object",
       "properties": {
-        "name": { "type": "string", "pattern": "^on[A-Z][a-zA-Z0-9]*$", "description": "事件名（onXxx，五端统一）" },
+        "name": { "type": "string", "pattern": "^(on|lhOn)[A-Z][a-zA-Z0-9]*$", "description": "事件名（onXxx；鸿蒙端为避开 CustomComponent 基类通用属性名，用 lhOnXxx 前缀，D20）" },
         "payload": {
           "type": "array",
           "items": {

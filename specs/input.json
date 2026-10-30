@@ -20,14 +20,21 @@
     {
       "name": "type",
       "type": "enum",
-      "values": ["text", "password"],
+      "values": [
+        "text",
+        "password"
+      ],
       "default": "text",
       "description": "输入类型；password 时以圆点掩码显示"
     },
     {
-      "name": "size",
+      "name": "lhSize",
       "type": "enum",
-      "values": ["small", "medium", "large"],
+      "values": [
+        "small",
+        "medium",
+        "large"
+      ],
       "default": "medium",
       "description": "输入框尺寸，映射到 input.height / paddingHorizontal / fontSize 令牌"
     },
@@ -59,24 +66,34 @@
     {
       "name": "onValueChange",
       "payload": [
-        { "name": "value", "type": "string", "description": "变更后的文本" }
+        {
+          "name": "value",
+          "type": "string",
+          "description": "变更后的文本"
+        }
       ],
       "description": "文本变化时触发；disabled 或 readonly 为 true 时不触发"
     },
     {
-      "name": "onFocus",
+      "name": "lhOnFocus",
       "payload": [],
       "description": "获得焦点时触发"
     },
     {
-      "name": "onBlur",
+      "name": "lhOnBlur",
       "payload": [],
       "description": "失去焦点时触发"
     }
   ],
   "slots": [
-    { "name": "prefix", "description": "输入框前缀内容（左侧非输入区）" },
-    { "name": "suffix", "description": "输入框后缀内容（右侧非输入区）" }
+    {
+      "name": "prefix",
+      "description": "输入框前缀内容（左侧非输入区）"
+    },
+    {
+      "name": "suffix",
+      "description": "输入框后缀内容（右侧非输入区）"
+    }
   ],
   "behaviors": [
     "size 映射：small/medium/large 分别取 input.height.<size> / paddingHorizontal.<size> / fontSize.<size> 令牌",

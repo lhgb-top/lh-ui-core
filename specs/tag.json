@@ -14,14 +14,25 @@
     {
       "name": "type",
       "type": "enum",
-      "values": ["default", "primary", "success", "warning", "danger", "info"],
+      "values": [
+        "default",
+        "primary",
+        "success",
+        "warning",
+        "danger",
+        "info"
+      ],
       "default": "default",
       "description": "语义类型，决定底色、文字色与描边色"
     },
     {
-      "name": "size",
+      "name": "lhSize",
       "type": "enum",
-      "values": ["small", "medium", "large"],
+      "values": [
+        "small",
+        "medium",
+        "large"
+      ],
       "default": "medium",
       "description": "标签尺寸，映射到 tag.height / paddingHorizontal / fontSize 令牌"
     },
@@ -52,7 +63,10 @@
     }
   ],
   "slots": [
-    { "name": "default", "description": "标签文字内容" }
+    {
+      "name": "default",
+      "description": "标签文字内容"
+    }
   ],
   "behaviors": [
     "size 映射：small/medium/large 分别取 tag.height.<size> 等尺寸令牌",

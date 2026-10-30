@@ -8,14 +8,25 @@
     {
       "name": "type",
       "type": "enum",
-      "values": ["default", "primary", "success", "warning", "danger", "info"],
+      "values": [
+        "default",
+        "primary",
+        "success",
+        "warning",
+        "danger",
+        "info"
+      ],
       "default": "default",
       "description": "按钮类型，决定底色与文字色"
     },
     {
-      "name": "size",
+      "name": "lhSize",
       "type": "enum",
-      "values": ["small", "medium", "large"],
+      "values": [
+        "small",
+        "medium",
+        "large"
+      ],
       "default": "medium",
       "description": "按钮尺寸，映射到 button.height / paddingHorizontal / fontSize / iconSize 令牌"
     },
@@ -45,14 +56,20 @@
   ],
   "events": [
     {
-      "name": "onClick",
+      "name": "lhOnClick",
       "payload": [],
       "description": "点击按钮时触发；disabled 或 loading 为 true 时不触发"
     }
   ],
   "slots": [
-    { "name": "default", "description": "按钮文字内容" },
-    { "name": "icon", "description": "自定义图标内容，覆盖 icon prop" }
+    {
+      "name": "default",
+      "description": "按钮文字内容"
+    },
+    {
+      "name": "icon",
+      "description": "自定义图标内容，覆盖 icon prop"
+    }
   ],
   "behaviors": [
     "disabled 为 true 时：不响应点击，呈现禁用样式（disabled.* 令牌），不触发 onClick",

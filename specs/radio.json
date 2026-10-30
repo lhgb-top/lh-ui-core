@@ -30,9 +30,13 @@
       "description": "单选值（组内标识，组件本身不含组逻辑，由宿主维护单选组）"
     },
     {
-      "name": "size",
+      "name": "lhSize",
       "type": "enum",
-      "values": ["small", "medium", "large"],
+      "values": [
+        "small",
+        "medium",
+        "large"
+      ],
       "default": "medium",
       "description": "圆环尺寸，映射到 radio.size.* 令牌"
     }
@@ -41,13 +45,20 @@
     {
       "name": "onChange",
       "payload": [
-        { "name": "checked", "type": "boolean", "description": "点击后的新选中态（仅可能为 true）" }
+        {
+          "name": "checked",
+          "type": "boolean",
+          "description": "点击后的新选中态（仅可能为 true）"
+        }
       ],
       "description": "由未选中变为选中时触发；已选中时点击不触发，disabled 为 true 时不触发"
     }
   ],
   "slots": [
-    { "name": "default", "description": "文字标签内容" }
+    {
+      "name": "default",
+      "description": "文字标签内容"
+    }
   ],
   "behaviors": [
     "size 映射：small/medium/large 分别取 radio.size.<size> 圆环尺寸令牌",

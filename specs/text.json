@@ -14,28 +14,49 @@
     {
       "name": "level",
       "type": "enum",
-      "values": ["extraLarge", "large", "medium", "base", "small", "extraSmall"],
+      "values": [
+        "extraLarge",
+        "large",
+        "medium",
+        "base",
+        "small",
+        "extraSmall"
+      ],
       "default": "base",
       "description": "字号级别，映射到 typography.fontSize.* 令牌"
     },
     {
       "name": "weight",
       "type": "enum",
-      "values": ["primary", "bold"],
+      "values": [
+        "primary",
+        "bold"
+      ],
       "default": "primary",
       "description": "字重，映射到 typography.fontWeight.* 令牌"
     },
     {
       "name": "tone",
       "type": "enum",
-      "values": ["primary", "regular", "secondary", "placeholder", "disabled", "selected"],
+      "values": [
+        "primary",
+        "regular",
+        "secondary",
+        "placeholder",
+        "disabled",
+        "selected"
+      ],
       "default": "primary",
       "description": "文字色调，映射到 color.text.* 或 color.selected 令牌"
     },
     {
-      "name": "align",
+      "name": "lhAlign",
       "type": "enum",
-      "values": ["start", "center", "end"],
+      "values": [
+        "start",
+        "center",
+        "end"
+      ],
       "default": "start",
       "description": "水平对齐方式（在 layout 计算出的行盒内对齐）"
     }
@@ -49,7 +70,10 @@
     "字重当前只进外观结构体供后端选字面，draw_text 指令暂不携带字重"
   ],
   "slots": [
-    { "name": "default", "description": "文本内容" }
+    {
+      "name": "default",
+      "description": "文本内容"
+    }
   ],
   "tokenRefs": [
     "typography.fontSize.extraLarge",
