@@ -1,0 +1,81 @@
+---
+title: "Слой построения дерева tree.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> Строит из плоского `path -> ResolvedToken` вложенное дерево, чтобы target'ы могли выводить иерархию пространств имён.
+
+## Зачем нужно дерево
+
+В JSON токены вложенные (`color.primary.default`), но на этапах загрузки и разрешения они лежат в **плоском `Map<path, ResolvedToken>`** (удобно для поиска дубликатов, разрешения ref и слияния тёмной темы). На этапе генерации для Kotlin `object Color { object Primary { ... } }`, Swift `enum Color { enum Primary { ... } }` и секционных комментариев C нужна **вложенная структура** — поэтому сначала строится дерево.
+
+## Типы
+
+```ts
+interface TokenTreeGroup {
+  name: string
+  tokens: { name: string; token: ResolvedToken }[]   // Прямые токены под группой (имена сохраняются исходными)
+  children: TokenTreeGroup[]                          // Подгруппы
+}
+```
+
+Пример преобразования:
+
+```
+color.primary.default  =>
+  { name: 'color', children: [
+      { name: 'primary', children: [
+          { name: 'default', tokens: [{ name: 'default', token }] }
+      ] }
+  ] }
+```
+
+## Функции
+
+### `buildTokenTree(tokens: ResolvedToken[]): TokenTreeGroup[]`
+
+Точка входа. Создаёт виртуальный корень, для каждого токена вызывает `insert(root, segments, token, 0)` и в конце возвращает `root.children` (сам виртуальный корень не появляется в результате).
+
+### `insert(group, segments, token, depth): void`
+
+Внутренняя рекурсивная функция:
+
+```ts
+const name = segments[depth]
+if (depth === segments.length - 1) {
+  group.tokens.push({ name, token })   // Последний сегмент: попадает в tokens
+  return
+}
+let child = group.children.find((c) => c.name === name)
+if (!child) {
+  child = { name, tokens: [], children: [] }
+  group.children.push(child)           // Если не существует — создаётся подгруппа
+}
+insert(child, segments, token, depth + 1)
+```
+
+**Одноимённая подгруппа создаётся только один раз**, последующие токены с тем же префиксом её переиспользуют.
+
+### `pascalCase(name: string): string`
+
+Преобразует имя группы в PascalCase для именования групп в Kotlin `object` / Swift `enum` / ArkTS `class`:
+
+```ts
+return name.charAt(0).toUpperCase() + name.slice(1)
+```
+
+<Aside type="caution" title="Только первая буква становится заглавной">
+`pascalCase` **не разбивает camelCase, а лишь делает первую букву заглавной**: `fontSize` → `FontSize`, `zIndex` → `ZIndex`. Имена токенов сами по себе уже в camelCase, поэтому повторное разбиение на слова здесь не нужно.
+</Aside>
+
+## Как дерево используется платформами
+
+| Платформа | Использование |
+| --- | --- |
+| Android | `emitTree` рекурсивно выводит `object PascalCase { ... }`, элементы `val name = literal` |
+| iOS | `emitTree` рекурсивно выводит `public enum PascalCase`, элементы `public static let name = ...` |
+| HarmonyOS | `emitTree` рекурсивно выводит `class PascalCase` (вложенные классы без export), элементы `static readonly name: T = ...` |
+| C | Плоский стиль `#define`, дерево нужно только для секционных комментариев `/* --- group.path --- */` |
+
+Подробнее: [Пять target'ов](./targets).

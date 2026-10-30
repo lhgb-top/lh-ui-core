@@ -1,0 +1,81 @@
+---
+title: "트리 구성 계층 tree.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> 평면의 `path -> ResolvedToken`를 중첩 트리로 구성하여, 각 target이 네임스페이스 계층별로 출력할 수 있게 합니다.
+
+## 트리가 필요한 이유
+
+토큰은 JSON 안에서 중첩되어 있습니다(`color.primary.default`). 하지만 적재와 해석 단계는 모두 **평면의 `Map<path, ResolvedToken>`**입니다(중복 확인, ref 해석, 다크 병합에 편리하기 때문). 생성 단계에 이르러 Kotlin의 `object Color { object Primary { ... } }`, Swift의 `enum Color { enum Primary { ... } }`, C의 섹션 주석은 모두 **중첩 구조**가 필요하므로 — 먼저 트리를 구성합니다.
+
+## 타입
+
+```ts
+interface TokenTreeGroup {
+  name: string
+  tokens: { name: string; token: ResolvedToken }[]   // 그룹 아래의 직접 토큰(원래 이름을 보존)
+  children: TokenTreeGroup[]                          // 하위 그룹
+}
+```
+
+변환 예시:
+
+```
+color.primary.default  =>
+  { name: 'color', children: [
+      { name: 'primary', children: [
+          { name: 'default', tokens: [{ name: 'default', token }] }
+      ] }
+  ] }
+```
+
+## 함수
+
+### `buildTokenTree(tokens: ResolvedToken[]): TokenTreeGroup[]`
+
+진입점입니다. 가상 루트를 만들고, 각 토큰마다 `insert(root, segments, token, 0)`을 호출한 뒤 `root.children`을 반환합니다(가상 루트 자체는 나타나지 않습니다).
+
+### `insert(group, segments, token, depth): void`
+
+내부 재귀 함수입니다:
+
+```ts
+const name = segments[depth]
+if (depth === segments.length - 1) {
+  group.tokens.push({ name, token })   // 마지막 세그먼트: tokens에 넣기
+  return
+}
+let child = group.children.find((c) => c.name === name)
+if (!child) {
+  child = { name, tokens: [], children: [] }
+  group.children.push(child)           // 없으면 하위 그룹 생성
+}
+insert(child, segments, token, depth + 1)
+```
+
+**같은 이름의 하위 그룹은 한 번만 생성**되고, 이후 같은 접두사의 토큰이 재사용합니다.
+
+### `pascalCase(name: string): string`
+
+그룹명을 PascalCase로 변환합니다. Kotlin `object` / Swift `enum` / ArkTS `class`의 그룹 이름에 쓰입니다:
+
+```ts
+return name.charAt(0).toUpperCase() + name.slice(1)
+```
+
+<Aside type="caution" title="첫 글자만 대문자로">
+`pascalCase`는 **camelCase를 분리하지 않고 첫 글자만 대문자로 만듭니다** — `fontSize` → `FontSize`, `zIndex` → `ZIndex`. 토큰 이름 자체가 이미 카멜 케이스이므로 여기서는 다시 단어를 쪼갤 필요가 없습니다.
+</Aside>
+
+## 각 단은 트리를 이렇게 사용합니다
+
+| 단 | 용법 |
+| --- | --- |
+| Android | `emitTree`가 재귀적으로 `object PascalCase { ... }`를 출력, 멤버는 `val name = literal` |
+| iOS | `emitTree`가 재귀적으로 `public enum PascalCase`를 출력, 멤버는 `public static let name = ...` |
+| HarmonyOS | `emitTree`가 재귀적으로 `class PascalCase`를 출력(중첩 클래스는 export 없음), 멤버는 `static readonly name: T = ...` |
+| C | 평면 `#define` 스타일, 트리는 섹션 주석 `/* --- group.path --- */` 생성에만 사용 |
+
+자세한 내용은 [5개 타깃](./targets)을 참고하세요.

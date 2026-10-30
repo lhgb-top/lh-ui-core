@@ -1,0 +1,81 @@
+---
+title: "طبقة بناء الشجرة tree.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> تحويل المسار المسطّح `path ← ResolvedToken` إلى شجرة متداخلة، ليُخرجها كل هدف وفق هرمية مساحات الأسماء.
+
+## لماذا الحاجة إلى الشجرة
+
+الرموز متداخلة في JSON (`color.primary.default`)، لكن مرحلتي التحميل والتحليل تعملان على **`Map<path, ResolvedToken>` مسطّحة** (لسهولة الكشف عن التكرار، وتحليل ref، ودمج الوضع الداكن). وعند مرحلة التوليد، يحتاج كل من `object Color { object Primary { ... } }` في Kotlin، و`enum Color { enum Primary { ... } }` في Swift، والتعليقات المقسَّمة في C إلى **بنية متداخلة** — لذلك تُبنى الشجرة أولًا.
+
+## الأنواع
+
+```ts
+interface TokenTreeGroup {
+  name: string
+  tokens: { name: string; token: ResolvedToken }[]   // الرموز المباشرة تحت المجموعة (تُحفظ بالأسماء الأصلية)
+  children: TokenTreeGroup[]                          // المجموعات الفرعية
+}
+```
+
+مثال على التحويل:
+
+```
+color.primary.default  =>
+  { name: 'color', children: [
+      { name: 'primary', children: [
+          { name: 'default', tokens: [{ name: 'default', token }] }
+      ] }
+  ] }
+```
+
+## الدوال
+
+### `buildTokenTree(tokens: ResolvedToken[]): TokenTreeGroup[]`
+
+الدخول. ينشئ جذرًا وهميًا، ويستدعي لكل رمز `insert(root, segments, token, 0)`، ثم يعيد `root.children` (الجذر الوهمي نفسه لا يظهر).
+
+### `insert(group, segments, token, depth): void`
+
+دالة متكررة داخلية:
+
+```ts
+const name = segments[depth]
+if (depth === segments.length - 1) {
+  group.tokens.push({ name, token })   // المقطع الأخير: يُدرج في tokens
+  return
+}
+let child = group.children.find((c) => c.name === name)
+if (!child) {
+  child = { name, tokens: [], children: [] }
+  group.children.push(child)           // إن لم يوجد، تُنشأ مجموعة فرعية
+}
+insert(child, segments, token, depth + 1)
+```
+
+**لا تُنشأ المجموعة الفرعية بالاسم نفسه إلا مرة واحدة**، ويعاد استخدامها للرموز اللاحقة بنفس البادئة.
+
+### `pascalCase(name: string): string`
+
+تحويل اسم المجموعة إلى PascalCase، لتسمية مجموعات `object` في Kotlin / `enum` في Swift / `class` في ArkTS:
+
+```ts
+return name.charAt(0).toUpperCase() + name.slice(1)
+```
+
+<Aside type="caution" title="تكبير الحرف الأول فقط">
+لا يقوم `pascalCase` **بفصل camelCase، بل يكبِّر الحرف الأول فقط** — `fontSize` ← `FontSize`، و`zIndex` ← `ZIndex`. وبما أن تسمية الرموز في أصلها بالسنام، فلا حاجة هنا إلى إعادة تقسيم الكلمات.
+</Aside>
+
+## كيف تستخدم الأطراف الشجرة
+
+| الطرف | الاستخدام |
+| --- | --- |
+| Android | `emitTree` يُخرج بشكل متكرر `object PascalCase { ... }`، والأعضاء `val name = literal` |
+| iOS | `emitTree` يُخرج بشكل متكرر `public enum PascalCase`، والأعضاء `public static let name = ...` |
+| HarmonyOS | `emitTree` يُخرج بشكل متكرر `class PascalCase` (الأصناف المتداخلة بلا export)، والأعضاء `static readonly name: T = ...` |
+| C | أسلوب `#define` مسطّح، وتُستخدم الشجرة فقط لتوليد التعليقات المقسَّمة `/* --- group.path --- */` |
+
+راجع [الأهداف الخمسة](./targets).

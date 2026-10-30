@@ -1,0 +1,137 @@
+---
+title: "Aperçu du pipeline"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+`pnpm codegen` exécute `codegen/src/index.ts` ; le pipeline complet est le suivant :
+
+```
+Numéro de version du package.json
+        │
+        ▼
+loadTokenFiles()          Charge tokens/*.json, validation structurelle Ajv, aplatissement
+        │                  Retourne LoadedTokenFile[] (par fichier : namespace / isDark / flat)
+        ▼
+resolveTokens()           Résolution des refs (avec détection de cycles) + fusion du mode sombre
+        │                  Retourne { tokenSet, orphanDarkPaths, refMap }
+        ▼
+loadSpecs()               Charge specs/*.json (validation du schéma)
+loadCases()               Charge cases/*.json (validation du schéma)
+        │
+        ▼
+Assemble CodegenInput { tokens: tokenSet, specs, cases, version }
+        │
+        ▼
+Supprime tout dist/ et le reconstruit
+        │
+        ▼
+Exécute les 5 cibles ──► android → ios → harmony → c → docs
+        │                 Chaque target.generate(input) retourne GeneratedFile[]
+        ▼
+Écrit chaque fichier dans dist/<outDir>/<relativePath>
+```
+
+## Le point d'entrée `codegen/src/index.ts`
+
+### Constantes
+
+| Constante | Valeur |
+| --- | --- |
+| `ROOT` | La racine du dépôt (deux niveaux au-dessus d'`import.meta.dirname`) |
+| `DIST` | `<ROOT>/dist` |
+| `targets` | `[androidTarget, iosTarget, harmonyTarget, cTarget, docsTarget]`, **ordre fixe** |
+
+### `main()`
+
+```ts
+function main(): void
+```
+
+Le seul point d'entrée (`index.ts` n'exporte aucune entité ; `main()` est une fonction interne, appelée directement en bas du fichier). Les étapes :
+
+1. `readVersion()` lit le numéro de version du `package.json`
+2. `loadTokenFiles()` charge les jetons
+3. `resolveTokens(files)` les résout et l'on récupère `tokenSet`
+4. `loadSpecs()` / `loadCases()` chargent les contrats et les cas
+5. Assemblage du `CodegenInput`
+6. Si `existsSync(DIST)` : `rmSync(DIST, { recursive: true })` — **suppression avant reconstruction, pour garantir l'absence de résidu dans les artéfacts**
+7. Appel de `generate(input)` sur chaque cible, écriture des fichiers selon `dist/<outDir>/<relativePath>`, avec un journal `[target] path` pour chaque artéfact
+8. La dernière ligne récapitule le nombre de cibles, le nombre de fichiers et la version
+
+Le commentaire d'en-tête du fichier explicite la ligne rouge 1 : **ne générer que des squelettes de jetons, aucune implémentation d'UI**.
+
+## Les interfaces clés (`codegen/src/types.ts`)
+
+Voici les quatre interfaces les plus utilisées dans le pipeline ; **la référence complète des 16 types exportés se trouve dans [Définitions de types — types.ts](./types).**
+
+### `CodegenTarget`
+
+```ts
+interface CodegenTarget {
+  name: string               // Préfixe de journal, par exemple 'android'
+  outDir: string             // Le nom du sous-répertoire de dist, par exemple 'android'
+  generate(input: CodegenInput): GeneratedFile[]
+}
+```
+
+Chaque cible de plateforme implémente cette interface. Ajouter une plateforme = ajouter une cible et l'insérer dans le tableau `targets`.
+
+### `CodegenInput`
+
+```ts
+interface CodegenInput {
+  tokens: TokenSet    // Le jeu de jetons clairs résolus + les surcharges sombres
+  specs: ComponentSpec[]   // Actuellement non consommé par aucune cible (réservé à la future génération de documentation / tests de composants)
+  cases: ComponentCases[]  // Idem
+  version: string     // Le numéro de version du package.json, écrit dans le commentaire d'en-tête de chaque artéfact
+}
+```
+
+<Aside type="tip" title="Le statut des specs / cas">
+Actuellement, les différentes cibles ne consomment **que** `input.tokens` ; aucune n'utilise `specs` / `cases` — ils sont réservés à la future génération de documentation, de squelettes de types ou de tests.
+</Aside>
+
+### `GeneratedFile`
+
+```ts
+interface GeneratedFile {
+  relativePath: string  // Le chemin de sortie relatif à dist/<outDir>/
+  content: string
+}
+```
+
+### `TokenSet`
+
+```ts
+interface TokenSet {
+  tokens: ResolvedToken[]              // Les jetons clairs (triés par chemin, ordre lexicographique)
+  byPath: Map<string, ResolvedToken>   // Recherche rapide par chemin
+  dark: DarkOverrides                  // path -> valeur de la surcharge sombre
+}
+```
+
+## Nombre d'artéfacts
+
+| Cible | Nombre de fichiers |
+| --- | --- |
+| android | 2 (`LhTokens.kt` + `LhDarkTokens.kt`) |
+| ios | 2~3 (+ `LhShadow.swift`, lorsque des jetons d'ombre existent) |
+| harmony | 2~3 (+ `LhShadow.ets`) |
+| c | 2 |
+| docs | 3 |
+
+Les fichiers d'ombre d'`ios` / `harmony` ne sont générés que si des jetons `shadow` existent ; le nombre total de fichiers dépend donc du contenu des jetons — les artéfacts réels dans `dist/` font foi.
+
+## Modules associés
+
+| Module | Responsabilité |
+| --- | --- |
+| [load.ts](./load) | Chargement et validation de structure |
+| [resolve.ts](./resolve) | Résolution des références et fusion du mode sombre |
+| [format.ts](./format) | Analyse des valeurs neutres et mise en forme par cible |
+| [tree.ts](./tree) | D'aplati vers arborescent |
+| [render.ts](./render) | Rendu des modèles |
+| [types.ts](./types) | L'ensemble des définitions de types |
+| [targets/](./targets) | Les cinq cibles de plateforme |
+| [templates/](./templates) | Les 7 modèles handlebars |

@@ -1,0 +1,71 @@
+---
+title: "طبقة العرض render.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> تغليف عرض قوالب Handlebars.
+
+## مبدأ التصميم: قوالب رفيعة
+
+القوالب **مسؤولة عن الهيكل العام للملف فقط** (تعليقات الرأس، والاستيرادات، وفتح/إغلاق مساحات الأسماء). أما تنسيق القيم الحرفية لكل رمز فيتم **بالكامل في TS الخاص بالهدف**، ويُغذَّى القالب بسلسلة `body` مُجمَّعة:
+
+```
+target.ts:  تنسيق كل رمز ← تجميعها في سلسلة body
+                        ▼
+render.ts:  render('android/LhTokens.kt.hbs', { package, imports, body })
+                        ▼
+القالب:      تعليقات الرأس + إعلان package + الاستيرادات + {{{body}}}
+```
+
+الفائدة: لا يوجد منطق handlebars معقد داخل القوالب؛ تعديل تنسيق القيم الحرفية يكون في TS الخاص بالهدف، وتعديل الهيكل العام للملف يكون في القالب، دون أن يتدخل أحدهما في الآخر.
+
+## الدوال
+
+### `loadTemplate(name: string): HandlebarsTemplateDelegate`
+
+دالة داخلية. تقرأ القالب وفق اسمه من `codegen/templates/<name>`:
+
+```ts
+const compiled = Handlebars.compile(source, { noEscape: true })
+cache.set(name, compiled)   // تخزين نتيجة التجميع، تفاديًا لإعادة التجميع
+```
+
+<Aside type="tip" title="لماذا يُعد `noEscape: true` ضروريًا">
+يحتوي محتوى القوالب على أحرف مثل `<` و`>` و`#` (حماية ملفات رأس C `#ifndef` و`#define`، والأصناف العامة (generics) في Kotlin). والإلغاء (escaping) الافتراضي للـ HTML سيفسدها، فلابد من إيقافه.
+</Aside>
+
+يُحدَّد دليل القوالب بالثابت `TEMPLATES_DIR` (`codegen/templates`).
+
+### `render<T>(templateName: string, data: T): string`
+
+الواجهة الوحيدة المُعلَنة:
+
+```ts
+return loadTemplate(templateName)(data)
+```
+
+وهذا كل ما يحتاجه كل هدف لاستدعائها.
+
+## لا توجد مساعدات (helpers) مخصصة
+
+لا تسجِّل القوالب **أي مساعد handlebars**، وتعتمد فقط على القدرات المدمجة:
+
+| الصيغة | الاستخدام |
+| --- | --- |
+| `{{{ }}}` | الأقواس الثلاثية مع `noEscape`، لإدراج `body` مهيَّأ مسبقًا |
+| `{{#each}}` | المرور على مصفوفات مثل قائمة الاستيرادات |
+
+## 7 قوالب
+
+| القالب | المنتجات |
+| --- | --- |
+| `android/LhTokens.kt.hbs` | `LhTokens.kt` **و** `LhDarkTokens.kt` (مشتركة بين الوضعين) |
+| `ios/LhTokens.swift.hbs` | `LhTokens.swift` و`LhDarkTokens.swift` |
+| `ios/LhShadow.swift.hbs` | `LhShadow.swift` (قالب ثابت، بلا فتحة body) |
+| `harmony/LhTokens.ets.hbs` | `LhTokens.ets` و`LhDarkTokens.ets` |
+| `harmony/LhShadow.ets.hbs` | `LhShadow.ets` (قالب ثابت) |
+| `c/lh_tokens.h.hbs` | `lh_tokens.h` |
+| `c/lh_dark_tokens.h.hbs` | `lh_dark_tokens.h` |
+
+راجع [قائمة القوالب](./templates).

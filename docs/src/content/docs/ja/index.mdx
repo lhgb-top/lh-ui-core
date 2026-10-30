@@ -1,0 +1,75 @@
+---
+title: lh-ui-core
+template: splash
+description: lh-ui ネイティブ血脈のビルド時中心 —— デザイントークン真源 + コンポーネント契約 + ゴールデンケース + クロスプラットフォーム codegen
+hero:
+  title: lh-ui-core
+  tagline: ネイティブ血脈のビルド時中心 —— デザイントークン真源 · コンポーネント契約 · ゴールデンケース · クロスプラットフォーム codegen。ビルド時にのみ動作し、生成物には JavaScript が一行もありません。
+  actions:
+    - text: クイックスタート
+      link: /lhui/core/ja/guide/quickstart
+      variant: primary
+    - text: トークンリファレンス
+      link: /lhui/core/ja/tokens/reference
+      variant: secondary
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+## このリポジトリの役割
+
+<CardGrid>
+  <Card title="🎨 デザイントークンの唯一真源">
+    9 つの JSON 中性ソース（カラー / タイポグラフィ / 間隔 / 角丸 / シャドウ / モーション / 階層 / コンポーネントレベル）。schema が厳格に制約し、プラットフォーム固有の構文は一切許可されない。
+    [トークンフォーマット](/ja/tokens/token-format)
+  </Card>
+  <Card title="📐 コンポーネント契約">
+    コンポーネントごとに 1 つの JSON 契約：props / 列挙 / デフォルト値 / イベント / スロット / 振る舞い。命名正規表現が 5 端での統一を保証する。
+    [契約フォーマット](/ja/specs/spec-format)
+  </Card>
+  <Card title="🧪 ゴールデンケース">
+    クロスプラットフォームで翻訳可能な given/when/then の振る舞いレベルのアサーション——ロジックは共有せず、振る舞いを共有する。
+    [ケースフォーマット](/ja/cases/case-format)
+  </Card>
+  <Card title="⚙️ クロスプラットフォーム codegen">
+    1 セットの中性トークンから Android（Kotlin）/ iOS（Swift）/ HarmonyOS（ArkTS）/ Windows（C#）4 端の言語スケルトンを生成。骨組みのみで、実装は生成しない。
+    [パイプライン概要](/ja/codegen/pipeline)
+  </Card>
+  <Card title="🌙 ダークモードの事前計算">
+    Web 血脈の `color-mix()` はビルド時にフラットな色値へ事前計算され、ネイティブ端のランタイムコストはゼロになる。
+    [ダークモードのマージ](/ja/tokens/dark-mode)
+  </Card>
+  <Card title="🔗 ローカル連携">
+    ファミリーレイアウトの下でトークンを変更し codegen を再実行すれば即時反映。存在性ガード付きで、パッケージの公開は不要。
+    [ローカル連携](/ja/guide/local-linking)
+  </Card>
+</CardGrid>
+
+## ファミリーサイト
+
+<CardGrid>
+  <Card title="lh-ui（総覧）">
+    ファミリーのポータル。二つの血脈アーキテクチャとデザイン言語ベースラインを掲載。
+    [開く →](https://www.lhgb.top)
+  </Card>
+  <Card title="lh-ui-plus（Vue3）">
+    Web 血脈の Vue3 コンポーネントライブラリ。
+    [開く →](https://www.lhgb.top/lhui/vue3/)
+  </Card>
+  <Card title="lh-ui-android">
+    ネイティブ血脈：Compose トークンパッケージ + コンポーネント実装。
+    [開く →](https://www.lhgb.top/lhui/android/)
+  </Card>
+  <Card title="lh-ui-ios">
+    ネイティブ血脈：SwiftUI トークンパッケージ + コンポーネント実装。
+    [開く →](https://www.lhgb.top/lhui/ios/)
+  </Card>
+  <Card title="lh-ui-harmony">
+    ネイティブ血脈：ArkUI トークンパッケージ + コンポーネント実装。
+    [開く →](https://www.lhgb.top/lhui/harmony/)
+  </Card>
+  <Card title="lh-ui-windows">
+    ネイティブ血脈：WinUI 3（C#）トークンパッケージ + コンポーネント実装。
+    [開く →](https://www.lhgb.top/lhui/windows/)
+  </Card>
+</CardGrid>

@@ -1,0 +1,75 @@
+---
+title: lh-ui-core
+template: splash
+description: Centro en tiempo de compilación del linaje nativo de lh-ui — fuente única de tokens de diseño + contratos de componentes + casos dorados + codegen multiplataforma
+hero:
+  title: lh-ui-core
+  tagline: El centro en tiempo de compilación del linaje nativo — fuente única de tokens de diseño, contratos de componentes, casos dorados y codegen multiplataforma. Solo funciona en tiempo de compilación; los artefactos no contienen ni una línea de JavaScript.
+  actions:
+    - text: Inicio rápido
+      link: /lhui/core/es/guide/quickstart
+      variant: primary
+    - text: Referencia de tokens
+      link: /lhui/core/es/tokens/reference
+      variant: secondary
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+## Qué hace este repositorio
+
+<CardGrid>
+  <Card title="🎨 Fuente única de tokens de diseño">
+    9 fuentes JSON neutrales (color / tipografía / espaciado / radio de esquina / sombra / movimiento / jerarquía / nivel de componente), fuertemente restringidas por un esquema, sin ninguna sintaxis específica de plataforma.
+    [Formato de tokens](/es/tokens/token-format)
+  </Card>
+  <Card title="📐 Contratos de componentes">
+    Un contrato JSON por componente: props / enumerados / valores por defecto / eventos / slots / comportamientos, con expresiones regulares de nomenclatura que garantizan la unidad entre las cinco plataformas.
+    [Formato de los contratos](/es/specs/spec-format)
+  </Card>
+  <Card title="🧪 Casos dorados">
+    Aserciones de comportamiento given/when/then traducibles entre plataformas — la lógica no se comparte, el comportamiento sí.
+    [Formato de los casos](/es/cases/case-format)
+  </Card>
+  <Card title="⚙️ Codegen multiplataforma">
+    Un conjunto de tokens neutrales genera los esqueletos de lenguaje para Android (Kotlin) / iOS (Swift) / HarmonyOS (ArkTS) / Windows (C#): solo esqueletos, nunca implementaciones.
+    [Visión general del pipeline](/es/codegen/pipeline)
+  </Card>
+  <Card title="🌙 Precomputación del modo oscuro">
+    El `color-mix()` del linaje web se precomputa en tiempo de compilación a valores de color planos, sin coste alguno en tiempo de ejecución para las plataformas nativas.
+    [Fusión del modo oscuro](/es/tokens/dark-mode)
+  </Card>
+  <Card title="🔗 Enlace local">
+    Con el diseño de la familia, cambiar un token y volver a ejecutar codegen surte efecto de inmediato, con guardas de existencia y sin necesidad de publicar paquetes.
+    [Enlace local](/es/guide/local-linking)
+  </Card>
+</CardGrid>
+
+## Sitios de la familia
+
+<CardGrid>
+  <Card title="lh-ui (vista general)">
+    El portal de la familia: la arquitectura de dos linajes y la línea base del lenguaje de diseño.
+    [Abrir →](https://www.lhgb.top)
+  </Card>
+  <Card title="lh-ui-plus (Vue3)">
+    La biblioteca de componentes Vue3 del linaje web.
+    [Abrir →](https://www.lhgb.top/lhui/vue3/)
+  </Card>
+  <Card title="lh-ui-android">
+    Linaje nativo: paquete de tokens para Compose + implementaciones de componentes.
+    [Abrir →](https://www.lhgb.top/lhui/android/)
+  </Card>
+  <Card title="lh-ui-ios">
+    Linaje nativo: paquete de tokens para SwiftUI + implementaciones de componentes.
+    [Abrir →](https://www.lhgb.top/lhui/ios/)
+  </Card>
+  <Card title="lh-ui-harmony">
+    Linaje nativo: paquete de tokens para ArkUI + implementaciones de componentes.
+    [Abrir →](https://www.lhgb.top/lhui/harmony/)
+  </Card>
+  <Card title="lh-ui-windows">
+    Linaje nativo: paquete de tokens para WinUI 3 (C#) + implementaciones de componentes.
+    [Abrir →](https://www.lhgb.top/lhui/windows/)
+  </Card>
+</CardGrid>

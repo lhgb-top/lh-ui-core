@@ -1,0 +1,220 @@
+---
+title: "5개 타깃"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+각 target은 `CodegenTarget` 인터페이스(`{ name, outDir, generate(input): GeneratedFile[] }`)를 구현하며, [파이프라인](./pipeline)이 순서대로 호출합니다.
+
+## 공유 다크 산출물 구성 패턴
+
+네 개의 플랫폼 target은 동일한 패턴으로 `tokenSet.dark`(`Map<path, value>`)를 `ResolvedToken[]`로 변환합니다:
+
+```ts
+const darkTokens = [...tokenSet.dark.entries()]
+  .map(([path, value]) => {
+    const base = tokenSet.byPath.get(path)
+    return {
+      path,
+      type: base?.type ?? ('color' as const),   // 명색 동명 키에서 타입을 취하고, 없으면 color로 폴백
+      value,
+      description: base?.description,
+    }
+  })
+  .sort((a, b) => a.path.localeCompare(b.path))
+```
+
+그런 다음 path 순으로 정렬하여 동일한 emit 트리를 따라갑니다. 명색 산출물에는 `description` 주석이 붙고, `spread`(확장량)는 **모든 단에서 무시되며 주석으로 명시**됩니다.
+
+---
+
+## android.ts —— Kotlin + Jetpack Compose
+
+**산출물**: `dist/android/top/lhgb/ui/tokens/LhTokens.kt` + `LhDarkTokens.kt`
+
+**상수**: `PACKAGE = 'top.lhgb.ui.tokens'`(가족 역도메인 규범, 마스터 플랜 D20)
+
+### `formatKotlin(path, token): FormatResult`
+
+`{ literal, features }`를 반환합니다 — `features`는 사용된 런타임 타입의 집합으로, **import 목록을 결정**합니다:
+
+| 타입 | 리터럴 | features |
+| --- | --- | --- |
+| color | `ComposeColor(0xAARRGGBB)` | `color` |
+| dimension(px) | `${d.value}.${usesSp(path) ? 'sp' : 'dp'}` | `dimension` |
+| dimension(%) | `0.50f  // 50%(분수, 컨테이너 크기에서 환산)`(`(v/100).toFixed(3)` 후 마지막 0 하나 제거) | — |
+| duration | `200  // 200ms(밀리초)` | — |
+| cubicBezier | `CubicBezierEasing(0.4f, 0f, 0.2f, 1f)` | `bezier` |
+| shadow | `Shadow(color = ..., offset = Offset(xf, yf), blurRadius = bf)` | `color`, `shadow` |
+| number / string | 그대로 / `JSON.stringify` | — |
+
+### `emitTree(lines, group, indent, features)`
+
+중첩 `object PascalCase { ... }`를 재귀 출력하고, 멤버는 `val name = literal`, description은 줄 끝 주석으로 붙입니다. `features`는 순회 중에 누적됩니다.
+
+### `buildKotlinBody(tokenSet, rootName, features)` / `buildDarkKotlinBody(tokenSet, features)`
+
+명색 루트 object 이름은 매개변수로 전달되고(`LhTokens`), **다크 루트는 `LhDarkTokens`로 고정**입니다.
+
+### `importsFor(features): string[]`
+
+**import 목록은 실제로 사용된 특성에 따라 결정되며, 사용하지 않으면 import하지 않습니다**:
+
+| feature | import |
+| --- | --- |
+| `color` | `androidx.compose.ui.graphics.Color as ComposeColor` |
+| `dimension` | `androidx.compose.ui.unit.dp` + `.sp` |
+| `shadow` | `androidx.compose.ui.graphics.Shadow` + `androidx.compose.ui.geometry.Offset` |
+| `bezier` | `androidx.compose.animation.core.CubicBezierEasing` |
+
+### `renderKotlinFile(body, version, features): string`
+
+헤더의「수동 수정 금지」배너, `features`에 따라 생성된 import 블록, body를 합쳐 완전한 `.kt` 파일을 만듭니다.
+
+---
+
+## ios.ts —— Swift + SwiftUI
+
+**산출물**: `dist/ios/Sources/LhUITokens/LhTokens.swift` + `LhDarkTokens.swift`, **shadow 토큰이 존재할 경우 추가로 `LhShadow.swift`를 생성**
+
+### `formatSwift(token): string`
+
+| 타입 | 리터럴 |
+| --- | --- |
+| color(a=1) | `SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)` |
+| color(a&lt;1) | 동일 + `.opacity(0.4)` |
+| dimension | `CGFloat(40)`, `%`는 분수 + 주석으로 출력 |
+| duration | `0.200  // 0.2s(초)` — **SwiftUI 애니메이션은 초 단위이므로 빌드 시간에 환산**(밀리초 ÷ 1000, 소수점 이하 3자리) |
+| cubicBezier | `(x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // 베지어 제어점, 각 단이 easing 직접 구성` |
+| shadow | `LhShadow(color:opacity:radius:x:y:)` |
+
+### `swiftMemberName(name): string`
+
+멤버명이 Swift 키워드와 같은 형태일 경우 **백틱을 붙입니다**(예: `` `default` ``). 그렇지 않으면 산출물이 컴파일되지 않습니다.
+
+<Aside type="tip" title="왜 멤버명만 이스케이프하는가">
+`SWIFT_KEYWORDS`는 45개 Swift 키워드의 집합입니다. **enum 타입명은 `pascalCase`를 거치므로 키워드와 충돌하지 않습니다**(첫 글자를 대문자로 하면 어느 것도 집합에 없습니다). **이스케이프가 필요한 것은 멤버명뿐**입니다.
+</Aside>
+
+### `buildSwiftBody(tokenSet, rootName): string` / `buildDarkSwiftBody(tokenSet): string`
+
+`public enum` 루트 구조를 조립합니다: 명색 루트명은 매개변수로 전달되고(`LhTokens`), **다크 루트는 `LhDarkTokens`로 고정**이며, 내부는 모두 `emitTree`의 재귀로 채워집니다. 파일 헤더 배너는 `iosTarget.generate`에서 직접 조립합니다.
+
+### `emitTree(lines, group, indent)`
+
+Swift의 인스턴스 없는 네임스페이스 관용 표현: 중첩 `public enum PascalCase`, 멤버 `public static let name = ...`.
+
+---
+
+## harmony.ts —— HarmonyOS ArkTS + ArkUI
+
+**산출물**: `dist/harmony/tokens/LhTokens.ets` + `LhDarkTokens.ets`, **shadow 토큰이 존재할 경우 추가로 `LhShadow.ets`를 생성**
+
+### `formatEts(token): string`
+
+| 타입 | 리터럴 |
+| --- | --- |
+| color | `'#FF2B4C7C'`(ArkUI는 `#AARRGGBB` 문자열을 받으며, `toArgbHash`를 경유) |
+| dimension | 순수 `vp` 수치, `%`는 분수 + 주석으로 출력 |
+| duration | `200  // 200ms(밀리초)` |
+| cubicBezier | `[0.4, 0, 0.2, 1]  // 컴포넌트 측에서 curves.cubicBezierCurve로 소비` |
+| shadow | `{ color: '#...', radius: 8, offsetX: 0, offsetY: 2 }` |
+
+### `typeAnnotation(token): string`
+
+**유일하게 타입 주석이 있는 플랫폼**(ArkTS는 강타입 언어):
+
+| 타입 | 주석 |
+| --- | --- |
+| color | `ResourceColor` |
+| dimension | `Dimension \| number` |
+| duration / number | `number` |
+| shadow | `LhShadow` |
+| cubicBezier | `number[]` |
+| string | `string` |
+
+### `emitTree(lines, group, indent)`
+
+루트는 `export class`이고, **중첩 클래스에는 export가 없습니다**(ArkTS는 클래스 본문에 export 선언을 허용하지 않음). 멤버는 `static readonly name: T = literal`입니다.
+
+### `buildEtsBody(tokenSet, rootName): string` / `buildDarkEtsBody(tokenSet): string`
+
+`export class` 루트 구조를 조립합니다: 명색 루트명은 매개변수로 전달되고(`LhTokens`), **다크 루트는 `LhDarkTokens`로 고정**이며, 내부는 모두 `emitTree`의 재귀로 채워집니다. 파일 헤더 배너는 `harmonyTarget.generate`에서 직접 조립합니다.
+
+---
+
+## windows.ts —— Windows C# + WinUI 3
+
+**산출물**: `dist/windows/Tokens/LhTokens.cs` + `LhDarkTokens.cs`, **shadow 토큰이 존재할 경우 추가로 `LhShadow.cs`를, 베지어 토큰이 존재할 경우 추가로 `LhEasing.cs`를 생성**
+
+네임스페이스 `Top.Lhgb.Ui.Tokens`(역도메인, 마스터 플랜 D20).
+
+### `toCsColor(c): string`
+
+색상을 WinUI 팩토리 호출로 변환합니다: `Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C)`.
+
+<Aside type="caution" title="왜 Microsoft.UI.Color가 아니라 Windows.UI.Color인가">
+Windows App SDK 1.6 이하에는 `Microsoft.UI.Color` 구조체가 **존재하지 않습니다**. 색상 테이블 `Microsoft.UI.Colors`(Black / Transparent 등)의 속성이 반환하는 것도 `Windows.UI.Color`입니다. 따라서 토큰 측은 모두 `Windows.UI.Color`를 사용합니다 — `FromArgb` 팩토리를 내장하고, Colors 테이블과 타입이 일치하기 때문입니다.
+</Aside>
+
+### `doubleLiteral(value): string`
+
+정수에는 `.0` 접미사를 보충합니다(8 → `8.0`). 암시적 타입 변환의 모호성을 피하기 위해서입니다.
+
+### `formatCs(token): FormatResult`
+
+| 타입 | C# 리터럴 | 필드 타입 |
+| --- | --- | --- |
+| color | `Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C)` | `Windows.UI.Color` |
+| dimension(정수) | `40.0` | `double` |
+| dimension(소수) | `0.5` | `double` |
+| dimension(%) | `0.500  // 50%(분수, 컨테이너 크기에서 환산)` | `double` |
+| duration | `200  // 200ms(밀리초)` | `int` |
+| cubicBezier | `new LhEasing(0.4, 0, 0.2, 1)` | `LhEasing` |
+| shadow | `new LhShadow(0xFF..., 0.0, 2.0, 8.0)` | `LhShadow` |
+| number | `400` / `1.8` | `int` / `double` |
+| string | `"Source Code Pro, ..."` | `string` |
+
+`note`(단위 / 환산 설명)와 `description`은 하나의 인라인 주석으로 합쳐집니다. **세미콜론은 반드시 literal과 주석 사이에 와야 하며**, 그렇지 않으면 주석이 달린 리터럴(분수 / 시간 / 베지어 / 그림자)이 세미콜론을 주석 안으로 삼켜버립니다(CS1002).
+
+### `csMemberName(name): string`
+
+**PascalCase**로 변환합니다: `default → Default`, `extraLarge → ExtraLarge`. 동시에 `default` / `base` 등 C# 문맥 키워드를 회피합니다(그룹명도 마찬가지로 `pascalCase`를 거칩니다).
+
+### `emitTree(lines, group, indent)`
+
+중첩 `public static class`로 토큰 계층을 표현합니다(C#의 정적 클래스가 곧 네임스페이스 관용 표현). 멤버는 `public static readonly T Name = literal;`입니다.
+
+### `buildCsBody(tokenSet, rootName)` / `buildDarkCsBody(tokenSet)`
+
+명색 루트명은 매개변수로 전달되고(`LhTokens`), **다크 루트는 `LhDarkTokens`로 고정**이며, 내부는 모두 `emitTree`의 재귀로 채워집니다. 파일 헤더 배너는 `windowsTarget.generate`에서 `windows/LhTokens.cs.hbs`로 렌더링합니다.
+
+<Aside type="note" title="다크: 병렬 객체">
+`LhDarkTokens`는 `LhTokens`와 병렬하는 독립 객체입니다 — 다크는 색상만 덮어쓰고 사이즈 / 모션 / 라운드 코너는 다크에서 변하지 않으므로, 컴포넌트가 다크 사이즈가 필요할 때는 명색 객체의 값을 취합니다. android / ios / harmony 3개 단과 동일한 형태입니다.
+</Aside>
+
+### 내보내기
+
+`export { csTokenPath }` — 점 경로를 `LhTokens.Color.Primary.Default`로 변환하여 테스트와 외부 소비에 제공합니다.
+
+---
+
+## docs.ts —— 문서 산출물(템플릿을 거치지 않음)
+
+**산출물**: `dist/docs/tokens.md` + `tokens.light.json` + `tokens.dark.json`
+
+**유일하게 handlebars 템플릿을 사용하지 않는 target**으로, 코드로 직접 문자열을 조립합니다.
+
+### `literalValue(token): string`
+
+color는 `원래 값 → #rrggbb`를 출력하고(a&lt;1일 때 `→ rgba(r, g, b, a)`), 나머지는 그대로 `String(value)`입니다.
+
+### `buildTokenTable(input): string`
+
+path의 **최상위 네임스페이스별로 그룹화**하여 마크다운 표「토큰 | 타입 | 명색 | 다크 | 설명」을 출력합니다. `nativeOnly`는「네이티브 신규」로 표시하고, 다크 열에 덮어쓰기가 없으면 `—`를 채웁니다.
+
+### `buildDarkJson(input): string`
+
+다크 덮어쓰기 표를 정렬한 뒤 `JSON.stringify(..., null, 2)`합니다.
+
+세 산출물의 용도는 [docs 산출물](../artifacts/docs-output)을 참고하세요.

@@ -1,0 +1,81 @@
+---
+title: "Tree Layer — tree.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> Builds a nested tree out of the flat `path -> ResolvedToken` map, so each target can emit per namespace hierarchy.
+
+## Why a tree
+
+Tokens are nested in JSON (`color.primary.default`), but both the loading and resolution stages work with the **flat `Map<path, ResolvedToken>`** (convenient for duplicate detection, ref resolution, and dark merging). At the generation stage, Kotlin's `object Color { object Primary { ... } }`, Swift's `enum Color { enum Primary { ... } }`, and C's section comments all need a **nested structure** — hence the tree-building step.
+
+## Types
+
+```ts
+interface TokenTreeGroup {
+  name: string
+  tokens: { name: string; token: ResolvedToken }[]   // The direct tokens under this group (kept under their original names)
+  children: TokenTreeGroup[]                          // Subgroups
+}
+```
+
+Conversion example:
+
+```
+color.primary.default  =>
+  { name: 'color', children: [
+      { name: 'primary', children: [
+          { name: 'default', tokens: [{ name: 'default', token }] }
+      ] }
+  ] }
+```
+
+## Functions
+
+### `buildTokenTree(tokens: ResolvedToken[]): TokenTreeGroup[]`
+
+The entry point. It creates a virtual root, calls `insert(root, segments, token, 0)` for every token, and finally returns `root.children` (the virtual root itself never appears).
+
+### `insert(group, segments, token, depth): void`
+
+The internal recursive function:
+
+```ts
+const name = segments[depth]
+if (depth === segments.length - 1) {
+  group.tokens.push({ name, token })   // Last segment: goes into tokens
+  return
+}
+let child = group.children.find((c) => c.name === name)
+if (!child) {
+  child = { name, tokens: [], children: [] }
+  group.children.push(child)           // Create the subgroup if it does not exist
+}
+insert(child, segments, token, depth + 1)
+```
+
+**A same-named subgroup is created only once**; subsequent tokens with the same prefix reuse it.
+
+### `pascalCase(name: string): string`
+
+Capitalizes a group name for Kotlin `object` / Swift `enum` / ArkTS `class` naming:
+
+```ts
+return name.charAt(0).toUpperCase() + name.slice(1)
+```
+
+<Aside type="caution" title="Only capitalizes the first letter">
+`pascalCase` **does not split camelCase words; it only upper-cases the first letter** — `fontSize` → `FontSize`, `zIndex` → `ZIndex`. Token names are already camelCase, so no word re-splitting is needed here.
+</Aside>
+
+## How each target uses the tree
+
+| Target | Usage |
+| --- | --- |
+| Android | `emitTree` recursively emits `object PascalCase { ... }` with members `val name = literal` |
+| iOS | `emitTree` recursively emits `public enum PascalCase` with members `public static let name = ...` |
+| HarmonyOS | `emitTree` recursively emits `class PascalCase` (nested classes are not exported) with members `static readonly name: T = ...` |
+| C | Flat `#define` style; the tree is only used to generate section comments `/* --- group.path --- */` |
+
+See [The Five Targets](./targets).

@@ -1,0 +1,113 @@
+---
+title: "طبقة التنسيق format.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> تحليل القيم المحايدة والتنسيق لكل طرف.
+
+جميع قيم الرموز هي تعبيرات محايدة تجاه المنصات (سداسي عشري / rgba / سلاسل مع وحدة / أرقام / مصفوفات بيزيه). يحلِّلها `format.ts` **إلى بيانات مهيكلة**، ثم يقوم كل هدف بتنسيقها إلى قيم حرفية في اللغة المحلية.
+
+## أنواع البنى بعد التحليل
+
+```ts
+interface ParsedColor    { r: number; g: number; b: number; a: number }   // r/g/b: 0..255، a: 0..1
+interface ParsedDimension { value: number; unit: 'px' | '%' }
+interface ParsedDuration { ms: number }                                     // موحَّدة إلى ملي ثانية
+interface ParsedShadow   { x: number; y: number; blur: number; spread?: number; color: ParsedColor }
+```
+
+## دوال التحليل
+
+### `parseHex(hex: string): ParsedColor`
+
+يدعم ثلاثة أشكال سداسية عشرية:
+
+| الإدخال | المعالجة |
+| --- | --- |
+| `#RGB` | تكرار كل خانة لتوسيعها |
+| `#RRGGBB` | أخذ القنوات مباشرة |
+| `#AARRGGBB` | **الخانتان الأولى هما alpha**، وتُقسمان على 255 للتطبيع إلى 0..1 |
+| أطوال أخرى | يُطلق `قيمة لون سداسية عشرية غير قابلة للتحليل` |
+
+### `parseRgba(raw: string): ParsedColor`
+
+تحليل `rgba()` / `rgb()`، والقيمة الافتراضية لـ alpha هي 1. تخضع القنوات للتحقق عبر `clamp255` (يُطلق `قناة اللون خارج النطاق` عند تجاوز 0..255).
+
+### `parseColor(value: string): ParsedColor`
+
+الدخول الموحَّد للألوان: ما يبدأ بـ `#` يمر عبر `parseHex`، وما يبدأ بـ `rgb` يمر عبر `parseRgba`، وإلا يُطلق `تنسيق لون غير مدعوم (يُقبل السداسي العشري وrgba فقط)`.
+
+### `parseDimension(value: string): ParsedDimension`
+
+يطابق `/^(\d+(?:\.\d+)?)(px|%)$/`، وإلا يُطلق `قيمة حجم غير قابلة للتحليل`. **لا يقبل سوى px و%** — أما الوحدات الأخرى فيمنعها الخط الأحمر 5 على مستوى JSON.
+
+### `parseDuration(value: string): ParsedDuration`
+
+يطابق `/^(\d+(?:\.\d+)?)(s|ms)$/`، ويضرب `s` في 1000، **موحِّدًا كل المدد إلى ملي ثانية**.
+
+### `parseShadow(value: string): ParsedShadow`
+
+التقسيم بمسافة (4 أجزاء على الأقل):
+
+```
+x  y  blur  [spread]  color
+```
+
+إذا طابق الجزء الرابع `-?\d+(\.\d+)?px` فهو **مقدار الانتشار (spread)**، وإلا فهو اللون:
+
+```ts
+if (rest.length > 1 && /^-?\d+(\.\d+)?px$/.test(rest[0])) {
+  spread = Number(rest[0].replace('px', ''))
+  rest.shift()
+}
+```
+
+يُمرَّر جزء اللون إلى `parseColor`.
+
+<Aside type="tip" title="spread يُهمَل في جميع الأطراف">
+يُسجَّل `ParsedShadow.spread` لكن **لا يُصدِّره أي هدف** (مع توضيح في التعليقات)، لأن واجهتي برمجة الظلال في SwiftUI / ArkUI لا تملكان وسيلة spread.
+</Aside>
+
+### `assertTypedValue(type: TokenType, value: TokenValue): void`
+
+**تحقق دلالي خارج schema**: تأكيد القيم نوعًا نوعًا مع **تحليلها فعليًا**. وهذا هو الحاجز الأخير في أولويات الأنواع ذات الطبقات الثلاث (راجع [نظام الأنواع](../tokens/type-system)).
+
+| النوع | التأكيد |
+| --- | --- |
+| `color` | يجب أن يكون سلسلة نصية ويقبل التحليل عبر `parseColor` |
+| `dimension` | يجب أن يكون سلسلة نصية ويقبل التحليل عبر `parseDimension` |
+| `duration` | يجب أن يكون سلسلة نصية ويقبل التحليل عبر `parseDuration` |
+| `shadow` | يجب أن يكون سلسلة نصية ويقبل التحليل عبر `parseShadow` |
+| `cubicBezier` | يجب أن يكون مصفوفة طولها 4 من الأرقام |
+| `number` / `string` | بلا تحقق |
+
+## دوال التنسيق
+
+### `toArgbHex(c: ParsedColor): string`
+
+قيمة `0xAARRGGBB` الحرفية، للاستخدام في **Kotlin / C**. قناة alpha هي `Math.round(a * 255)`، وكل قناة بخانتين سداسيتين عشريتين كبيرتين.
+
+### `toArgbHash(c: ParsedColor): string`
+
+سلسلة `#AARRGGBB`، للاستخدام في **ArkTS**. مبنية على `toArgbHex` مع استبدال `0x` بـ `#`.
+
+### `usesSp(path: string): boolean`
+
+**حكم خاص بـ Android**: إذا طابق المسار `/fontsize/i` يُستخدم `sp`، وإلا `dp`.
+
+### `structureValue(token: ResolvedToken)`
+
+**الدخول الموحَّد للأهداف**. يحوّل القيمة المحايدة وفق `token.type` إلى كائن اتحاد مميَّز بـ `kind`:
+
+```ts
+{ kind: 'color'; color: ParsedColor }
+| { kind: 'dimension'; dimension: ParsedDimension }
+| { kind: 'duration'; duration: ParsedDuration }
+| { kind: 'shadow'; shadow: ParsedShadow }
+| { kind: 'cubicBezier'; bezier: number[] }
+| { kind: 'number'; number: number }
+| { kind: 'string'; string: string }
+```
+
+ثم يجري كل هدف switch على هذا الاتحاد لتنسيقه إلى قيمة محلية. وهكذا **تُكتب تحليل القيم المحايدة مرة واحدة**، وما على كل طرف سوى «كيفية الكتابة».

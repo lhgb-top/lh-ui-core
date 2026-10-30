@@ -1,0 +1,137 @@
+---
+title: "파이프라인 개요"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+`pnpm codegen`이 `codegen/src/index.ts`를 실행하며, 전체 파이프라인은 다음과 같습니다:
+
+```
+package.json 버전 번호
+        │
+        ▼
+loadTokenFiles()          tokens/*.json 적재, Ajv 구조 검증, flatten 평탄화
+        │                  LoadedTokenFile[] 반환(파일마다 namespace / isDark / flat 포함)
+        ▼
+resolveTokens()           ref 해석(순환 감지 포함) + 다크 병합
+        │                  { tokenSet, orphanDarkPaths, refMap } 반환
+        ▼
+loadSpecs()               specs/*.json 적재(schema 검증)
+loadCases()               cases/*.json 적재(schema 검증)
+        │
+        ▼
+CodegenInput 조립 { tokens: tokenSet, specs, cases, version }
+        │
+        ▼
+dist/ 전체를 삭제하고 재구축
+        │
+        ▼
+5개 target을 순서대로 실행 ──► android → ios → harmony → c → docs
+        │                 각 target.generate(input)이 GeneratedFile[] 반환
+        ▼
+dist/<outDir>/<relativePath>에 파일별로 저장
+```
+
+## 진입 파일 `codegen/src/index.ts`
+
+### 상수
+
+| 상수 | 값 |
+| --- | --- |
+| `ROOT` | 리포지터리 루트(`import.meta.dirname`의 두 단계 위) |
+| `DIST` | `<ROOT>/dist` |
+| `targets` | `[androidTarget, iosTarget, harmonyTarget, cTarget, docsTarget]`, **순서 고정** |
+
+### `main()`
+
+```ts
+function main(): void
+```
+
+유일한 진입점입니다(`index.ts`는 어떤 실체도 내보내지 않고, `main()`은 내부 함수이며 파일 끝에서 직접 호출). 단계:
+
+1. `readVersion()`이 `package.json`의 버전 번호를 읽음
+2. `loadTokenFiles()`가 토큰을 적재
+3. `resolveTokens(files)`가 해석하고, `tokenSet`을 취함
+4. `loadSpecs()` / `loadCases()`가 계약과 케이스를 적재
+5. `CodegenInput`을 조립
+6. `existsSync(DIST)`일 때 `rmSync(DIST, { recursive: true })` — **삭제 후 재구축, 산출물에 잔여물이 없도록 보장**
+7. target마다 `generate(input)`을 호출해 `dist/<outDir>/<relativePath>`로 파일을 쓰고, 산출물마다 `[target] path` 로그를 출력
+8. 마지막 줄에 target 수, 파일 수, 버전을 집계
+
+파일 머리 주석이 레드라인 1을 명시합니다: **토큰 골격만 생성하고 어떤 UI 구현도 생성하지 않습니다**.
+
+## 핵심 인터페이스(`codegen/src/types.ts`)
+
+아래는 파이프라인에서 가장 자주 쓰이는 네 인터페이스입니다. **내보내지는 16개 타입 전체의 완전한 참조는 [타입 정의 types.ts](./types)를 참고하세요.**
+
+### `CodegenTarget`
+
+```ts
+interface CodegenTarget {
+  name: string               // 로그 접두사, 예: 'android'
+  outDir: string             // dist 아래의 서브디렉터리 이름, 예: 'android'
+  generate(input: CodegenInput): GeneratedFile[]
+}
+```
+
+각 플랫폼 target이 이 인터페이스를 구현합니다. 새 플랫폼의 추가 = target을 하나 추가해 `targets` 배열에 넣는 것입니다.
+
+### `CodegenInput`
+
+```ts
+interface CodegenInput {
+  tokens: TokenSet    // 해석된 라이트 토큰 집합 + 다크 덮어쓰기
+  specs: ComponentSpec[]   // 현재 어떤 target도 소비하지 않음(향후 컴포넌트 문서/테스트 생성을 위해 예약)
+  cases: ComponentCases[]  // 같음
+  version: string     // package.json 버전 번호, 각 산출물의 머리 주석에 기록
+}
+```
+
+<Aside type="tip" title="specs / cases의 상태">
+현재 각 target은 **오직** `input.tokens`만 소비하며, 어떤 target도 `specs` / `cases`를 사용하지 않습니다 — 이들은 향후 컴포넌트 문서 / 타입 골격 / 테스트 생성을 위해 예약된 인터페이스입니다.
+</Aside>
+
+### `GeneratedFile`
+
+```ts
+interface GeneratedFile {
+  relativePath: string  // dist/<outDir>/에 대한 상대 출력 경로
+  content: string
+}
+```
+
+### `TokenSet`
+
+```ts
+interface TokenSet {
+  tokens: ResolvedToken[]              // 라이트 토큰(path 사전순)
+  byPath: Map<string, ResolvedToken>   // 경로로 빠른 검색
+  dark: DarkOverrides                  // path -> 다크 덮어쓰기 값
+}
+```
+
+## 산출물 총수
+
+| target | 파일 수 |
+| --- | --- |
+| android | 2(`LhTokens.kt` + `LhDarkTokens.kt`) |
+| ios | 2~3(shadow 토큰이 있을 때 `LhShadow.swift` 추가) |
+| harmony | 2~3(`LhShadow.ets` 추가) |
+| c | 2 |
+| docs | 3 |
+
+`ios` / `harmony`의 그림자 파일은 `shadow` 토큰이 있을 때만 생성되므로, 총 파일 수는 토큰 내용에 따라 달라지며 `dist/`의 실제 산출물을 기준으로 합니다.
+
+## 관련 모듈
+
+| 모듈 | 역할 |
+| --- | --- |
+| [load.ts](./load) | 적재와 구조 검증 |
+| [resolve.ts](./resolve) | 참조 해석과 다크 병합 |
+| [format.ts](./format) | 중성값 파싱과 플랫폼 포맷팅 |
+| [tree.ts](./tree) | 평면에서 중첩으로 |
+| [render.ts](./render) | 템플릿 렌더링 |
+| [types.ts](./types) | 전체 타입 정의 |
+| [targets/](./targets) | 다섯 플랫폼 target |
+| [templates/](./templates) | 7개 handlebars 템플릿 |

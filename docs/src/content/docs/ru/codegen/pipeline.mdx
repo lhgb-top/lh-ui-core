@@ -1,0 +1,137 @@
+---
+title: "Обзор конвейера"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+Команда `pnpm codegen` выполняет `codegen/src/index.ts`; полный конвейер выглядит так:
+
+```
+Номер версии из package.json
+        │
+        ▼
+loadTokenFiles()          Загрузка tokens/*.json, структурная валидация Ajv, уплощение flatten
+        │                  Возвращает LoadedTokenFile[] (каждый файл содержит namespace / isDark / flat)
+        ▼
+resolveTokens()           Разрешение ref (с обнаружением циклов) + слияние тёмной темы
+        │                  Возвращает { tokenSet, orphanDarkPaths, refMap }
+        ▼
+loadSpecs()               Загрузка specs/*.json (валидация по схеме)
+loadCases()               Загрузка cases/*.json (валидация по схеме)
+        │
+        ▼
+Сборка CodegenInput { tokens: tokenSet, specs, cases, version }
+        │
+        ▼
+Удаление всего dist/ и пересоздание
+        │
+        ▼
+Последовательное выполнение 5 target'ов ──► android → ios → harmony → c → docs
+        │                 Каждый target.generate(input) возвращает GeneratedFile[]
+        ▼
+Покомандная запись файлов на диск по dist/<outDir>/<relativePath>
+```
+
+## Точка входа `codegen/src/index.ts`
+
+### Константы
+
+| Константа | Значение |
+| --- | --- |
+| `ROOT` | Корень репозитория (два уровня вверх от `import.meta.dirname`) |
+| `DIST` | `<ROOT>/dist` |
+| `targets` | `[androidTarget, iosTarget, harmonyTarget, cTarget, docsTarget]`, **порядок фиксирован** |
+
+### `main()`
+
+```ts
+function main(): void
+```
+
+Единственная точка входа (`index.ts` не экспортирует сущностей, `main()` — внутренняя функция, вызываемая прямо в конце файла). Шаги:
+
+1. `readVersion()` читает номер версии из `package.json`
+2. `loadTokenFiles()` загружает токены
+3. `resolveTokens(files)` разрешает ссылки, возвращает `tokenSet`
+4. `loadSpecs()` / `loadCases()` загружают контракты и сценарии
+5. Сборка `CodegenInput`
+6. При `existsSync(DIST)` выполняется `rmSync(DIST, { recursive: true })` — **сначала удалить, потом создать**, чтобы артефактов без остатка
+7. Для каждого target'а вызывается `generate(input)`, файлы пишутся по `dist/<outDir>/<relativePath>`, для каждого артефакта печатается лог `[target] path`
+8. Последней строкой подводятся итоги: количество target'ов, количество файлов, версия
+
+В комментарии-преамбуле файла явно зафиксирована красная линия 1: **генерируются только каркасы токенов, никакой реализации UI**.
+
+## Ключевые интерфейсы (`codegen/src/types.ts`)
+
+Ниже — четыре наиболее часто используемых в конвейере интерфейса; **полный справочник по всем 16 экспортируемым типам — в [Определения типов types.ts](./types).**
+
+### `CodegenTarget`
+
+```ts
+interface CodegenTarget {
+  name: string               // Префикс для логов, например 'android'
+  outDir: string             // Имя подкаталога внутри dist, например 'android'
+  generate(input: CodegenInput): GeneratedFile[]
+}
+```
+
+Каждый target платформы реализует этот интерфейс. Добавить платформу = добавить target и поместить его в массив `targets`.
+
+### `CodegenInput`
+
+```ts
+interface CodegenInput {
+  tokens: TokenSet    // Разрешённое множество светлых токенов + переопределения тёмной темы
+  specs: ComponentSpec[]   // В данный момент не используется ни одним target'ом (зарезервировано под будущую генерацию документации/тестов компонентов)
+  cases: ComponentCases[]  // То же
+  version: string     // Номер версии из package.json; записывается в заголовочный комментарий каждого артефакта
+}
+```
+
+<Aside type="tip" title="Статус specs / cases">
+Сейчас target'ы потребляют **только** `input.tokens`; ни один target не использует `specs` / `cases` — они зарезервированы под будущую генерацию документации, каркасов типов и тестов.
+</Aside>
+
+### `GeneratedFile`
+
+```ts
+interface GeneratedFile {
+  relativePath: string  // Путь вывода относительно dist/<outDir>/
+  content: string
+}
+```
+
+### `TokenSet`
+
+```ts
+interface TokenSet {
+  tokens: ResolvedToken[]              // Светлые токены (отсортированы по path в лексикографическом порядке)
+  byPath: Map<string, ResolvedToken>   // Быстрый поиск по пути
+  dark: DarkOverrides                  // path -> значение переопределения тёмной темы
+}
+```
+
+## Количество артефактов
+
+| target | Количество файлов |
+| --- | --- |
+| android | 2 (`LhTokens.kt` + `LhDarkTokens.kt`) |
+| ios | 2~3 (+ `LhShadow.swift`, при наличии токенов теней) |
+| harmony | 2~3 (+ `LhShadow.ets`) |
+| c | 2 |
+| docs | 3 |
+
+Файлы теней для `ios` / `harmony` генерируются только при наличии токенов `shadow`, поэтому общее количество файлов зависит от содержимого токенов; ориентируйтесь на фактические артефакты в `dist/`.
+
+## Смежные модули
+
+| Модуль | Ответственность |
+| --- | --- |
+| [load.ts](./load) | Загрузка и структурная валидация |
+| [resolve.ts](./resolve) | Разрешение ссылок и слияние тёмной темы |
+| [format.ts](./format) | Разбор нейтральных значений и форматирование под платформы |
+| [tree.ts](./tree) | Из плоского во вложенное |
+| [render.ts](./render) | Рендеринг шаблонов |
+| [types.ts](./types) | Все определения типов |
+| [targets/](./targets) | Пять target'ов платформ |
+| [templates/](./templates) | 7 handlebars-шаблонов |

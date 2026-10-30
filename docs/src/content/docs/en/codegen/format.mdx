@@ -1,0 +1,113 @@
+---
+title: "Formatting Layer — format.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> Parsing of neutral values and per-target formatting.
+
+Every token value is a platform-neutral expression (hexadecimal / rgba / unit-carrying string / number / Bézier array). `format.ts` **parses them into structured data**, and each target then formats that data into its own language's literals.
+
+## Parsed structure types
+
+```ts
+interface ParsedColor    { r: number; g: number; b: number; a: number }   // r/g/b: 0..255, a: 0..1
+interface ParsedDimension { value: number; unit: 'px' | '%' }
+interface ParsedDuration { ms: number }                                     // Normalized to milliseconds
+interface ParsedShadow   { x: number; y: number; blur: number; spread?: number; color: ParsedColor }
+```
+
+## Parsing functions
+
+### `parseHex(hex: string): ParsedColor`
+
+Supports three hexadecimal forms:
+
+| Input | Handling |
+| --- | --- |
+| `#RGB` | Each digit expanded by duplication |
+| `#RRGGBB` | Channels taken directly |
+| `#AARRGGBB` | **The first two digits are alpha**, divided by 255 to normalize into 0..1 |
+| Other lengths | Throws `Unresolvable hex color value` |
+
+### `parseRgba(raw: string): ParsedColor`
+
+Parses `rgba()` / `rgb()`, alpha defaults to 1. Channels are validated by `clamp255` (out of 0..255 throws `Color channel out of range`).
+
+### `parseColor(value: string): ParsedColor`
+
+The single entry point for colors: a `#` prefix goes to `parseHex`, an `rgb` prefix to `parseRgba`, otherwise `Unsupported color format (only hex and rgba are accepted)` is thrown.
+
+### `parseDimension(value: string): ParsedDimension`
+
+Matches `/^(\d+(?:\.\d+)?)(px|%)$/`, otherwise throws `Unresolvable size value`. **Only px and % are accepted** — every other unit is already forbidden at the JSON layer by red line 5.
+
+### `parseDuration(value: string): ParsedDuration`
+
+Matches `/^(\d+(?:\.\d+)?)(s|ms)$/`, multiplies `s` by 1000, and **normalizes everything to milliseconds**.
+
+### `parseShadow(value: string): ParsedShadow`
+
+Splits on spaces (at least 4 segments):
+
+```
+x  y  blur  [spread]  color
+```
+
+If the 4th segment matches `-?\d+(\.\d+)?px` it is the **spread**, otherwise it is the color:
+
+```ts
+if (rest.length > 1 && /^-?\d+(\.\d+)?px$/.test(rest[0])) {
+  spread = Number(rest[0].replace('px', ''))
+  rest.shift()
+}
+```
+
+The color part goes back to `parseColor`.
+
+<Aside type="tip" title="spread is ignored on every target">
+`ParsedShadow.spread` is recorded but **emitted by no target** (documented in a comment), because neither SwiftUI's nor ArkUI's shadow API has a spread parameter.
+</Aside>
+
+### `assertTypedValue(type: TokenType, value: TokenValue): void`
+
+**Semantic validation beyond the schema**: asserts and **actually parses** each value by type. This is the final gate of the three-level type precedence (see [Type System](../tokens/type-system)).
+
+| Type | Assertion |
+| --- | --- |
+| `color` | Must be a string parseable by `parseColor` |
+| `dimension` | Must be a string parseable by `parseDimension` |
+| `duration` | Must be a string parseable by `parseDuration` |
+| `shadow` | Must be a string parseable by `parseShadow` |
+| `cubicBezier` | Must be an array of four numbers |
+| `number` / `string` | Not validated |
+
+## Formatting functions
+
+### `toArgbHex(c: ParsedColor): string`
+
+An `0xAARRGGBB` literal, for **Kotlin / C**. The alpha channel is `Math.round(a * 255)`; every channel is rendered as two uppercase hexadecimal digits.
+
+### `toArgbHash(c: ParsedColor): string`
+
+A `#AARRGGBB` string, for **ArkTS**. Based on `toArgbHex` with `0x` replaced by `#`.
+
+### `usesSp(path: string): boolean`
+
+**An Android-specific decision**: if the path matches `/fontsize/i`, use `sp`; otherwise `dp`.
+
+### `structureValue(token: ResolvedToken)`
+
+**The single entry point for the targets**. Converts the neutral value into a discriminated union keyed by `kind` per `token.type`:
+
+```ts
+{ kind: 'color'; color: ParsedColor }
+| { kind: 'dimension'; dimension: ParsedDimension }
+| { kind: 'duration'; duration: ParsedDuration }
+| { kind: 'shadow'; shadow: ParsedShadow }
+| { kind: 'cubicBezier'; bezier: number[] }
+| { kind: 'number'; number: number }
+| { kind: 'string'; string: string }
+```
+
+Each target then switches on this union to format its own literals. This way **the neutral-value parsing exists exactly once**; each target only cares about "how to write it".

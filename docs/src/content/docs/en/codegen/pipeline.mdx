@@ -1,0 +1,137 @@
+---
+title: "Pipeline Overview"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+`pnpm codegen` executes `codegen/src/index.ts`. The complete pipeline:
+
+```
+package.json version
+        │
+        ▼
+loadTokenFiles()          Load tokens/*.json, Ajv structural validation, flatten
+        │                 Returns LoadedTokenFile[] (each file carries namespace / isDark / flat)
+        ▼
+resolveTokens()           ref resolution (with cycle detection) + dark-mode merging
+        │                 Returns { tokenSet, orphanDarkPaths, refMap }
+        ▼
+loadSpecs()               Load specs/*.json (schema validation)
+loadCases()               Load cases/*.json (schema validation)
+        │
+        ▼
+Assemble CodegenInput { tokens: tokenSet, specs, cases, version }
+        │
+        ▼
+Delete the entire dist/ and rebuild
+        │
+        ▼
+Run the 5 targets in order ──► android → ios → harmony → c → docs
+        │                 Each target.generate(input) returns GeneratedFile[]
+        ▼
+Write each file to dist/<outDir>/<relativePath>
+```
+
+## Entry file `codegen/src/index.ts`
+
+### Constants
+
+| Constant | Value |
+| --- | --- |
+| `ROOT` | Repository root (two levels up from `import.meta.dirname`) |
+| `DIST` | `<ROOT>/dist` |
+| `targets` | `[androidTarget, iosTarget, harmonyTarget, cTarget, docsTarget]`, **order fixed** |
+
+### `main()`
+
+```ts
+function main(): void
+```
+
+The only entry point (`index.ts` exports nothing; `main()` is an internal function called at the bottom of the file). Steps:
+
+1. `readVersion()` reads the `package.json` version number
+2. `loadTokenFiles()` loads the tokens
+3. `resolveTokens(files)` resolves them and takes the `tokenSet`
+4. `loadSpecs()` / `loadCases()` load the contracts and cases
+5. Assemble the `CodegenInput`
+6. When `existsSync(DIST)`, `rmSync(DIST, { recursive: true })` — **delete-then-build, guaranteeing no stale artifacts**
+7. Call `generate(input)` per target, writing files to `dist/<outDir>/<relativePath>` and printing a `[target] path` log line for each artifact
+8. A final summary line with the target count, file count, and version
+
+The file-header comment declares red line 1 explicitly: **generate token skeletons only, never any UI implementation**.
+
+## Core interfaces (`codegen/src/types.ts`)
+
+Below are the four most commonly used interfaces of the pipeline; **the complete reference for all 16 exported types is in [Type Definitions — types.ts](./types).**
+
+### `CodegenTarget`
+
+```ts
+interface CodegenTarget {
+  name: string               // Log prefix, e.g. 'android'
+  outDir: string             // Subdirectory under dist/, e.g. 'android'
+  generate(input: CodegenInput): GeneratedFile[]
+}
+```
+
+Every platform target implements this interface. Adding a platform = adding a target and appending it to the `targets` array.
+
+### `CodegenInput`
+
+```ts
+interface CodegenInput {
+  tokens: TokenSet    // The resolved light token set + dark overrides
+  specs: ComponentSpec[]   // Currently consumed by no target (reserved for future component docs / test generation)
+  cases: ComponentCases[]  // Same as above
+  version: string     // The package.json version number, written into the header comment of every artifact
+}
+```
+
+<Aside type="tip" title="Status of specs / cases">
+Currently every target consumes **only** `input.tokens`; no target uses `specs` / `cases` — they are reserved interfaces for future component documentation / type skeleton / test generation.
+</Aside>
+
+### `GeneratedFile`
+
+```ts
+interface GeneratedFile {
+  relativePath: string  // Output path relative to dist/<outDir>/
+  content: string
+}
+```
+
+### `TokenSet`
+
+```ts
+interface TokenSet {
+  tokens: ResolvedToken[]              // Light tokens (path lexicographic order)
+  byPath: Map<string, ResolvedToken>   // Fast lookup by path
+  dark: DarkOverrides                  // path -> dark override value
+}
+```
+
+## Total artifact count
+
+| target | Files |
+| --- | --- |
+| android | 2 (`LhTokens.kt` + `LhDarkTokens.kt`) |
+| ios | 2~3 (+ `LhShadow.swift`, when shadow tokens exist) |
+| harmony | 2~3 (+ `LhShadow.ets`) |
+| c | 2 |
+| docs | 3 |
+
+The ios / harmony shadow files are only generated when `shadow` tokens exist, so the total file count changes with the token content; `dist/` is authoritative.
+
+## Related modules
+
+| Module | Responsibility |
+| --- | --- |
+| [load.ts](./load) | Loading and structural validation |
+| [resolve.ts](./resolve) | Reference resolution and dark-mode merging |
+| [format.ts](./format) | Neutral-value parsing and per-target formatting |
+| [tree.ts](./tree) | Flat to nested |
+| [render.ts](./render) | Template rendering |
+| [types.ts](./types) | All type definitions |
+| [targets/](./targets) | The five platform targets |
+| [templates/](./templates) | The 7 handlebars templates |

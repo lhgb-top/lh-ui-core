@@ -1,0 +1,137 @@
+---
+title: "نظرة عامة على خط الأنابيب"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+ينفّذ `pnpm codegen` الأمر `codegen/src/index.ts`، وخط الأنابيب الكامل كالتالي:
+
+```
+رقم إصدار package.json
+        │
+        ▼
+loadTokenFiles()          تحميل tokens/*.json، تحقق Ajv الهيكلي، تسطيح flatten
+        │                  يعيد LoadedTokenFile[] (كل ملف يحوي namespace / isDark / flat)
+        ▼
+resolveTokens()           تحليل ref (متضممنًا الكشف عن الحلقات) + دمج الوضع الداكن
+        │                  يعيد { tokenSet, orphanDarkPaths, refMap }
+        ▼
+loadSpecs()               تحميل specs/*.json (تحقق schema)
+loadCases()               تحميل cases/*.json (تحقق schema)
+        │
+        ▼
+تجميع CodegenInput { tokens: tokenSet, specs, cases, version }
+        │
+        ▼
+حذف مجلد dist/ بالكامل وإعادة بنائه
+        │
+        ▼
+تنفيذ الأهداف الخمسة بالترتيب ──► android ← ios ← harmony ← c ← docs
+        │                 كل target.generate(input) يعيد GeneratedFile[]
+        ▼
+الكتابة على القرص ملفًا ملفًا وفق dist/<outDir>/<relativePath>
+```
+
+## ملف الدخول `codegen/src/index.ts`
+
+### الثوابت
+
+| الثابت | القيمة |
+| --- | --- |
+| `ROOT` | جذر المستودع (مستويان أعلى `import.meta.dirname`) |
+| `DIST` | `<ROOT>/dist` |
+| `targets` | `[androidTarget, iosTarget, harmonyTarget, cTarget, docsTarget]`، **بترتيب ثابت** |
+
+### `main()`
+
+```ts
+function main(): void
+```
+
+الدخول الوحيد (لا يُصدِّر `index.ts` أي كيان، و`main()` دالة داخلية، تُستدعى مباشرةً في نهاية الملف). الخطوات:
+
+1. يقرأ `readVersion()` رقم الإصدار من `package.json`
+2. يحمل `loadTokenFiles()` الرموز
+3. يحلل `resolveTokens(files)` ويأخذ `tokenSet`
+4. يحمّل `loadSpecs()` / `loadCases()` العقود والحالات
+5. يجمع `CodegenInput`
+6. عند `existsSync(DIST)` ينفذ `rmSync(DIST, { recursive: true })` — **حذف أولًا ثم بناء، لضمان عدم بقاء مخلفات في المنتجات**
+7. يستدعي `generate(input)` لكل هدف، ويكتب الملفات وفق `dist/<outDir>/<relativePath>`، مع طباعة سجل `[target] path` لكل منتج
+8. سطر أخير يلخّص عدد الأهداف وعدد الملفات والإصدار
+
+يذكر تعليق رأس الملف الخط الأحمر 1 صراحةً: **توليد هيكل الرموز فقط، دون توليد أي تنفيذ للواجهة**.
+
+## الواجهات الأساسية (`codegen/src/types.ts`)
+
+فيما يلي الواجهات الأربع الأكثر استخدامًا في خط الأنابيب؛ **المرجع الكامل لجميع تصديرات الأنواع الـ 16 في [تعريفات الأنواع types.ts](./types).**
+
+### `CodegenTarget`
+
+```ts
+interface CodegenTarget {
+  name: string               // بادئة السجل، مثل 'android'
+  outDir: string             // اسم الدليل الفرعي تحت dist، مثل 'android'
+  generate(input: CodegenInput): GeneratedFile[]
+}
+```
+
+ينفذ كل هدف لمنصة هذه الواجهة. إضافة منصة جديدة = إضافة هدف جديد وإدراجه في مصفوفة `targets`.
+
+### `CodegenInput`
+
+```ts
+interface CodegenInput {
+  tokens: TokenSet    // مجموعة رموز الوضع الفاتح محلَّلة + تغطية الوضع الداكن
+  specs: ComponentSpec[]   // غير مُستهلكة حاليًا من أي هدف (محجوزة لتوليد توثيق/اختبارات المكوّنات مستقبلًا)
+  cases: ComponentCases[]  // مثل ما سبق
+  version: string     // رقم إصدار package.json، يُكتب في تعليق رأس كل منتج
+}
+```
+
+<Aside type="tip" title="حالة specs / cases">
+لا تستهلك الأهداف حاليًا **سوى** `input.tokens`، ولا يستخدم أي هدف `specs` / `cases` — فهذه واجهات محجوزة لتوليد توثيق المكوّنات / هياكل الأنواع / الاختبارات مستقبلًا.
+</Aside>
+
+### `GeneratedFile`
+
+```ts
+interface GeneratedFile {
+  relativePath: string  // مسار الإخراج بالنسبة إلى dist/<outDir>/
+  content: string
+}
+```
+
+### `TokenSet`
+
+```ts
+interface TokenSet {
+  tokens: ResolvedToken[]              // رموز الوضع الفاتح (مرتبة حسب path معجميًا)
+  byPath: Map<string, ResolvedToken>   // بحث سريع حسب المسار
+  dark: DarkOverrides                  // path ← قيمة تغطية الوضع الداكن
+}
+```
+
+## العدد الإجمالي للمنتجات
+
+| الهدف | عدد الملفات |
+| --- | --- |
+| android | 2 (`LhTokens.kt` + `LhDarkTokens.kt`) |
+| ios | 2~3 (+ `LhShadow.swift` عند وجود رموز ظلال) |
+| harmony | 2~3 (+ `LhShadow.ets`) |
+| c | 2 |
+| docs | 3 |
+
+لا تُولَّد ملفات الظلال في ios / harmony إلا عند وجود رموز `shadow`، لذلك يتغير العدد الإجمالي للملفات تبعًا لمحتوى الرموز، والمعتمد هو ما في `dist/` فعلًا.
+
+## الوحدات ذات الصلة
+
+| الوحدة | المسؤولية |
+| --- | --- |
+| [load.ts](./load) | التحميل والتحقق الهيكلي |
+| [resolve.ts](./resolve) | تحليل المراجع ودمج الوضع الداكن |
+| [format.ts](./format) | تحليل القيم المحايدة والتنسيق لكل طرف |
+| [tree.ts](./tree) | تحويل المسطح إلى متداخل |
+| [render.ts](./render) | عرض القوالب |
+| [types.ts](./types) | جميع تعريفات الأنواع |
+| [targets/](./targets) | الأهداف الخمسة للمنصات |
+| [templates/](./templates) | 7 قوالب handlebars |

@@ -1,0 +1,81 @@
+---
+title: "Capa de árbol tree.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> Construye un árbol anidado a partir del `path -> ResolvedToken` plano, para que cada target pueda emitir la salida según la jerarquía de espacios de nombres.
+
+## Por qué hace falta un árbol
+
+Los tokens están anidados en el JSON (`color.primary.default`), pero las fases de carga y de resolución trabajan con un **`Map<path, ResolvedToken>` plano** (práctico para detectar duplicados, resolver refs y fusionar el modo oscuro). Al llegar a la fase de generación, el `object Color { object Primary { ... } }` de Kotlin, el `enum Color { enum Primary { ... } }` de Swift y los comentarios de sección de C necesitan todos ellos una **estructura anidada** — de ahí que primero se construya el árbol.
+
+## Tipos
+
+```ts
+interface TokenTreeGroup {
+  name: string
+  tokens: { name: string; token: ResolvedToken }[]   // los tokens directos bajo el grupo (se conservan los nombres originales)
+  children: TokenTreeGroup[]                          // los subgrupos
+}
+```
+
+Ejemplo de la transformación:
+
+```
+color.primary.default  =>
+  { name: 'color', children: [
+      { name: 'primary', children: [
+          { name: 'default', tokens: [{ name: 'default', token }] }
+      ] }
+  ] }
+```
+
+## Funciones
+
+### `buildTokenTree(tokens: ResolvedToken[]): TokenTreeGroup[]`
+
+La entrada. Se crea una raíz virtual, se llama a `insert(root, segments, token, 0)` para cada token y, por último, se devuelve `root.children` (la propia raíz virtual no aparece).
+
+### `insert(group, segments, token, depth): void`
+
+Función recursiva interna:
+
+```ts
+const name = segments[depth]
+if (depth === segments.length - 1) {
+  group.tokens.push({ name, token })   // el último segmento: entra en tokens
+  return
+}
+let child = group.children.find((c) => c.name === name)
+if (!child) {
+  child = { name, tokens: [], children: [] }
+  group.children.push(child)           // si no existe, se crea el subgrupo
+}
+insert(child, segments, token, depth + 1)
+```
+
+**Los subgrupos con el mismo nombre solo se crean una vez**; los siguientes tokens con el mismo prefijo reutilizan el subgrupo ya creado.
+
+### `pascalCase(name: string): string`
+
+Convierte el nombre del grupo a PascalCase, para la nomenclatura de los grupos en los `object` de Kotlin / los `enum` de Swift / las `class` de ArkTS:
+
+```ts
+return name.charAt(0).toUpperCase() + name.slice(1)
+```
+
+<Aside type="caution" title="Solo se pone en mayúscula la inicial">
+`pascalCase` **no separa las palabras del camelCase, solo pone la inicial en mayúscula** — `fontSize` → `FontSize`, `zIndex` → `ZIndex`. Como la nomenclatura de los tokens ya es camelCase, aquí no hace falta volver a partir las palabras.
+</Aside>
+
+## Cómo usa el árbol cada plataforma
+
+| Plataforma | Uso |
+| --- | --- |
+| Android | `emitTree` emite recursivamente `object PascalCase { ... }`, con miembros `val name = literal` |
+| iOS | `emitTree` emite recursivamente `public enum PascalCase`, con miembros `public static let name = ...` |
+| HarmonyOS | `emitTree` emite recursivamente `class PascalCase` (las clases anidadas no llevan export), con miembros `static readonly name: T = ...` |
+| C | Estilo plano de `#define`; el árbol solo sirve para generar los comentarios de sección `/* --- group.path --- */` |
+
+Para más detalles, véanse [Las cinco plataformas objetivo](./targets).

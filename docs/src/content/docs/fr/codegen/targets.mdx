@@ -1,0 +1,220 @@
+---
+title: "Les cinq cibles"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+Chaque cible implémente l'interface `CodegenTarget` (`{ name, outDir, generate(input): GeneratedFile[] }`) et est appelée à tour de rôle par le [pipeline](./pipeline).
+
+## Le modèle partagé de construction des artéfacts sombres
+
+Les quatre cibles de plateforme utilisent le même schéma pour transformer `tokenSet.dark` (`Map<path, value>`) en `ResolvedToken[]` :
+
+```ts
+const darkTokens = [...tokenSet.dark.entries()]
+  .map(([path, value]) => {
+    const base = tokenSet.byPath.get(path)
+    return {
+      path,
+      type: base?.type ?? ('color' as const),   // Le type est pris sur la clé claire de même nom, sinon repli sur color
+      value,
+      description: base?.description,
+    }
+  })
+  .sort((a, b) => a.path.localeCompare(b.path))
+```
+
+Puis l'émission suit le même arbre, triée par chemin. Les artéfacts clairs portent des commentaires de `description` ; l'**étalement (spread) est ignoré et commenté explicitement sur toutes les cibles**.
+
+---
+
+## android.ts — Kotlin + Jetpack Compose
+
+**Artéfacts** : `dist/android/top/lhgb/ui/tokens/LhTokens.kt` + `LhDarkTokens.kt`
+
+**Constante** : `PACKAGE = 'top.lhgb.ui.tokens'` (la convention familiale du nom de domaine inverse, plan directeur D20)
+
+### `formatKotlin(path, token): FormatResult`
+
+Retourne `{ literal, features }` — `features` est l'ensemble des types d'exécution utilisés, et **détermine la liste des imports** :
+
+| Type | Littéral | features |
+| --- | --- | --- |
+| color | `ComposeColor(0xAARRGGBB)` | `color` |
+| dimension (px) | `${d.value}.${usesSp(path) ? 'sp' : 'dp'}` | `dimension` |
+| dimension (%) | `0.50f  // 50% (une fraction, convertie par rapport à la taille du conteneur)` (après `(v/100).toFixed(3)`, un zéro de fin est retiré) | — |
+| duration | `200  // 200ms (millisecondes)` | — |
+| cubicBezier | `CubicBezierEasing(0.4f, 0f, 0.2f, 1f)` | `bezier` |
+| shadow | `Shadow(color = ..., offset = Offset(xf, yf), blurRadius = bf)` | `color`, `shadow` |
+| number / string | Tel quel / `JSON.stringify` | — |
+
+### `emitTree(lines, group, indent, features)`
+
+Émet récursivement des `object PascalCase { ... }` imbriqués, avec des membres `val name = literal` et la description en commentaire en fin de ligne. `features` est cumulé au cours du parcours.
+
+### `buildKotlinBody(tokenSet, rootName, features)` / `buildDarkKotlinBody(tokenSet, features)`
+
+Le nom de l'objet racine clair est passé en paramètre (`LhTokens`), la **racine sombre est toujours `LhDarkTokens`**.
+
+### `importsFor(features): string[]`
+
+**La liste des imports est déterminée par les fonctionnalités réellement utilisées ; ce qui n'est pas utilisé n'est pas importé** :
+
+| feature | import |
+| --- | --- |
+| `color` | `androidx.compose.ui.graphics.Color as ComposeColor` |
+| `dimension` | `androidx.compose.ui.unit.dp` + `.sp` |
+| `shadow` | `androidx.compose.ui.graphics.Shadow` + `androidx.compose.ui.geometry.Offset` |
+| `bezier` | `androidx.compose.animation.core.CubicBezierEasing` |
+
+### `renderKotlinFile(body, version, features): string`
+
+Assemble la bannière d'en-tête « ne pas modifier à la main », le bloc des imports généré selon `features` et le body, en un fichier `.kt` complet.
+
+---
+
+## ios.ts — Swift + SwiftUI
+
+**Artéfacts** : `dist/ios/Sources/LhUITokens/LhTokens.swift` + `LhDarkTokens.swift` ; **`LhShadow.swift` est en outre généré lorsque des jetons d'ombre existent**
+
+### `formatSwift(token): string`
+
+| Type | Littéral |
+| --- | --- |
+| color (a=1) | `SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)` |
+| color (a&lt;1) | Identique + `.opacity(0.4)` |
+| dimension | `CGFloat(40)` ; `%` émet une fraction + un commentaire |
+| duration | `0.200  // 0.2s (secondes)` — **les animations SwiftUI s'expriment en secondes, conversion à la compilation** (millisecondes ÷ 1000, 3 décimales) |
+| cubicBezier | `(x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // Points de contrôle de Bézier, la cible construit elle-même son easing` |
+| shadow | `LhShadow(color:opacity:radius:x:y:)` |
+
+### `swiftMemberName(name): string`
+
+Lorsqu'un nom de membre est identique à un mot-clé Swift, il est **entouré de contre-apostrophes** (comme `` `default` ``), sinon l'artéfact ne compile pas.
+
+<Aside type="tip" title="Pourquoi seul le nom des membres est échappé">
+`SWIFT_KEYWORDS` est un ensemble de 45 mots-clés Swift. **Les noms des types énumérés suivent la convention `pascalCase` et ne collisionnent jamais avec un mot-clé** (une fois la première lettre mise en majuscule, aucun ne figure dans l'ensemble) ; **seuls les noms de membres doivent être échappés**.
+</Aside>
+
+### `buildSwiftBody(tokenSet, rootName): string` / `buildDarkSwiftBody(tokenSet): string`
+
+Assemble la structure racine `public enum` : le nom de la racine claire est passé en paramètre (`LhTokens`), la **racine sombre est toujours `LhDarkTokens`**, et l'intérieur est rempli récursivement par `emitTree` dans les deux cas. La bannière d'en-tête est assemblée directement dans `iosTarget.generate`.
+
+### `emitTree(lines, group, indent)`
+
+L'idiome Swift des espaces de noms sans instance : des `public enum PascalCase` imbriqués, avec des membres `public static let name = ...`.
+
+---
+
+## harmony.ts — HarmonyOS ArkTS + ArkUI
+
+**Artéfacts** : `dist/harmony/tokens/LhTokens.ets` + `LhDarkTokens.ets` ; **`LhShadow.ets` est en outre généré lorsque des jetons d'ombre existent**
+
+### `formatEts(token): string`
+
+| Type | Littéral |
+| --- | --- |
+| color | `'#FF2B4C7C'` (ArkUI accepte les chaînes `#AARRGGBB`, via `toArgbHash`) |
+| dimension | Une valeur `vp` pure ; `%` émet une fraction + un commentaire |
+| duration | `200  // 200ms (millisecondes)` |
+| cubicBezier | `[0.4, 0, 0.2, 1]  // consommé côté composant via curves.cubicBezierCurve` |
+| shadow | `{ color: '#...', radius: 8, offsetX: 0, offsetY: 2 }` |
+
+### `typeAnnotation(token): string`
+
+**La seule plateforme avec des annotations de type** (ArkTS est fortement typé) :
+
+| Type | Annotation |
+| --- | --- |
+| color | `ResourceColor` |
+| dimension | `Dimension \| number` |
+| duration / number | `number` |
+| shadow | `LhShadow` |
+| cubicBezier | `number[]` |
+| string | `string` |
+
+### `emitTree(lines, group, indent)`
+
+Une `export class` racine, **les classes imbriquées sans export** (les déclarations `export` ne sont pas autorisées dans le corps d'une classe ArkTS), avec des membres `static readonly name: T = literal`.
+
+### `buildEtsBody(tokenSet, rootName): string` / `buildDarkEtsBody(tokenSet): string`
+
+Assemble la structure racine `export class` : le nom de la racine claire est passé en paramètre (`LhTokens`), la **racine sombre est toujours `LhDarkTokens`**, et l'intérieur est rempli récursivement par `emitTree` dans les deux cas. La bannière d'en-tête est assemblée directement dans `harmonyTarget.generate`.
+
+---
+
+## windows.ts — Windows C# + WinUI 3
+
+**Artéfacts** : `dist/windows/Tokens/LhTokens.cs` + `LhDarkTokens.cs` ; **`LhShadow.cs` est en outre généré lorsque des jetons d'ombre existent, et `LhEasing.cs` lorsque des jetons de Bézier existent**
+
+L'espace de noms est `Top.Lhgb.Ui.Tokens` (nom de domaine inverse, plan directeur D20).
+
+### `toCsColor(c): string`
+
+Convertit une couleur en appel de fabrique WinUI : `Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C)`.
+
+<Aside type="caution" title="Pourquoi Windows.UI.Color plutôt que Microsoft.UI.Color">
+Windows App SDK 1.6 et versions antérieures **n'ont pas** de structure `Microsoft.UI.Color` ; les propriétés de la table des couleurs `Microsoft.UI.Colors` (Black, Transparent, etc.) retournent elles aussi des `Windows.UI.Color`. C'est pourquoi les jetons utilisent tous `Windows.UI.Color` — il fournit la fabrique `FromArgb` et son type correspond à celui de la table Colors.
+</Aside>
+
+### `doubleLiteral(value): string`
+
+Ajoute le suffixe `.0` aux entiers (8 → `8.0`), pour éviter toute ambiguïté de conversion implicite.
+
+### `formatCs(token): FormatResult`
+
+| Type | Littéral C# | Type du champ |
+| --- | --- | --- |
+| color | `Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C)` | `Windows.UI.Color` |
+| dimension (entière) | `40.0` | `double` |
+| dimension (décimale) | `0.5` | `double` |
+| dimension (%) | `0.500  // 50% (une fraction, convertie par rapport à la taille du conteneur)` | `double` |
+| duration | `200  // 200ms (millisecondes)` | `int` |
+| cubicBezier | `new LhEasing(0.4, 0, 0.2, 1)` | `LhEasing` |
+| shadow | `new LhShadow(0xFF..., 0.0, 2.0, 8.0)` | `LhShadow` |
+| number | `400` / `1.8` | `int` / `double` |
+| string | `"Source Code Pro, ..."` | `string` |
+
+La `note` (explication d'unité / de conversion) et la `description` sont fusionnées en un seul commentaire inline ; **le point-virgule doit se trouver entre le littéral et le commentaire**, sinon les littéraux portant un commentaire (fraction / durée / Bézier / ombre) verraient leur point-virgule absorbé par le commentaire (CS1002).
+
+### `csMemberName(name): string`
+
+Convertit en **PascalCase** : `default → Default`, `extraLarge → ExtraLarge`. Ce qui évite au passage les mots-clés contextuels C# que sont `default` / `base` (les noms de groupe suivent également la convention `pascalCase`).
+
+### `emitTree(lines, group, indent)`
+
+Des `public static class` imbriquées expriment la hiérarchie des jetons (les classes statiques sont l'idiome C# des espaces de noms), avec des membres `public static readonly T Name = literal;`.
+
+### `buildCsBody(tokenSet, rootName)` / `buildDarkCsBody(tokenSet)`
+
+Le nom de la racine claire est passé en paramètre (`LhTokens`), la **racine sombre est toujours `LhDarkTokens`**, et l'intérieur est rempli récursivement par `emitTree` dans les deux cas. La bannière d'en-tête est rendue dans `windowsTarget.generate` par `windows/LhTokens.cs.hbs`.
+
+<Aside type="note" title="Le mode sombre : un objet parallèle">
+`LhDarkTokens` est un objet indépendant, parallèle à `LhTokens` — le mode sombre ne surcharge que les couleurs ; les dimensions / le mouvement / les rayons sont inchangés en mode sombre, et un composant qui a besoin d'une dimension en mode sombre prend la valeur de l'objet clair. La forme est strictement identique à celle des cibles android / ios / harmony.
+</Aside>
+
+### Exports
+
+`export { csTokenPath }` — convertit un chemin pointillé en `LhTokens.Color.Primary.Default`, pour les tests et la consommation externe.
+
+---
+
+## docs.ts — les artéfacts de documentation (sans modèle)
+
+**Artéfacts** : `dist/docs/tokens.md` + `tokens.light.json` + `tokens.dark.json`
+
+**La seule cible qui n'utilise pas de modèles handlebars** ; elle assemble des chaînes de caractères directement en code.
+
+### `literalValue(token): string`
+
+Une couleur est rendue sous la forme `valeur brute → #rrggbb` (lorsque a&lt;1, `→ rgba(r, g, b, a)`), les autres types passent directement par `String(value)`.
+
+### `buildTokenTable(input): string`
+
+Émet, regroupé par **espace de noms de premier niveau** du chemin, des tableaux markdown « Jeton | Type | Clair | Sombre | Description » ; `nativeOnly` est signalé par « ajout natif » ; la colonne sombre contient `—` en l'absence de surcharge.
+
+### `buildDarkJson(input): string`
+
+La table des surcharges sombres, triée, puis `JSON.stringify(..., null, 2)`.
+
+L'usage des trois artéfacts est décrit dans [Artéfacts docs](../artifacts/docs-output).

@@ -1,0 +1,113 @@
+---
+title: "Capa de formato format.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> Análisis de los valores neutrales y formateo por plataforma.
+
+Todos los valores de los tokens son expresiones neutrales independientes de la plataforma (hexadecimales / rgba / cadenas con unidad / números / matrices de Bézier). `format.ts` los **analiza como datos estructurados**, y cada target los formatea luego como literales del lenguaje de la plataforma.
+
+## Tipos tras el análisis
+
+```ts
+interface ParsedColor    { r: number; g: number; b: number; a: number }   // r/g/b: 0..255, a: 0..1
+interface ParsedDimension { value: number; unit: 'px' | '%' }
+interface ParsedDuration { ms: number }                                     // normalizado a milisegundos
+interface ParsedShadow   { x: number; y: number; blur: number; spread?: number; color: ParsedColor }
+```
+
+## Funciones de análisis
+
+### `parseHex(hex: string): ParsedColor`
+
+Admite tres formas hexadecimales:
+
+| Entrada | Tratamiento |
+| --- | --- |
+| `#RGB` | Se despliega duplicando cada dígito |
+| `#RRGGBB` | Se toman los canales directamente |
+| `#AARRGGBB` | **Los dos primeros dígitos son el alfa**, divididos entre 255 para normalizar a 0..1 |
+| Otra longitud | Se lanza `Valor de color hexadecimal no analizable` |
+
+### `parseRgba(raw: string): ParsedColor`
+
+Análisis de `rgba()` / `rgb()`, con el alfa por defecto a 1. Los canales se validan con `clamp255` (fuera del rango 0..255, se lanza `Canal de color fuera de rango`).
+
+### `parseColor(value: string): ParsedColor`
+
+La entrada única para los colores: si empieza por `#` pasa por `parseHex`, si empieza por `rgb` pasa por `parseRgba`, y en caso contrario se lanza `Formato de color no admitido (solo se aceptan hexadecimal y rgba)`.
+
+### `parseDimension(value: string): ParsedDimension`
+
+Coincide con `/^(\d+(?:\.\d+)?)(px|%)$/`; en caso contrario, se lanza `Valor de tamaño no analizable`. **Solo admite px y %** — el resto de unidades ya están prohibidas en la capa del JSON por la línea roja 5.
+
+### `parseDuration(value: string): ParsedDuration`
+
+Coincide con `/^(\d+(?:\.\d+)?)(s|ms)$/`; los `s` se multiplican por 1000 y **se normaliza todo a milisegundos**.
+
+### `parseShadow(value: string): ParsedShadow`
+
+Se parte por espacios (mínimo 4 segmentos):
+
+```
+x  y  blur  [spread]  color
+```
+
+Si el 4.º segmento coincide con `-?\d+(\.\d+)?px`, es la **extensión (spread)**; si no, es el color:
+
+```ts
+if (rest.length > 1 && /^-?\d+(\.\d+)?px$/.test(rest[0])) {
+  spread = Number(rest[0].replace('px', ''))
+  rest.shift()
+}
+```
+
+La parte del color se devuelve a `parseColor`.
+
+<Aside type="tip" title="spread se ignora en todas las plataformas">
+`ParsedShadow.spread` se registra pero **ningún target lo emite** (se deja constancia en un comentario), porque ni la API de sombras de SwiftUI ni la de ArkUI tienen un parámetro spread.
+</Aside>
+
+### `assertTypedValue(type: TokenType, value: TokenValue): void`
+
+**La validación semántica que va más allá del esquema**: afirma y **resuelve en la práctica** el valor de cada tipo, uno por uno. Es la última barrera de la prioridad de tres niveles del sistema de tipos (véase el [Sistema de tipos](../tokens/type-system)).
+
+| Tipo | Aserción |
+| --- | --- |
+| `color` | Debe ser una cadena que `parseColor` pueda analizar |
+| `dimension` | Debe ser una cadena que `parseDimension` pueda analizar |
+| `duration` | Debe ser una cadena que `parseDuration` pueda analizar |
+| `shadow` | Debe ser una cadena que `parseShadow` pueda analizar |
+| `cubicBezier` | Debe ser una matriz de números de longitud 4 |
+| `number` / `string` | Sin validación |
+
+## Funciones de formateo
+
+### `toArgbHex(c: ParsedColor): string`
+
+El literal `0xAARRGGBB`, para uso de **Kotlin / C**. El canal alfa pasa por `Math.round(a * 255)` y cada canal se expresa en mayúsculas con dos dígitos hexadecimales.
+
+### `toArgbHash(c: ParsedColor): string`
+
+La cadena `#AARRGGBB`, para uso de **ArkTS**. Se construye sobre `toArgbHex` cambiando `0x` por `#`.
+
+### `usesSp(path: string): boolean`
+
+**La decisión específica de Android**: si la ruta coincide con `/fontsize/i` se usa `sp`, y en el resto, `dp`.
+
+### `structureValue(token: ResolvedToken)`
+
+**La entrada común de los targets**. Convierte el valor neutral en un objeto unión discriminado por `kind`, según el `token.type`:
+
+```ts
+{ kind: 'color'; color: ParsedColor }
+| { kind: 'dimension'; dimension: ParsedDimension }
+| { kind: 'duration'; duration: ParsedDuration }
+| { kind: 'shadow'; shadow: ParsedShadow }
+| { kind: 'cubicBezier'; bezier: number[] }
+| { kind: 'number'; number: number }
+| { kind: 'string'; string: string }
+```
+
+Cada target hace luego un switch sobre esta unión para formatearla como un literal local. Así, **el análisis de los valores neutrales se escribe una sola vez**, y cada plataforma solo se preocupa de «cómo se escribe».

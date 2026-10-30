@@ -1,0 +1,107 @@
+---
+title: "Артефакты iOS"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+**Путь**: `dist/ios/Sources/LhUITokens/LhTokens.swift` и `LhDarkTokens.swift`; при наличии токенов теней дополнительно генерируется `LhShadow.swift`
+
+**Каталог модуля**: `Sources/LhUITokens/` (соглашение о каталогах SwiftPM)
+
+## Структура
+
+Идиома Swift для пространств имён без экземпляров: **вложенные `public enum`** + `public static let`:
+
+```swift
+import SwiftUI
+import CoreGraphics
+
+public enum LhTokens {
+  public enum Button {
+    public static let borderRadius = CGFloat(2)  // Скругление кнопки следует за глобальным скруглением
+    public static let borderWidth = CGFloat(1)
+    public enum FontSize {
+      public static let large = CGFloat(16)
+      public static let medium = CGFloat(14)
+    }
+    public enum Height {
+      public static let medium = CGFloat(40)  // Высота кнопки среднего размера (по умолчанию)
+    }
+  }
+}
+```
+
+## Отображение имён
+
+| Путь токена | Элемент Swift |
+| --- | --- |
+| `button.height.medium` | `LhTokens.Button.Height.medium` |
+| `color.primary.default` | `LhTokens.Color.Primary.`default`` |
+| `zIndex.modal` | `LhTokens.ZIndex.modal` |
+
+## Экранирование ключевых слов
+
+Если имя элемента совпадает с ключевым словом Swift, оно **берётся в обратные апострофы**, иначе артефакт не компилируется:
+
+```swift
+public enum Primary {
+  public static let `default` = SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)
+  public static let `repeat` = ...
+}
+```
+
+Экранирование применяется только к **именам элементов** — имена типов-перечислений проходят `pascalCase` (первая буква в верхнем регистре) и не сталкиваются с ключевыми словами. См. `SWIFT_KEYWORDS` и `swiftMemberName()` в `ios.ts`.
+
+## Единицы и литералы
+
+| Тип токена | Литерал Swift |
+| --- | --- |
+| Цвет (непрозрачный) | `SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)` |
+| Цвет (полупрозрачный) | То же + `.opacity(0.400)` |
+| Размер | `CGFloat(40)` |
+| Проценты | `0.500  // 50% (доля, пересчитывается от размера контейнера)` |
+| Длительность | `0.200  // 0.2s (секунды)` — **анимации SwiftUI работают в секундах, преобразование на этапе сборки** (миллисекунды ÷ 1000, 3 знака после запятой) |
+| Безье | `(x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // Контрольные точки Безье, easing строится на стороне платформы` |
+| Тень | `LhShadow(color:opacity:radius:x:y:)` |
+| Число / строка | Как есть / `JSON.stringify` |
+
+<Aside type="tip" title="Нормализация цветов">
+`Color(red:green:blue:)` в SwiftUI принимает нормализованные значения 0..1, поэтому на этапе сборки значение 0..255 делится на 255 и округляется до 3 знаков после запятой. Это типичный пример того, как «преобразование платформенных единиц лежит на target'е».
+</Aside>
+
+## LhShadow.swift
+
+В SwiftUI нет типа составной тени, поэтому генерируется структура-носитель (**статический шаблон, без содержимого токенов**):
+
+```swift
+public struct LhShadow {
+  public let color: SwiftUI.Color
+  public let opacity: Double
+  public let radius: CGFloat
+  public let x: CGFloat
+  public let y: CGFloat
+  // memberwise init
+}
+```
+
+Генерируется только при наличии токенов с `type: shadow`.
+
+## Тёмная тема
+
+Отдельный `public enum LhDarkTokens`:
+
+```swift
+public enum LhDarkTokens {
+  public enum Color {
+    public static let focus = SwiftUI.Color(red: 0.498, green: 0.651, blue: 0.851)
+    public static let selected = SwiftUI.Color(red: 0.694, green: 0.757, blue: 0.847)
+    // …остальные переопределённые ключи
+  }
+}
+```
+
+Непереопределённые ключи в тёмной теме наследуются из `LhTokens`.
+
+## Использование
+
+Репозиторий iOS подключает `dist/ios/` через SPM как локальную path-зависимость или использует уже опубликованный пакет; для применения достаточно `import LhUITokens`.

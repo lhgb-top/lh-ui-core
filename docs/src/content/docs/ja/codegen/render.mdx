@@ -1,0 +1,71 @@
+---
+title: "レンダリング層 render.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> Handlebars テンプレートレンダリングのラッパー。
+
+## 設計原則：薄いテンプレート
+
+テンプレートが担うのは**ファイルの骨組みだけ**です（ヘッダーコメント、import、名前空間の開閉）。トークンごとのリテラルのフォーマットは**すべて target の TS 側で完了**し、組み立て済みの `body` 文字列をテンプレートに渡します。
+
+```
+target.ts:  トークンごとにフォーマット → body 文字列へ連結
+                        ▼
+render.ts:  render('android/LhTokens.kt.hbs', { package, imports, body })
+                        ▼
+テンプレート:  ヘッダーコメント + package 宣言 + imports + {{{body}}}
+```
+
+利点：テンプレートに複雑な handlebars ロジックがなく、リテラルのフォーマットを変えるときは target の TS だけ、ファイルの骨組みを変えるときはテンプレートだけを触ればよく、互いに干渉しません。
+
+## 関数
+
+### `loadTemplate(name: string): HandlebarsTemplateDelegate`
+
+内部関数。テンプレート名から `codegen/templates/<name>` を読みます：
+
+```ts
+const compiled = Handlebars.compile(source, { noEscape: true })
+cache.set(name, compiled)   // コンパイル結果をキャッシュし、再コンパイルを避ける
+```
+
+<Aside type="tip" title="なぜ `noEscape: true` が必須なのか">
+テンプレートの内容には `<` `>` `#` などの文字が含まれます（C のヘッダーガード `#ifndef`、`#define`、Kotlin のジェネリクス）。デフォルトの HTML エスケープはこれらを壊してしまうため、必ず無効にします。
+</Aside>
+
+テンプレートディレクトリは定数 `TEMPLATES_DIR`（`codegen/templates`）で指定します。
+
+### `render<T>(templateName: string, data: T): string`
+
+唯一の外部向けインターフェース：
+
+```ts
+return loadTemplate(templateName)(data)
+```
+
+各 target はこの 1 行を呼ぶだけで済みます。
+
+## カスタム helper なし
+
+テンプレートは**handlebars の helper を一切登録しておらず**、組み込みの機能だけを使います：
+
+| 構文 | 用途 |
+| --- | --- |
+| `{{{ }}}` | 三重波括弧 + `noEscape` で、フォーマット済みの `body` を挿入 |
+| `{{#each}}` | import 一覧などの配列を走査 |
+
+## 7 つのテンプレート
+
+| テンプレート | 生成物 |
+| --- | --- |
+| `android/LhTokens.kt.hbs` | `LhTokens.kt` **および** `LhDarkTokens.kt`（ライト / ダーク共用） |
+| `ios/LhTokens.swift.hbs` | `LhTokens.swift` と `LhDarkTokens.swift` |
+| `ios/LhShadow.swift.hbs` | `LhShadow.swift`（静的テンプレート、body スロットなし） |
+| `harmony/LhTokens.ets.hbs` | `LhTokens.ets` と `LhDarkTokens.ets` |
+| `harmony/LhShadow.ets.hbs` | `LhShadow.ets`（静的テンプレート） |
+| `c/lh_tokens.h.hbs` | `lh_tokens.h` |
+| `c/lh_dark_tokens.h.hbs` | `lh_dark_tokens.h` |
+
+詳しくは [テンプレート一覧](./templates) を参照してください。

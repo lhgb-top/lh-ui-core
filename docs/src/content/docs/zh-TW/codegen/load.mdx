@@ -1,0 +1,105 @@
+---
+title: "裝載層 load.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> JSON 載入 + Ajv schema 校驗 + 扁平化。
+
+`load.ts` 只做**結構校驗**（JSON Schema）。**語意校驗**（類型與值匹配、引用完整性、環檢測）在 [resolve.ts](./resolve) 完成。
+
+## 類型
+
+```ts
+interface LoadedTokenFile {
+  fileName: string
+  namespace: string       // 命名空間前綴（color / radius / zIndex；空串表示頂層鍵即命名空間）
+  isDark: boolean
+  defaultType?: TokenType // 檔案級 $type
+  description?: string
+  flat: Map<string, RawToken>  // path -> RawToken（已折疊，含命名空間前綴）
+}
+```
+
+## 函式清單
+
+### `readJson<T>(filePath: string): T`
+
+讀 JSON 檔案並 `JSON.parse`。內部工具函式。
+
+### `listJsonFiles(dir: string): string[]`
+
+列目錄下的 `.json` 檔案，**排除 `schema.json`**，排序後轉絕對路徑。排序保證載入順序穩定（影響錯誤訊息與產物可重現性）。
+
+### `namespaceFromFileName(fileName: string): string`
+
+檔名推導命名空間（`$namespace` 缺省時的兜底邏輯）：去 `.json` 後按 `-` 切分，首段原樣、其餘段首字母大寫，再拼接。
+
+| 檔名 | 推導結果 |
+| --- | --- |
+| `color.json` | `color` |
+| `z-index.json` | `zIndex` |
+| `color-dark.json` | `colorDark` |
+
+<Aside type="tip" title="只是兜底">
+暗色檔案通常會顯式宣告 `$namespace` 與明色對齊（`color-dark.json` 顯式寫 `"$namespace": "color"`），推導結果 `colorDark` 實際不會用到。詳見 [命名空間](../tokens/namespace)。
+</Aside>
+
+### `flatten(obj, prefix, out, inheritedType?): void`
+
+遞迴把巢狀 JSON 折疊為扁平的 `Map<path, RawToken>`：
+
+- 跳過所有 `$` 開頭的鍵（元屬性）
+- 路徑拼接：`prefix ? prefix + '.' + key : key`
+- 既不是葉子也不是物件的節點 → 拋 `令牌路径 X 既不是叶子令牌也不是分组`
+
+**類型繼承的關鍵邏輯**：分組（含檔案根）宣告的 `$type` 沿樹向下傳遞，但**只烤進字面值葉子**：
+
+```ts
+// 字面值令牌繼承分組類型；ref 令牌保留 undefined，交給 resolve 向引用目標取類型
+if (node.type === undefined && node.ref === undefined && groupType !== undefined) {
+  out.set(path, { ...node, type: groupType })
+}
+```
+
+ref 葉子刻意不烤，把類型決定權交給 resolve 階段（三層類型優先順序的第一步，詳見 [類型系統](../tokens/type-system)）。
+
+### `isRawToken(node: unknown): node is RawToken`
+
+類型守衛：節點含 `value` 或 `ref` 鍵即視為**葉子令牌**；否則視為分組。
+
+### `loadTokenFiles(tokensDir = <root>/tokens): LoadedTokenFile[]`
+
+載入令牌目錄：
+
+1. 讀 `tokens/schema.json`，用 Ajv（`allErrors: true, strict: false`）編譯
+2. 逐檔案讀 JSON 並校驗，失敗拋 `令牌文件校验失败：<path>` + 格式化的錯誤清單
+3. 命名空間：`raw.$namespace`（字串時）優先，否則 `namespaceFromFileName`
+4. `flatten(raw, namespace, flat)` 折疊
+5. 組裝 `{ fileName, namespace, isDark: raw.$dark === true, defaultType: raw.$type, description: raw.$description, flat }`
+
+### `loadSpecs(specsDir = <root>/specs): ComponentSpec[]`
+
+同構載入 `specs/*.json`，校驗失敗拋 `组件契约校验失败`。
+
+### `loadCases(casesDir = <root>/cases): ComponentCases[]`
+
+同構載入 `cases/*.json`，校驗失敗拋 `黄金用例校验失败`。
+
+### `formatErrors(errors: ErrorObject[]): string`
+
+把 Ajv 的錯誤物件格式化為縮排清單（`instancePath + message`）。
+
+### `readVersion(): string`
+
+讀 `package.json` 的 `version`，作為每個產物頭部註解的一部分（「源：@lh-ui/core tokens @ v0.0.1」）。
+
+## 校驗分層
+
+| 層 | 在哪 | 做什麼 |
+| --- | --- | --- |
+| **結構校驗** | `load.ts` | JSON Schema：欄位必填、列舉值、命名正則、`additionalProperties: false` |
+| **語意校驗** | `resolve.ts` | 類型與值匹配（`assertTypedValue`）、引用存在性、引用環檢測 |
+| **一致性校驗** | `scripts/verify-specs.mts` | spec 與 cases 的交叉一致性 |
+
+這樣分層是因為 JSON Schema 表達不了「ref 目標必須存在」「類型必須匹配值」這類跨檔案、跨節點的約束。

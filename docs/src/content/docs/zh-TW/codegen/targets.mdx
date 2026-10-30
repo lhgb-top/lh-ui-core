@@ -1,0 +1,220 @@
+---
+title: "五個目標平台"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+每個 target 實作 `CodegenTarget` 介面（`{ name, outDir, generate(input): GeneratedFile[] }`），由 [管線](./pipeline) 依序呼叫。
+
+## 共享的暗色產物構造模式
+
+四個平台 target 用同一套模式把 `tokenSet.dark`（`Map<path, value>`）轉成 `ResolvedToken[]`：
+
+```ts
+const darkTokens = [...tokenSet.dark.entries()]
+  .map(([path, value]) => {
+    const base = tokenSet.byPath.get(path)
+    return {
+      path,
+      type: base?.type ?? ('color' as const),   // 明色同名鍵取類型，否則兜底 color
+      value,
+      description: base?.description,
+    }
+  })
+  .sort((a, b) => a.path.localeCompare(b.path))
+```
+
+然後按 path 排序走同一棵 emit 樹。明色產物帶 `description` 註解；`spread`（擴展量）在**所有端都被忽略並註解說明**。
+
+---
+
+## android.ts —— Kotlin + Jetpack Compose
+
+**產物**：`dist/android/top/lhgb/ui/tokens/LhTokens.kt` + `LhDarkTokens.kt`
+
+**常數**：`PACKAGE = 'top.lhgb.ui.tokens'`（家族反域名規範，總綱 D20）
+
+### `formatKotlin(path, token): FormatResult`
+
+傳回 `{ literal, features }`——`features` 是用到的執行時類型集合，**決定 import 清單**：
+
+| 類型 | 字面值 | features |
+| --- | --- | --- |
+| color | `ComposeColor(0xAARRGGBB)` | `color` |
+| dimension（px） | `${d.value}.${usesSp(path) ? 'sp' : 'dp'}` | `dimension` |
+| dimension（%） | `0.50f  // 50%（分數，由容器尺寸換算）`（`(v/100).toFixed(3)` 後去掉一個尾零） | — |
+| duration | `200  // 200ms（毫秒）` | — |
+| cubicBezier | `CubicBezierEasing(0.4f, 0f, 0.2f, 1f)` | `bezier` |
+| shadow | `Shadow(color = ..., offset = Offset(xf, yf), blurRadius = bf)` | `color`, `shadow` |
+| number / string | 原樣 / `JSON.stringify` | — |
+
+### `emitTree(lines, group, indent, features)`
+
+遞迴輸出巢狀 `object PascalCase { ... }`，成員 `val name = literal`，description 作為行尾註解。`features` 在遍歷中累積。
+
+### `buildKotlinBody(tokenSet, rootName, features)` / `buildDarkKotlinBody(tokenSet, features)`
+
+明色根 object 名由參數傳入（`LhTokens`），**暗色根固定 `LhDarkTokens`**。
+
+### `importsFor(features): string[]`
+
+**import 清單由實際用到的特性決定，沒用到就不匯入**：
+
+| feature | import |
+| --- | --- |
+| `color` | `androidx.compose.ui.graphics.Color as ComposeColor` |
+| `dimension` | `androidx.compose.ui.unit.dp` + `.sp` |
+| `shadow` | `androidx.compose.ui.graphics.Shadow` + `androidx.compose.ui.geometry.Offset` |
+| `bezier` | `androidx.compose.animation.core.CubicBezierEasing` |
+
+### `renderKotlinFile(body, version, features): string`
+
+把頭部「請勿手改」橫幅、按 `features` 生成的 import 區塊與 body 拼成完整 `.kt` 檔案。
+
+---
+
+## ios.ts —— Swift + SwiftUI
+
+**產物**：`dist/ios/Sources/LhUITokens/LhTokens.swift` + `LhDarkTokens.swift`，**存在 shadow 令牌時額外生成 `LhShadow.swift`**
+
+### `formatSwift(token): string`
+
+| 類型 | 字面值 |
+| --- | --- |
+| color（a=1） | `SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)` |
+| color（a&lt;1） | 同上 + `.opacity(0.4)` |
+| dimension | `CGFloat(40)`；`%` 輸出分數 + 註解 |
+| duration | `0.200  // 0.2s（秒）`——**SwiftUI 動畫以秒為單位，構建期換算**（毫秒 ÷ 1000，保留 3 位小數） |
+| cubicBezier | `(x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // 貝茲控制點，端自行構造 easing` |
+| shadow | `LhShadow(color:opacity:radius:x:y:)` |
+
+### `swiftMemberName(name): string`
+
+成員名與 Swift 關鍵字同形時**加反引號**（如 `` `default` ``），否則產物無法編譯。
+
+<Aside type="tip" title="為什麼只轉義成員名">
+`SWIFT_KEYWORDS` 是 45 個 Swift 關鍵字的集合。**列舉類型名走 `pascalCase` 不會撞關鍵字**（首字母大寫後都不在集合裡），**只有成員名需要轉義**。
+</Aside>
+
+### `buildSwiftBody(tokenSet, rootName): string` / `buildDarkSwiftBody(tokenSet): string`
+
+拼 `public enum` 根結構：明色根名由參數傳入（`LhTokens`），**暗色根固定 `LhDarkTokens`**，內部都靠 `emitTree` 遞迴填充。檔案頭橫幅在 `iosTarget.generate` 裡直接拼。
+
+### `emitTree(lines, group, indent)`
+
+Swift 的無實例命名空間慣用法：巢狀 `public enum PascalCase`，成員 `public static let name = ...`。
+
+---
+
+## harmony.ts —— 鴻蒙 ArkTS + ArkUI
+
+**產物**：`dist/harmony/tokens/LhTokens.ets` + `LhDarkTokens.ets`，**存在 shadow 令牌時額外生成 `LhShadow.ets`**
+
+### `formatEts(token): string`
+
+| 類型 | 字面值 |
+| --- | --- |
+| color | `'#FF2B4C7C'`（ArkUI 接受 `#AARRGGBB` 字串，走 `toArgbHash`） |
+| dimension | 純 `vp` 數值；`%` 輸出分數 + 註解 |
+| duration | `200  // 200ms（毫秒）` |
+| cubicBezier | `[0.4, 0, 0.2, 1]  // 元件側以 curves.cubicBezierCurve 消費` |
+| shadow | `{ color: '#...', radius: 8, offsetX: 0, offsetY: 2 }` |
+
+### `typeAnnotation(token): string`
+
+**唯一帶類型註解的平台**（ArkTS 是強類型）：
+
+| 類型 | 註解 |
+| --- | --- |
+| color | `ResourceColor` |
+| dimension | `Dimension \| number` |
+| duration / number | `number` |
+| shadow | `LhShadow` |
+| cubicBezier | `number[]` |
+| string | `string` |
+
+### `emitTree(lines, group, indent)`
+
+根 `export class`，**巢狀類別不帶 export**（ArkTS 類別體內不允許 export 宣告），成員 `static readonly name: T = literal`。
+
+### `buildEtsBody(tokenSet, rootName): string` / `buildDarkEtsBody(tokenSet): string`
+
+拼 `export class` 根結構：明色根名由參數傳入（`LhTokens`），**暗色根固定 `LhDarkTokens`**，內部都靠 `emitTree` 遞迴填充。檔案頭橫幅在 `harmonyTarget.generate` 裡直接拼。
+
+---
+
+## windows.ts —— Windows C# + WinUI 3
+
+**產物**：`dist/windows/Tokens/LhTokens.cs` + `LhDarkTokens.cs`，**存在 shadow 令牌時額外生成 `LhShadow.cs`，存在貝茲令牌時額外生成 `LhEasing.cs`**
+
+命名空間 `Top.Lhgb.Ui.Tokens`（反域名，總綱 D20）。
+
+### `toCsColor(c): string`
+
+顏色轉 WinUI 工廠呼叫：`Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C)`。
+
+<Aside type="caution" title="為什麼是 Windows.UI.Color 而不是 Microsoft.UI.Color">
+Windows App SDK 1.6 及以下**不存在** `Microsoft.UI.Color` 結構體；顏色表 `Microsoft.UI.Colors`（Black / Transparent 等）的屬性傳回的也是 `Windows.UI.Color`。因此令牌側一律用 `Windows.UI.Color`——它自帶 `FromArgb` 工廠，且與 Colors 表類型一致。
+</Aside>
+
+### `doubleLiteral(value): string`
+
+整數補 `.0` 後綴（8 → `8.0`），避免隱式類型轉換歧義。
+
+### `formatCs(token): FormatResult`
+
+| 類型 | C# 字面值 | 欄位類型 |
+| --- | --- | --- |
+| color | `Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C)` | `Windows.UI.Color` |
+| dimension（整數） | `40.0` | `double` |
+| dimension（小數） | `0.5` | `double` |
+| dimension（%） | `0.500  // 50%（分數，由容器尺寸換算）` | `double` |
+| duration | `200  // 200ms（毫秒）` | `int` |
+| cubicBezier | `new LhEasing(0.4, 0, 0.2, 1)` | `LhEasing` |
+| shadow | `new LhShadow(0xFF..., 0.0, 2.0, 8.0)` | `LhShadow` |
+| number | `400` / `1.8` | `int` / `double` |
+| string | `"Source Code Pro, ..."` | `string` |
+
+`note`（單位 / 換算說明）與 `description` 合併為一條行內註解；**分號必須落在 literal 與註解之間**，否則帶註解的 literal（分數 / 時長 / 貝茲 / 投影）會讓分號被註解吞掉（CS1002）。
+
+### `csMemberName(name): string`
+
+轉 **PascalCase**：`default → Default`、`extraLarge → ExtraLarge`。順帶規避 `default` / `base` 等 C# 上下文關鍵字（分組名同樣走 `pascalCase`）。
+
+### `emitTree(lines, group, indent)`
+
+巢狀 `public static class` 表達令牌層級（C# 的靜態類別即命名空間慣用法），成員 `public static readonly T Name = literal;`。
+
+### `buildCsBody(tokenSet, rootName)` / `buildDarkCsBody(tokenSet)`
+
+明色根名由參數傳入（`LhTokens`），**暗色根固定 `LhDarkTokens`**，內部都靠 `emitTree` 遞迴填充。檔案頭橫幅在 `windowsTarget.generate` 裡由 `windows/LhTokens.cs.hbs` 渲染。
+
+<Aside type="note" title="暗色：並列物件">
+`LhDarkTokens` 是與 `LhTokens` 並列的獨立物件——暗色只覆蓋顏色，尺寸 / 動效 / 圓角暗色不變，元件需要暗色尺寸時取明色物件的值。與 android / ios / harmony 三端形態一致。
+</Aside>
+
+### 匯出
+
+`export { csTokenPath }` —— 點路徑轉 `LhTokens.Color.Primary.Default`，供測試與外部消費。
+
+---
+
+## docs.ts —— 文件產物（不經模板）
+
+**產物**：`dist/docs/tokens.md` + `tokens.light.json` + `tokens.dark.json`
+
+**唯一不使用 handlebars 模板的 target**，直接用程式碼拼字串。
+
+### `literalValue(token): string`
+
+color 輸出 `原值 → #rrggbb`（a&lt;1 時 `→ rgba(r, g, b, a)`），其餘直接 `String(value)`。
+
+### `buildTokenTable(input): string`
+
+按 path 的**頂級命名空間分組**輸出 markdown 表格「令牌 | 類型 | 明色 | 暗色 | 說明」；`nativeOnly` 標註為「原生新增」；暗色列無覆蓋時填 `—`。
+
+### `buildDarkJson(input): string`
+
+暗色覆蓋表排序後 `JSON.stringify(..., null, 2)`。
+
+三個產物的用途見 [docs 產物](../artifacts/docs-output)。

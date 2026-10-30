@@ -1,0 +1,220 @@
+---
+title: "5 つのターゲット"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+各 target は `CodegenTarget` インターフェース（`{ name, outDir, generate(input): GeneratedFile[] }`）を実装し、[パイプライン](./pipeline)から順に呼び出されます。
+
+## 共有されるダーク生成物の構築パターン
+
+4 つのプラットフォーム target は同じパターンで `tokenSet.dark`（`Map<path, value>`）を `ResolvedToken[]` へ変換します：
+
+```ts
+const darkTokens = [...tokenSet.dark.entries()]
+  .map(([path, value]) => {
+    const base = tokenSet.byPath.get(path)
+    return {
+      path,
+      type: base?.type ?? ('color' as const),   // ライトの同名キーから型を取り、なければ color でフォールバック
+      value,
+      description: base?.description,
+    }
+  })
+  .sort((a, b) => a.path.localeCompare(b.path))
+```
+
+その後、path 順に同じ emit ツリーをたどります。ライトの生成物には `description` のコメントが付き、`spread`（拡張量）は**すべての端で無視され、コメントで説明されます**。
+
+---
+
+## android.ts —— Kotlin + Jetpack Compose
+
+**生成物**：`dist/android/top/lhgb/ui/tokens/LhTokens.kt` + `LhDarkTokens.kt`
+
+**定数**：`PACKAGE = 'top.lhgb.ui.tokens'`（ファミリーのリバースドメイン規範、マスタープラン D20）
+
+### `formatKotlin(path, token): FormatResult`
+
+`{ literal, features }` を返します——`features` は使用するランタイム型の集合で、**import 一覧を決定します**：
+
+| 型 | リテラル | features |
+| --- | --- | --- |
+| color | `ComposeColor(0xAARRGGBB)` | `color` |
+| dimension（px） | `${d.value}.${usesSp(path) ? 'sp' : 'dp'}` | `dimension` |
+| dimension（%） | `0.50f  // 50%（分数。コンテナサイズから換算）`（`(v/100).toFixed(3)` の後に末尾の 0 を 1 つ削る） | — |
+| duration | `200  // 200ms（ミリ秒）` | — |
+| cubicBezier | `CubicBezierEasing(0.4f, 0f, 0.2f, 1f)` | `bezier` |
+| shadow | `Shadow(color = ..., offset = Offset(xf, yf), blurRadius = bf)` | `color`, `shadow` |
+| number / string | そのまま / `JSON.stringify` | — |
+
+### `emitTree(lines, group, indent, features)`
+
+再帰的にネストした `object PascalCase { ... }` を出力し、メンバーは `val name = literal`、description は行末コメントになります。`features` は走査の中で蓄積されます。
+
+### `buildKotlinBody(tokenSet, rootName, features)` / `buildDarkKotlinBody(tokenSet, features)`
+
+ライトのルート object 名は引数で渡され（`LhTokens`）、**ダークのルートは `LhDarkTokens` に固定**です。
+
+### `importsFor(features): string[]`
+
+**import 一覧は実際に使われた機能で決まり、使われなければ import しません**：
+
+| feature | import |
+| --- | --- |
+| `color` | `androidx.compose.ui.graphics.Color as ComposeColor` |
+| `dimension` | `androidx.compose.ui.unit.dp` + `.sp` |
+| `shadow` | `androidx.compose.ui.graphics.Shadow` + `androidx.compose.ui.geometry.Offset` |
+| `bezier` | `androidx.compose.animation.core.CubicBezierEasing` |
+
+### `renderKotlinFile(body, version, features): string`
+
+先頭の「手で変更しないでください」バナー、`features` に応じて生成した import ブロック、body を組み合わせて完全な `.kt` ファイルにします。
+
+---
+
+## ios.ts —— Swift + SwiftUI
+
+**生成物**：`dist/ios/Sources/LhUITokens/LhTokens.swift` + `LhDarkTokens.swift`。**shadow トークンが存在する場合は `LhShadow.swift` を追加生成**
+
+### `formatSwift(token): string`
+
+| 型 | リテラル |
+| --- | --- |
+| color（a=1） | `SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)` |
+| color（a&lt;1） | 同上 + `.opacity(0.4)` |
+| dimension | `CGFloat(40)`。`%` は分数 + コメントを出力 |
+| duration | `0.200  // 0.2s（秒）`——**SwiftUI のアニメーションは秒単位で、ビルド期に換算**（ミリ秒 ÷ 1000、小数 3 桁を保持） |
+| cubicBezier | `(x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // ベジェの制御点。easing は端が自前で構築する` |
+| shadow | `LhShadow(color:opacity:radius:x:y:)` |
+
+### `swiftMemberName(name): string`
+
+メンバー名が Swift のキーワードと同形の場合は**バッククォートを付ける**（例 `` `default` ``）。そうしないと生成物がコンパイルできません。
+
+<Aside type="tip" title="なぜメンバー名だけをエスケープするのか">
+`SWIFT_KEYWORDS` は 45 個の Swift キーワードの集合です。**列挙型の型名は `pascalCase` を通るのでキーワードに衝突しません**（先頭を大文字にすると集合のどれにも当たらない）。**エスケープが必要なのはメンバー名だけです**。
+</Aside>
+
+### `buildSwiftBody(tokenSet, rootName): string` / `buildDarkSwiftBody(tokenSet): string`
+
+`public enum` のルート構造を組み立てます：ライトのルート名は引数で渡され（`LhTokens`）、**ダークのルートは `LhDarkTokens` に固定**で、内部はいずれも `emitTree` が再帰的に埋めます。ファイル先頭のバナーは `iosTarget.generate` で直接連結します。
+
+### `emitTree(lines, group, indent)`
+
+Swift のインスタンスを持たない名前空間のイディオム：ネストした `public enum PascalCase`、メンバーは `public static let name = ...`。
+
+---
+
+## harmony.ts —— HarmonyOS ArkTS + ArkUI
+
+**生成物**：`dist/harmony/tokens/LhTokens.ets` + `LhDarkTokens.ets`。**shadow トークンが存在する場合は `LhShadow.ets` を追加生成**
+
+### `formatEts(token): string`
+
+| 型 | リテラル |
+| --- | --- |
+| color | `'#FF2B4C7C'`（ArkUI は `#AARRGGBB` 文字列を受け付けるので `toArgbHash` を通す） |
+| dimension | 純粋な `vp` の数値。`%` は分数 + コメントを出力 |
+| duration | `200  // 200ms（ミリ秒）` |
+| cubicBezier | `[0.4, 0, 0.2, 1]  // コンポーネント側が curves.cubicBezierCurve で消費する` |
+| shadow | `{ color: '#...', radius: 8, offsetX: 0, offsetY: 2 }` |
+
+### `typeAnnotation(token): string`
+
+**唯一、型注釈を伴うプラットフォーム**（ArkTS は強い型付け）：
+
+| 型 | 注釈 |
+| --- | --- |
+| color | `ResourceColor` |
+| dimension | `Dimension \| number` |
+| duration / number | `number` |
+| shadow | `LhShadow` |
+| cubicBezier | `number[]` |
+| string | `string` |
+
+### `emitTree(lines, group, indent)`
+
+ルートは `export class` で、**ネストしたクラスに export は付きません**（ArkTS のクラス本体では export 宣言が許可されていません）。メンバーは `static readonly name: T = literal`。
+
+### `buildEtsBody(tokenSet, rootName): string` / `buildDarkEtsBody(tokenSet): string`
+
+`export class` のルート構造を組み立てます：ライトのルート名は引数で渡され（`LhTokens`）、**ダークのルートは `LhDarkTokens` に固定**で、内部はいずれも `emitTree` が再帰的に埋めます。ファイル先頭のバナーは `harmonyTarget.generate` で直接連結します。
+
+---
+
+## windows.ts —— Windows C# + WinUI 3
+
+**生成物**：`dist/windows/Tokens/LhTokens.cs` + `LhDarkTokens.cs`。**shadow トークンが存在する場合は `LhShadow.cs`、ベジェトークンが存在する場合は `LhEasing.cs` を追加生成**
+
+名前空間は `Top.Lhgb.Ui.Tokens`（リバースドメイン、マスタープラン D20）。
+
+### `toCsColor(c): string`
+
+色を WinUI のファクトリ呼び出しへ変換します：`Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C)`。
+
+<Aside type="caution" title="なぜ Microsoft.UI.Color ではなく Windows.UI.Color なのか">
+Windows App SDK 1.6 以下には `Microsoft.UI.Color` 構造体が**存在しません**。カラーテーブル `Microsoft.UI.Colors`（Black / Transparent など）のプロパティが返すのも `Windows.UI.Color` です。したがってトークン側は一律 `Windows.UI.Color` を使います——`FromArgb` ファクトリを備え、Colors テーブルとも型が一致します。
+</Aside>
+
+### `doubleLiteral(value): string`
+
+整数には `.0` の接尾辞を補い（8 → `8.0`）、暗黙の型変換の曖昧さを避けます。
+
+### `formatCs(token): FormatResult`
+
+| 型 | C# リテラル | フィールド型 |
+| --- | --- | --- |
+| color | `Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C)` | `Windows.UI.Color` |
+| dimension（整数） | `40.0` | `double` |
+| dimension（小数） | `0.5` | `double` |
+| dimension（%） | `0.500  // 50%（分数。コンテナサイズから換算）` | `double` |
+| duration | `200  // 200ms（ミリ秒）` | `int` |
+| cubicBezier | `new LhEasing(0.4, 0, 0.2, 1)` | `LhEasing` |
+| shadow | `new LhShadow(0xFF..., 0.0, 2.0, 8.0)` | `LhShadow` |
+| number | `400` / `1.8` | `int` / `double` |
+| string | `"Source Code Pro, ..."` | `string` |
+
+`note`（単位 / 換算の説明）と `description` は 1 つの行内コメントに統合されます。**セミコロンは literal とコメントの間に置かなければなりません**。そうしないとコメント付きの literal（分数 / 時間 / ベジェ / 投影）でセミコロンがコメントに飲み込まれます（CS1002）。
+
+### `csMemberName(name): string`
+
+**PascalCase** に変換します：`default → Default`、`extraLarge → ExtraLarge`。ついでに `default` / `base` などの C# コンテキストキーワードも回避します（グループ名も同様に `pascalCase` を通します）。
+
+### `emitTree(lines, group, indent)`
+
+ネストした `public static class` でトークンの階層を表現し（C# の静的クラスは名前空間のイディオム）、メンバーは `public static readonly T Name = literal;`。
+
+### `buildCsBody(tokenSet, rootName)` / `buildDarkCsBody(tokenSet)`
+
+ライトのルート名は引数で渡され（`LhTokens`）、**ダークのルートは `LhDarkTokens` に固定**で、内部はいずれも `emitTree` が再帰的に埋めます。ファイル先頭のバナーは `windowsTarget.generate` で `windows/LhTokens.cs.hbs` がレンダリングします。
+
+<Aside type="note" title="ダーク：並列のオブジェクト">
+`LhDarkTokens` は `LhTokens` と並ぶ独立したオブジェクトです——ダークがオーバーライドするのは色だけで、寸法 / モーション / 角丸はダークでも変わりません。コンポーネントがダークの寸法を必要とするときはライトのオブジェクトの値を取ります。android / ios / harmony の 3 端と同じ形態です。
+</Aside>
+
+### エクスポート
+
+`export { csTokenPath }` —— ドットパスを `LhTokens.Color.Primary.Default` へ変換し、テストと外部利用に提供します。
+
+---
+
+## docs.ts —— ドキュメント生成物（テンプレートを通さない）
+
+**生成物**：`dist/docs/tokens.md` + `tokens.light.json` + `tokens.dark.json`
+
+**handlebars テンプレートを使わない唯一の target**で、コードで直接文字列を組み立てます。
+
+### `literalValue(token): string`
+
+color は `元の値 → #rrggbb` を出力し（a&lt;1 のときは `→ rgba(r, g, b, a)`）、それ以外はそのまま `String(value)`。
+
+### `buildTokenTable(input): string`
+
+path の**トップレベルの名前空間でグループ化**して markdown の表「トークン | 型 | ライト | ダーク | 説明」を出力します。`nativeOnly` は「ネイティブ追加」と注記し、ダーク列にオーバーライドがなければ `—` を入れます。
+
+### `buildDarkJson(input): string`
+
+ダークのオーバーライド表をソートして `JSON.stringify(..., null, 2)` します。
+
+3 つの生成物の用途は [docs 生成物](../artifacts/docs-output) を参照してください。

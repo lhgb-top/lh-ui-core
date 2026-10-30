@@ -1,0 +1,113 @@
+---
+title: "フォーマット層 format.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> 中性値の解析と各端のフォーマット。
+
+トークン値はすべてプラットフォーム非依存の中性表現です（16 進数 / rgba / 単位付き文字列 / 数値 / ベジェ配列）。`format.ts` がそれらを**構造化データへ解析**し、各 target がローカル言語のリテラルへフォーマットします。
+
+## 解析後の構造型
+
+```ts
+interface ParsedColor    { r: number; g: number; b: number; a: number }   // r/g/b: 0..255、a: 0..1
+interface ParsedDimension { value: number; unit: 'px' | '%' }
+interface ParsedDuration { ms: number }                                     // ミリ秒に正規化
+interface ParsedShadow   { x: number; y: number; blur: number; spread?: number; color: ParsedColor }
+```
+
+## 解析系の関数
+
+### `parseHex(hex: string): ParsedColor`
+
+3 種類の 16 進数をサポートします：
+
+| 入力 | 処理 |
+| --- | --- |
+| `#RGB` | 各桁を繰り返して展開 |
+| `#RRGGBB` | そのままチャンネルを取る |
+| `#AARRGGBB` | **先頭 2 桁が alpha** で、255 で割って 0..1 に正規化 |
+| その他の長さ | `无法解析的十六进制色值`（解析できない 16 進数の色値）を投げる |
+
+### `parseRgba(raw: string): ParsedColor`
+
+`rgba()` / `rgb()` を解析し、alpha の省略時は 1 です。チャンネルは `clamp255` で検証します（0..255 を超えると `颜色通道超出范围`（色チャンネルが範囲外）を投げる）。
+
+### `parseColor(value: string): ParsedColor`
+
+色の統一エントリ：`#` で始まれば `parseHex`、`rgb` で始まれば `parseRgba`、それ以外は `不支持的颜色格式（仅接受十六进制与 rgba）`（対応していない色形式。16 進数と rgba のみ受け付ける）を投げます。
+
+### `parseDimension(value: string): ParsedDimension`
+
+`/^(\d+(?:\.\d+)?)(px|%)$/` に一致しなければ `无法解析的尺寸值`（解析できない寸法値）を投げます。**受け付けるのは px と % のみ**——その他の単位は JSON 層でレッドライン 5 により禁止されています。
+
+### `parseDuration(value: string): ParsedDuration`
+
+`/^(\d+(?:\.\d+)?)(s|ms)$/` に一致し、`s` は 1000 を掛けて、**ミリ秒に統一して正規化**します。
+
+### `parseShadow(value: string): ParsedShadow`
+
+空白で区切ります（少なくとも 4 セグメント）：
+
+```
+x  y  blur  [spread]  color
+```
+
+4 番目のセグメントが `-?\d+(\.\d+)?px` に一致すれば**拡張量（spread）**、そうでなければ色です：
+
+```ts
+if (rest.length > 1 && /^-?\d+(\.\d+)?px$/.test(rest[0])) {
+  spread = Number(rest[0].replace('px', ''))
+  rest.shift()
+}
+```
+
+色の部分は `parseColor` に戻して処理します。
+
+<Aside type="tip" title="spread はすべての端で無視される">
+`ParsedShadow.spread` は記録しますが、**どの端の target も出力しません**（コメントで説明します）。SwiftUI / ArkUI の投影 API に spread パラメータがないためです。
+</Aside>
+
+### `assertTypedValue(type: TokenType, value: TokenValue): void`
+
+**schema の外側にある意味検証**：型ごとに 1 つずつアサートし、**実際に値を解析**します。これが型システム 3 層優先順位の最後の関門です（詳しくは [型システム](../tokens/type-system)）。
+
+| 型 | アサーション |
+| --- | --- |
+| `color` | 文字列であり、`parseColor` で解析できること |
+| `dimension` | 文字列であり、`parseDimension` で解析できること |
+| `duration` | 文字列であり、`parseDuration` で解析できること |
+| `shadow` | 文字列であり、`parseShadow` で解析できること |
+| `cubicBezier` | 長さ 4 の数値配列であること |
+| `number` / `string` | 検証しない |
+
+## フォーマット系の関数
+
+### `toArgbHex(c: ParsedColor): string`
+
+`0xAARRGGBB` のリテラルで、**Kotlin / C** 用です。alpha チャンネルは `Math.round(a * 255)`、各チャンネルは 2 桁の 16 進数（大文字）にします。
+
+### `toArgbHash(c: ParsedColor): string`
+
+`#AARRGGBB` の文字列で、**ArkTS** 用です。`toArgbHex` を基に `0x` を `#` に置き換えたものです。
+
+### `usesSp(path: string): boolean`
+
+**Android 専用の判定**：パスが `/fontsize/i` に一致すれば `sp`、それ以外は `dp` を使います。
+
+### `structureValue(token: ResolvedToken)`
+
+**target たちの統一エントリ**。`token.type` に従って中性値を `kind` で判別するユニオンオブジェクトへ変換します：
+
+```ts
+{ kind: 'color'; color: ParsedColor }
+| { kind: 'dimension'; dimension: ParsedDimension }
+| { kind: 'duration'; duration: ParsedDuration }
+| { kind: 'shadow'; shadow: ParsedShadow }
+| { kind: 'cubicBezier'; bezier: number[] }
+| { kind: 'number'; number: number }
+| { kind: 'string'; string: string }
+```
+
+各 target がさらにこのユニオンで switch し、ローカルのリテラルへフォーマットします。こうして**中性値の解析は 1 か所だけに書き**、各端は「どう書くか」だけを担います。

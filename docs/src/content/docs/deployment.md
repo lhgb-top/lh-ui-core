@@ -27,6 +27,15 @@ pnpm docs:build
 `base` 首尾必须带斜杠。Astro 的 `base` 会同时作用于构建产物的资源路径、sitemap 与 pagefind 搜索索引，不需要像 VitePress 时代那样额外维护 `.env` 文件。
 </Aside>
 
+<Aside type="caution" title="base 管不到两类链接">
+`base` 只作用于 Astro / Starlight 自己生成的部分：页面资源、侧边栏、分页、locale 切换、sitemap、pagefind 索引。**以下两类不会自动拼 base**：
+
+1. **frontmatter 的 `hero.actions[].link`**（`template: splash` 首页的 CTA 按钮）——Starlight 0.42.6 把它原样作为 `href`，必须在 `index.mdx` 里写完整前缀，例如 `/lhui/core/guide/quickstart`。
+2. **markdown 正文里以 `/` 开头的绝对路径链接**——Astro 7 的 markdown 渲染不做 base 拼接。
+
+本仓由 `astro.config.mjs` 里的 `basePrefixPlugin` 插件在构建期给第 2 类自动补前缀，所以正文仍可写 `/tokens/reference` 这样的绝对路径；第 1 类必须手写完整前缀。改 `base` 时记得同步改首页 hero 的 2 个按钮。
+</Aside>
+
 ## 上传
 
 把 `docs/dist/` 的内容上传到服务器目录 `/home/webuser/nginx/lh-ui/core/`。
@@ -52,6 +61,8 @@ location ^~ /lhui/core/ {
 ```bash
 curl -I https://www.lhgb.top/lhui/core/guide/introduction
 grep -c "lhui/core" docs/dist/index.html   # 期望 > 0
+# 反向断言：产物里不得存在缺 base 的站内链接（命中数应为 0）
+grep -rcE 'href="/(guide|tokens|specs|cases|codegen|artifacts)/' docs/dist/ | grep -v ':0$' || echo OK
 ```
 
 ## 本地预览
@@ -68,9 +79,9 @@ Astro 的 `base` 在 dev server 下同样生效（与 VitePress 靠 `.env.develo
 | 仓库 | dev 端口 | base |
 | --- | --- | --- |
 | lh-ui-vue2 | 5177 | `/lhui/vue2/` |
-| lh-ui-plus | 5178 | `/lhui/plus/` |
+| lh-ui-plus | 5178 | `/lhui/vue3/` |
 | lh-ui-react | 5179 | `/lhui/react/` |
-| lh-ui-uniapp | 5179 | `/lhui/uniapp/` |
+| lh-ui-uniapp | 5187 | `/lhui/uniapp/` |
 | lh-ui-android | 5181 | `/lhui/android/` |
 | lh-ui-ios | 5182 | `/lhui/ios/` |
 | lh-ui-harmony | 5183 | `/lhui/harmony/` |

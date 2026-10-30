@@ -1,0 +1,105 @@
+---
+title: "読み込み層 load.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> JSON のロード + Ajv schema 検証 + 扁平化。
+
+`load.ts` が行うのは**構造検証**（JSON Schema）のみです。**意味検証**（型と値の一致、参照の整合性、循環検出）は [resolve.ts](./resolve) で行います。
+
+## 型
+
+```ts
+interface LoadedTokenFile {
+  fileName: string
+  namespace: string       // 名前空間プレフィックス（color / radius / zIndex。空文字列はトップレベルのキーがそのまま名前空間）
+  isDark: boolean
+  defaultType?: TokenType // ファイルレベルの $type
+  description?: string
+  flat: Map<string, RawToken>  // path -> RawToken（折り畳み済み。名前空間プレフィックスを含む）
+}
+```
+
+## 関数一覧
+
+### `readJson<T>(filePath: string): T`
+
+JSON ファイルを読み、`JSON.parse` します。内部ユーティリティ関数。
+
+### `listJsonFiles(dir: string): string[]`
+
+ディレクトリ配下の `.json` ファイルを列挙し、**`schema.json` を除外**して、ソート後に絶対パスへ変換します。ソートによってロード順が安定します（エラーメッセージと生成物の再現性に影響）。
+
+### `namespaceFromFileName(fileName: string): string`
+
+ファイル名から名前空間を導出します（`$namespace` が省略されたときのフォールバックロジック）：`.json` を除いたうえで `-` で区切り、先頭のセグメントはそのまま、残りのセグメントは先頭を大文字にして連結します。
+
+| ファイル名 | 導出結果 |
+| --- | --- |
+| `color.json` | `color` |
+| `z-index.json` | `zIndex` |
+| `color-dark.json` | `colorDark` |
+
+<Aside type="tip" title="あくまでフォールバック">
+ダークファイルは通常 `$namespace` を明示的に宣言してライトと揃えます（`color-dark.json` は `"$namespace": "color"` を明示）。導出結果の `colorDark` は実際には使われません。詳しくは [名前空間](../tokens/namespace) を参照してください。
+</Aside>
+
+### `flatten(obj, prefix, out, inheritedType?): void`
+
+ネストした JSON を再帰的にフラットな `Map<path, RawToken>` へ折り畳みます：
+
+- `$` で始まるキー（メタ属性）はすべてスキップ
+- パスの連結：`prefix ? prefix + '.' + key : key`
+- リーフでもオブジェクトでもないノード → `令牌路径 X 既不是叶子令牌也不是分组`（トークンパス X はリーフトークンでもグループでもない）を投げる
+
+**型継承の要となるロジック**：グループ（ファイルルートを含む）が宣言した `$type` はツリーに沿って下へ伝わりますが、**リテラルリーフにのみベイクされます**：
+
+```ts
+// リテラルトークンはグループ型を継承する。ref トークンは undefined のまま保ち、resolve が参照先から型を取る
+if (node.type === undefined && node.ref === undefined && groupType !== undefined) {
+  out.set(path, { ...node, type: groupType })
+}
+```
+
+ref リーフは意図的にベイクせず、型の決定権を resolve 段階に委ねます（3 層の型優先順位の第 1 段階。詳しくは [型システム](../tokens/type-system)）。
+
+### `isRawToken(node: unknown): node is RawToken`
+
+型ガード：ノードが `value` または `ref` キーを持てば**リーフトークン**と見なし、そうでなければグループと見なします。
+
+### `loadTokenFiles(tokensDir = <root>/tokens): LoadedTokenFile[]`
+
+トークンディレクトリをロードします：
+
+1. `tokens/schema.json` を読み、Ajv（`allErrors: true, strict: false`）でコンパイル
+2. ファイルごとに JSON を読んで検証し、失敗時は `令牌文件校验失败：<path>` + 整形されたエラー一覧を投げる
+3. 名前空間：`raw.$namespace`（文字列のとき）を優先し、そうでなければ `namespaceFromFileName`
+4. `flatten(raw, namespace, flat)` で折り畳む
+5. `{ fileName, namespace, isDark: raw.$dark === true, defaultType: raw.$type, description: raw.$description, flat }` を組み立てる
+
+### `loadSpecs(specsDir = <root>/specs): ComponentSpec[]`
+
+同じ構造で `specs/*.json` をロードし、検証失敗時は `组件契约校验失败`（コンポーネント契約の検証失敗）を投げます。
+
+### `loadCases(casesDir = <root>/cases): ComponentCases[]`
+
+同じ構造で `cases/*.json` をロードし、検証失敗時は `黄金用例校验失败`（ゴールデンケースの検証失敗）を投げます。
+
+### `formatErrors(errors: ErrorObject[]): string`
+
+Ajv のエラーオブジェクトをインデント付きのリスト（`instancePath + message`）に整形します。
+
+### `readVersion(): string`
+
+`package.json` の `version` を読み、各生成物のヘッダーコメントの一部として使います（「源：@lh-ui/core tokens @ v0.0.1」）。
+
+## 検証の階層
+
+| 層 | 場所 | 行うこと |
+| --- | --- | --- |
+| **構造検証** | `load.ts` | JSON Schema：フィールドの必須、列挙値、命名正規表現、`additionalProperties: false` |
+| **意味検証** | `resolve.ts` | 型と値の一致（`assertTypedValue`）、参照の存在、参照の循環検出 |
+| **一貫性検証** | `scripts/verify-specs.mts` | spec と cases の相互の一貫性 |
+
+このように階層化するのは、JSON Schema では「ref の対象が存在しなければならない」「型が値と一致しなければならない」といったファイルをまたぐ・ノードをまたぐ制約を表現できないからです。

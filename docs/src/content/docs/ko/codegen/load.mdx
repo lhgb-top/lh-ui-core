@@ -1,0 +1,105 @@
+---
+title: "적재 계층 load.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> JSON 적재 + Ajv schema 검증 + 평탄화.
+
+`load.ts`는 **구조 검증**(JSON Schema)만 합니다. **의미 검증**(타입과 값의 일치, 참조 무결성, 순환 감지)은 [resolve.ts](./resolve)에서 완료합니다.
+
+## 타입
+
+```ts
+interface LoadedTokenFile {
+  fileName: string
+  namespace: string       // 네임스페이스 접두사(color / radius / zIndex, 빈 문자열은 최상위 키가 곧 네임스페이스)
+  isDark: boolean
+  defaultType?: TokenType // 파일 수준 $type
+  description?: string
+  flat: Map<string, RawToken>  // path -> RawToken(평탄화됨, 네임스페이스 접두사 포함)
+}
+```
+
+## 함수 목록
+
+### `readJson<T>(filePath: string): T`
+
+JSON 파일을 읽어 `JSON.parse`합니다. 내부 도구 함수입니다.
+
+### `listJsonFiles(dir: string): string[]`
+
+디렉터리 아래의 `.json` 파일을 나열합니다, **`schema.json`은 제외**, 정렬한 뒤 절대 경로로 바꿉니다. 정렬은 적재 순서를 안정적으로 보장합니다(오류 메시지와 산출물의 재현성에 영향).
+
+### `namespaceFromFileName(fileName: string): string`
+
+파일 이름으로 네임스페이스를 유도(`$namespace`가 없을 때의 폴백 로직): `.json`을 떼어내고 `-`로 분할, 첫 단어는 그대로, 나머지 단어의 첫 글자를 대문자로 바꾼 뒤 이어 붙입니다.
+
+| 파일 이름 | 유도 결과 |
+| --- | --- |
+| `color.json` | `color` |
+| `z-index.json` | `zIndex` |
+| `color-dark.json` | `colorDark` |
+
+<Aside type="tip" title="단지 폴백일 뿐">
+다크 파일은 보통 `$namespace`를 명시적으로 선언해 라이트와 맞춥니다(`color-dark.json`은 명시적으로 `"$namespace": "color"`를 작성), 유도 결과인 `colorDark`는 실제로 쓰이지 않습니다. 자세한 내용은 [네임스페이스](../tokens/namespace)를 참고하세요.
+</Aside>
+
+### `flatten(obj, prefix, out, inheritedType?): void`
+
+재귀적으로 중첩 JSON을 평면 `Map<path, RawToken>`로 접습니다:
+
+- `$`로 시작하는 모든 키를 건너뜀(메타 속성)
+- 경로 이어붙이기: `prefix ? prefix + '.' + key : key`
+- 리프도 객체도 아닌 노드 → `토큰 경로 X는 리프 토큰도 그룹도 아님`을 throw
+
+**타입 상속의 핵심 로직**: 그룹(파일 루트 포함)이 선언한 `$type`을 트리 아래로 전달하지만, **리터럴 리프에만 구워 넣습니다**:
+
+```ts
+// 리터럴 토큰은 그룹 타입을 상속, ref 토큰은 undefined를 유지하고 resolve가 참조 목표에서 타입을 취함
+if (node.type === undefined && node.ref === undefined && groupType !== undefined) {
+  out.set(path, { ...node, type: groupType })
+}
+```
+
+ref 리프는 의도적으로 구워 넣지 않고, 타입 결정권을 resolve 단계에 넘깁니다(3계층 타입 우선순위의 첫 단계, 자세한 내용은 [타입 시스템](../tokens/type-system) 참고).
+
+### `isRawToken(node: unknown): node is RawToken`
+
+타입 가드: 노드가 `value` 또는 `ref` 키를 포함하면 **리프 토큰**으로, 그렇지 않으면 그룹으로 봅니다.
+
+### `loadTokenFiles(tokensDir = <root>/tokens): LoadedTokenFile[]`
+
+토큰 디렉터리를 적재합니다:
+
+1. `tokens/schema.json`을 읽고, Ajv(`allErrors: true, strict: false`)로 컴파일
+2. 파일별로 JSON을 읽고 검증, 실패 시 `토큰 파일 검증 실패: <path>`와 포맷팅된 오류 목록을 throw
+3. 네임스페이스: `raw.$namespace`(문자열인 경우)가 우선, 그렇지 않으면 `namespaceFromFileName`
+4. `flatten(raw, namespace, flat)`로 접기
+5. `{ fileName, namespace, isDark: raw.$dark === true, defaultType: raw.$type, description: raw.$description, flat }` 조립
+
+### `loadSpecs(specsDir = <root>/specs): ComponentSpec[]`
+
+같은 구조로 `specs/*.json`을 적재하며, 검증 실패 시 `컴포넌트 계약 검증 실패`를 throw합니다.
+
+### `loadCases(casesDir = <root>/cases): ComponentCases[]`
+
+같은 구조로 `cases/*.json`을 적재하며, 검증 실패 시 `골든 케이스 검증 실패`를 throw합니다.
+
+### `formatErrors(errors: ErrorObject[]): string`
+
+Ajv의 오류 객체를 들여쓰기 목록으로 포맷팅합니다(`instancePath + message`).
+
+### `readVersion(): string`
+
+`package.json`의 `version`을 읽어 각 산출물 머리 주석의 일부로 사용합니다("소스: @lh-ui/core tokens @ v0.0.1").
+
+## 검증 계층화
+
+| 계층 | 위치 | 하는 일 |
+| --- | --- | --- |
+| **구조 검증** | `load.ts` | JSON Schema: 필수 필드, 열거값, 명명 정규식, `additionalProperties: false` |
+| **의미 검증** | `resolve.ts` | 타입과 값의 일치(`assertTypedValue`), 참조 존재, 참조 순환 감지 |
+| **일치성 검증** | `scripts/verify-specs.mts` | spec과 cases의 교차 일치성 |
+
+이렇게 계층화한 이유는 JSON Schema가 "ref 목표는 반드시 존재", "타입은 값과 일치" 같은 크로스 파일, 크로스 노드 제약을 표현할 수 없기 때문입니다.

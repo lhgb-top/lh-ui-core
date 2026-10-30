@@ -1,0 +1,105 @@
+---
+title: "طبقة التحميل load.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> تحميل JSON + تحقق Ajv schema + التسطيح.
+
+لا تقوم `load.ts` إلا بالتحقق **الهيكلي** (JSON Schema). أما التحقق **الدلالي** (مطابقة الأنواع للقيم، سلامة المراجع، الكشف عن الحلقات) فيتم في [resolve.ts](./resolve).
+
+## الأنواع
+
+```ts
+interface LoadedTokenFile {
+  fileName: string
+  namespace: string       // بادئة مساحة الأسماء (color / radius / zIndex؛ سلسلة فارغة تعني أن المفاتيح العلوية هي مساحة الأسماء)
+  isDark: boolean
+  defaultType?: TokenType // $type على مستوى الملف
+  description?: string
+  flat: Map<string, RawToken>  // path ← RawToken (مُسطَّحة، وتشمل بادئة مساحة الأسماء)
+}
+```
+
+## قائمة الدوال
+
+### `readJson<T>(filePath: string): T`
+
+قراءة ملف JSON ثم `JSON.parse`. دالة أداة داخلية.
+
+### `listJsonFiles(dir: string): string[]`
+
+إدراج ملفات `.json` في الدليل، **مع استثناء `schema.json`**، ثم ترتيبها وتحويلها إلى مسارات مطلقة. يضمن الترتيب ثبات تسلسل التحميل (وهو ما يؤثر في رسائل الأخطاء وقابلية إعادة إنتاج المنتجات).
+
+### `namespaceFromFileName(fileName: string): string`
+
+اشتقاق مساحة الأسماء من اسم الملف (منطق التراجع عند غياب `$namespace`): حذف لاحقة `.json` ثم التقسيم على `-`، مع إبقاء المقطع الأول كما هو وكتابة الحرف الأول من المقاطع الأخرى كبيرًا، ثم الدمج.
+
+| اسم الملف | نتيجة الاشتقاق |
+| --- | --- |
+| `color.json` | `color` |
+| `z-index.json` | `zIndex` |
+| `color-dark.json` | `colorDark` |
+
+<Aside type="tip" title="مجرد تراجع احتياطي">
+يُعلِن ملف الوضع الداكن عادةً عن `$namespace` صراحةً ليتطابق مع الوضع الفاتح (`color-dark.json` يكتب صراحةً `"$namespace": "color"`)، ولذا فإن نتيجة الاشتقاق `colorDark` غير مستخدمة فعلًا. راجع [مساحات الأسماء](../tokens/namespace).
+</Aside>
+
+### `flatten(obj, prefix, out, inheritedType?): void`
+
+طي JSON المتداخل بشكل متكرر إلى `Map<path, RawToken>` مسطحة:
+
+- تخطي جميع المفاتيح التي تبدأ بـ `$` (الخصائص الوصفية)
+- وصل المسار: `prefix ? prefix + '.' + key : key`
+- العقدة التي ليست رمزًا طرفيًا ولا كائنًا ← يُطلق `مسار الرمز X ليس رمزًا طرفيًا ولا مجموعة`
+
+**المنطق الأساسي لوراثة النوع**: يُنقل `$type` المُعلَن في المجموعة (بما في ذلك جذر الملف) نزولًا على الشجرة، لكنه **يُخبز في الرموز الحرفية فقط**:
+
+```ts
+// ترث الرموز الحرفية نوع المجموعة؛ أما رموز ref فتبقى undefined، ويُترك التحديد لـ resolve ليأخذ النوع من الهدف المُشار إليه
+if (node.type === undefined && node.ref === undefined && groupType !== undefined) {
+  out.set(path, { ...node, type: groupType })
+}
+```
+
+لا تُخبز رموز ref عمدًا، ويُترك قرار النوع لمرحلة resolve (الخطوة الأولى من أولويات الأنواع ذات الطبقات الثلاث، راجع [نظام الأنواع](../tokens/type-system)).
+
+### `isRawToken(node: unknown): node is RawToken`
+
+حارس نوع: العقدة التي تحتوي على مفتاح `value` أو `ref` تُعتبر **رمزًا طرفيًا**؛ وإلا فتُعتبر مجموعة.
+
+### `loadTokenFiles(tokensDir = <root>/tokens): LoadedTokenFile[]`
+
+تحميل دليل الرموز:
+
+1. قراءة `tokens/schema.json` وتجميعه عبر Ajv (`allErrors: true, strict: false`)
+2. قراءة كل ملف JSON والتحقق منه، وعند الفشل يُطلق `فشل التحقق من ملف الرموز: <path>` مع قائمة أخطاء منسَّقة
+3. مساحة الأسماء: الأولوية لـ `raw.$namespace` (عندما يكون سلسلة نصية)، وإلا `namespaceFromFileName`
+4. الطي عبر `flatten(raw, namespace, flat)`
+5. التجميع `{ fileName, namespace, isDark: raw.$dark === true, defaultType: raw.$type, description: raw.$description, flat }`
+
+### `loadSpecs(specsDir = <root>/specs): ComponentSpec[]`
+
+تحميل `specs/*.json` بالبنية نفسها، ويُطلق عند فشل التحقق `فشل التحقق من عقد المكوّن`.
+
+### `loadCases(casesDir = <root>/cases): ComponentCases[]`
+
+تحميل `cases/*.json` بالبنية نفسها، ويُطلق عند فشل التحقق `فشل التحقق من الحالات الذهبية`.
+
+### `formatErrors(errors: ErrorObject[]): string`
+
+تحويل كائنات أخطاء Ajv إلى قائمة ذات مسافات بادئة (`instancePath + message`).
+
+### `readVersion(): string`
+
+قراءة `version` من `package.json`، كجزء من تعليق رأس كل منتج («المصدر: @lh-ui/core tokens @ v0.0.1»).
+
+## طبقات التحقق
+
+| الطبقة | أين | ماذا تفعل |
+| --- | --- | --- |
+| **التحقق الهيكلي** | `load.ts` | JSON Schema: الحقول الإلزامية، قيم التعداد، التعابير القياسية للتسمية، `additionalProperties: false` |
+| **التحقق الدلالي** | `resolve.ts` | مطابقة النوع للقيمة (`assertTypedValue`)، وجود المراجع، الكشف عن حلقات المراجع |
+| **التحقق الاتساقي** | `scripts/verify-specs.mts` | الاتساق المتبادل بين المواصفات والحالات |
+
+سبب هذا التقسيم الطبقي هو عجز JSON Schema عن التعبير عن قيود عبر الملفات والعقد مثل «يجب أن يكون هدف ref موجودًا» و«يجب أن يطابق النوع القيمة».

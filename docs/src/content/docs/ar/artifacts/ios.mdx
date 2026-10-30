@@ -1,0 +1,107 @@
+---
+title: "منتجات iOS"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+**المسار**: `dist/ios/Sources/LhUITokens/LhTokens.swift` و`LhDarkTokens.swift`، ويُضاف `LhShadow.swift` عند وجود رموز ظلال
+
+**دليل الوحدة**: `Sources/LhUITokens/` (اصطلاح أدلة SwiftPM)
+
+## البنية
+
+الأسلوب المعتاد لمساحات الأسماء في Swift (تعدادات بدون نسخ): **`public enum` متداخل** + `public static let`:
+
+```swift
+import SwiftUI
+import CoreGraphics
+
+public enum LhTokens {
+  public enum Button {
+    public static let borderRadius = CGFloat(2)  // زاوية انحناء الزر تتبع زاوية الانحناء العامة
+    public static let borderWidth = CGFloat(1)
+    public enum FontSize {
+      public static let large = CGFloat(16)
+      public static let medium = CGFloat(14)
+    }
+    public enum Height {
+      public static let medium = CGFloat(40)  // ارتفاع الزر المتوسط (الافتراضي)
+    }
+  }
+}
+```
+
+## مراسلات التسمية
+
+| مسار الرمز | العضو في Swift |
+| --- | --- |
+| `button.height.medium` | `LhTokens.Button.Height.medium` |
+| `color.primary.default` | `LhTokens.Color.Primary.`default`` |
+| `zIndex.modal` | `LhTokens.ZIndex.modal` |
+
+## تهريب الكلمات المفتاحية
+
+عند تطابق اسم العضو مع كلمة مفتاحية في Swift **تُضاف علامات الاقتباس الخلفية**، وإلا فلن تُترجم المنتجات:
+
+```swift
+public enum Primary {
+  public static let `default` = SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)
+  public static let `repeat` = ...
+}
+```
+
+يعمل التهريب على **أسماء الأعضاء** فقط — فأسماء أنواع التعدادات تمر عبر `pascalCase` (تكبير الحرف الأول) فلا تتصادم مع الكلمات المفتاحية. راجع `SWIFT_KEYWORDS` و`swiftMemberName()` في `ios.ts`.
+
+## الوحدات والقيم الحرفية
+
+| نوع الرمز | القيمة الحرفية في Swift |
+| --- | --- |
+| اللون (غير شفاف) | `SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)` |
+| اللون (شبه شفاف) | نفس ما سبق + `.opacity(0.400)` |
+| البعد | `CGFloat(40)` |
+| النسبة المئوية | `0.500  // 50% (كسر، يُحوَّل وفق حجم الحاوية)` |
+| المدة | `0.200  // 0.2s (ثانية)` — **رسوم SwiftUI المتحركة تعمل بالثواني، ويتم التحويل في وقت البناء** (ملي ثانية ÷ 1000، مع الاحتفاظ بـ 3 خانات عشرية) |
+| بيزيه | `(x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // نقطتا تحكم بيزيه، ويبني الطرف easing بنفسه` |
+| الظل | `LhShadow(color:opacity:radius:x:y:)` |
+| القيم / السلاسل | كما هي / `JSON.stringify` |
+
+<Aside type="tip" title="تطبيع الألوان">
+تتلقى `Color(red:green:blue:)` في SwiftUI قيمًا موحَّدة بين 0 و1، لذلك تُقسم قيم 0..255 على 255 في وقت البناء مع الاحتفاظ بـ 3 خانات عشرية. وهذا مثال نموذجي على أن «تحويل الوحدات بين المنصات من مسؤولية الهدف».
+</Aside>
+
+## LhShadow.swift
+
+لا يملك SwiftUI نوع ظل مركب، لذلك يُولَّد هيكل حامل (**قالب ثابت، بلا محتوى رموز**):
+
+```swift
+public struct LhShadow {
+  public let color: SwiftUI.Color
+  public let opacity: Double
+  public let radius: CGFloat
+  public let x: CGFloat
+  public let y: CGFloat
+  // memberwise init
+}
+```
+
+لا يُولَّد إلا عند وجود رموز من نوع `type: shadow`.
+
+## الوضع الداكن
+
+`public enum LhDarkTokens` مستقل:
+
+```swift
+public enum LhDarkTokens {
+  public enum Color {
+    public static let focus = SwiftUI.Color(red: 0.498, green: 0.651, blue: 0.851)
+    public static let selected = SwiftUI.Color(red: 0.694, green: 0.757, blue: 0.847)
+    // …بقية المفاتيح المغطاة
+  }
+}
+```
+
+تبقى المفاتيح غير المغطاة في الوضع الداكن تأخذ قيمها من `LhTokens`.
+
+## طريقة الاستهلاك
+
+يُدخل مستودع iOS الدليل `dist/ios/` عبر SPM كتبعية مسار محلية أو كحزمة منشورة، ويكفي استيراد `import LhUITokens`.

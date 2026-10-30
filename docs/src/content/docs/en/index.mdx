@@ -1,0 +1,75 @@
+---
+title: lh-ui-core
+template: splash
+description: The build-time center of the lh-ui native bloodline — design token source of truth + component contracts + golden cases + cross-platform codegen
+hero:
+  title: lh-ui-core
+  tagline: The build-time center of the native bloodline — design token source of truth, component contracts, golden cases, and cross-platform codegen. It works only at build time; the artifacts contain no JavaScript at all.
+  actions:
+    - text: Quick Start
+      link: /lhui/core/en/guide/quickstart
+      variant: primary
+    - text: Token Reference
+      link: /lhui/core/en/tokens/reference
+      variant: secondary
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+## What this repository does
+
+<CardGrid>
+  <Card title="🎨 Single source of truth for design tokens">
+    9 platform-neutral JSON sources (color / typography / spacing / radius / shadow / motion / elevation / component-level), strictly schema-constrained, with no platform-specific syntax allowed.
+    [Token Format](/en/tokens/token-format)
+  </Card>
+  <Card title="📐 Component contracts">
+    One JSON contract per component: props / enums / defaults / events / slots / behaviors, with naming regular expressions guaranteeing consistency across the five targets.
+    [Contract Format](/en/specs/spec-format)
+  </Card>
+  <Card title="🧪 Golden cases">
+    Cross-platform translatable given/when/then behavior-level assertions — logic is not shared, behavior is.
+    [Case Format](/en/cases/case-format)
+  </Card>
+  <Card title="⚙️ Cross-platform codegen">
+    One set of neutral tokens generates the language skeletons for Android (Kotlin) / iOS (Swift) / HarmonyOS (ArkTS) / Windows (C#) — skeletons only, never implementations.
+    [Pipeline Overview](/en/codegen/pipeline)
+  </Card>
+  <Card title="🌙 Dark mode precomputation">
+    The web bloodline's `color-mix()` is precomputed to flat color values at build time, at zero runtime cost for the native targets.
+    [Dark Mode Merging](/en/tokens/dark-mode)
+  </Card>
+  <Card title="🔗 Local linking">
+    Under the family layout, changing a token and re-running codegen takes effect immediately — with existence guards, no publishing required.
+    [Local Linking](/en/guide/local-linking)
+  </Card>
+</CardGrid>
+
+## Family sites
+
+<CardGrid>
+  <Card title="lh-ui (overview)">
+    The family portal: the two-bloodlines architecture and the design language baseline.
+    [Open →](https://www.lhgb.top)
+  </Card>
+  <Card title="lh-ui-plus (Vue3)">
+    The Vue3 component library of the web bloodline.
+    [Open →](https://www.lhgb.top/lhui/vue3/)
+  </Card>
+  <Card title="lh-ui-android">
+    Native bloodline: Compose token package + component implementations.
+    [Open →](https://www.lhgb.top/lhui/android/)
+  </Card>
+  <Card title="lh-ui-ios">
+    Native bloodline: SwiftUI token package + component implementations.
+    [Open →](https://www.lhgb.top/lhui/ios/)
+  </Card>
+  <Card title="lh-ui-harmony">
+    Native bloodline: ArkUI token package + component implementations.
+    [Open →](https://www.lhgb.top/lhui/harmony/)
+  </Card>
+  <Card title="lh-ui-windows">
+    Native bloodline: WinUI 3 (C#) token package + component implementations.
+    [Open →](https://www.lhgb.top/lhui/windows/)
+  </Card>
+</CardGrid>

@@ -1,0 +1,107 @@
+---
+title: "iOS 生成物"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+**パス**：`dist/ios/Sources/LhUITokens/LhTokens.swift` と `LhDarkTokens.swift`。投影トークンが存在する場合は `LhShadow.swift` を追加生成
+
+**モジュールディレクトリ**：`Sources/LhUITokens/`（SwiftPM のディレクトリ慣例）
+
+## 構造
+
+Swift のインスタンスを持たない名前空間のイディオム：**ネストした `public enum`** + `public static let`：
+
+```swift
+import SwiftUI
+import CoreGraphics
+
+public enum LhTokens {
+  public enum Button {
+    public static let borderRadius = CGFloat(2)  // ボタンの角丸はグローバルの角丸に追随
+    public static let borderWidth = CGFloat(1)
+    public enum FontSize {
+      public static let large = CGFloat(16)
+      public static let medium = CGFloat(14)
+    }
+    public enum Height {
+      public static let medium = CGFloat(40)  // 中サイズのボタンの高さ（デフォルト）
+    }
+  }
+}
+```
+
+## 命名マッピング
+
+| トークンパス | Swift メンバー |
+| --- | --- |
+| `button.height.medium` | `LhTokens.Button.Height.medium` |
+| `color.primary.default` | `LhTokens.Color.Primary.`default`` |
+| `zIndex.modal` | `LhTokens.ZIndex.modal` |
+
+## キーワードのエスケープ
+
+メンバー名が Swift のキーワードと同形の場合は**バッククォートを付けます**。そうしないと生成物がコンパイルできません：
+
+```swift
+public enum Primary {
+  public static let `default` = SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)
+  public static let `repeat` = ...
+}
+```
+
+エスケープが作用するのは**メンバー名だけ**です——列挙型の型名は `pascalCase`（先頭を大文字）を通るのでキーワードに衝突しません。`ios.ts` の `SWIFT_KEYWORDS` と `swiftMemberName()` を参照してください。
+
+## 単位とリテラル
+
+| トークン型 | Swift リテラル |
+| --- | --- |
+| 色（不透明） | `SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)` |
+| 色（半透明） | 同上 + `.opacity(0.400)` |
+| 寸法 | `CGFloat(40)` |
+| 百分率 | `0.500  // 50%（分数。コンテナサイズから換算）` |
+| 時間 | `0.200  // 0.2s（秒）`——**SwiftUI のアニメーションは秒単位で、ビルド期に換算**（ミリ秒 ÷ 1000、小数 3 桁を保持） |
+| ベジェ | `(x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // ベジェの制御点。easing は端が自前で構築する` |
+| 投影 | `LhShadow(color:opacity:radius:x:y:)` |
+| 数値 / 文字列 | そのまま / `JSON.stringify` |
+
+<Aside type="tip" title="色の正規化">
+SwiftUI の `Color(red:green:blue:)` は 0..1 に正規化された値を受け取るため、ビルド期に 0..255 を 255 で割り、小数 3 桁を保持します。これは「プラットフォームの単位換算は target が担う」の典型例です。
+</Aside>
+
+## LhShadow.swift
+
+SwiftUI には複合投影の型がないため、キャリアの構造体を生成します（**静的テンプレートで、トークンの内容は含みません**）：
+
+```swift
+public struct LhShadow {
+  public let color: SwiftUI.Color
+  public let opacity: Double
+  public let radius: CGFloat
+  public let x: CGFloat
+  public let y: CGFloat
+  // memberwise init
+}
+```
+
+`type: shadow` のトークンが存在するときだけ生成されます。
+
+## ダーク
+
+独立した `public enum LhDarkTokens`：
+
+```swift
+public enum LhDarkTokens {
+  public enum Color {
+    public static let focus = SwiftUI.Color(red: 0.498, green: 0.651, blue: 0.851)
+    public static let selected = SwiftUI.Color(red: 0.694, green: 0.757, blue: 0.847)
+    // …オーバーライドされた残りのキー
+  }
+}
+```
+
+オーバーライドされていないキーはダークでも `LhTokens` を引き継ぎます。
+
+## 消費方法
+
+iOS リポジトリは SPM で `dist/ios/` をローカル path 依存または公開済みパッケージとして取り込み、`import LhUITokens` ですぐ使えます。

@@ -1,0 +1,113 @@
+---
+title: "Слой форматирования format.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> Разбор нейтральных значений и форматирование под каждую платформу.
+
+Все значения токенов записаны в платформенно-нейтральном виде (шестнадцатеричные цвета / rgba / строки с единицами / числа / массивы Безье). `format.ts` **разбирает их в структурированные данные**, а target'ы затем форматируют их в литералы соответствующего языка.
+
+## Типы разобранных структур
+
+```ts
+interface ParsedColor    { r: number; g: number; b: number; a: number }   // r/g/b: 0..255, a: 0..1
+interface ParsedDimension { value: number; unit: 'px' | '%' }
+interface ParsedDuration { ms: number }                                     // Нормализовано в миллисекунды
+interface ParsedShadow   { x: number; y: number; blur: number; spread?: number; color: ParsedColor }
+```
+
+## Функции разбора
+
+### `parseHex(hex: string): ParsedColor`
+
+Поддерживаются три формы шестнадцатеричной записи:
+
+| Ввод | Обработка |
+| --- | --- |
+| `#RGB` | Каждый символ дублируется и разворачивается |
+| `#RRGGBB` | Каналы берутся напрямую |
+| `#AARRGGBB` | **Первые два символа — alpha**, делится на 255 и нормализуется в 0..1 |
+| Иная длина | Ошибка `Не удалось разобрать шестнадцатеричное значение цвета` |
+
+### `parseRgba(raw: string): ParsedColor`
+
+Разбор `rgba()` / `rgb()`, alpha по умолчанию равен 1. Каналы проверяются функцией `clamp255` (выход за 0..255 — ошибка `Канал цвета вне диапазона`).
+
+### `parseColor(value: string): ParsedColor`
+
+Единая точка входа для цветов: с префиксом `#` идёт в `parseHex`, с префиксом `rgb` — в `parseRgba`, иначе выбрасывается `Неподдерживаемый формат цвета (допустимы только hex и rgba)`.
+
+### `parseDimension(value: string): ParsedDimension`
+
+Соответствие `/^(\d+(?:\.\d+)?)(px|%)$/`, иначе — ошибка `Не удалось разобрать значение размера`. **Принимаются только px и %** — любые другие единицы запрещены на уровне JSON красной линией 5.
+
+### `parseDuration(value: string): ParsedDuration`
+
+Соответствие `/^(\d+(?:\.\d+)?)(s|ms)$/`, `s` умножается на 1000; **всё нормализуется в миллисекунды**.
+
+### `parseShadow(value: string): ParsedShadow`
+
+Разбивается по пробелам (минимум 4 сегмента):
+
+```
+x  y  blur  [spread]  color
+```
+
+Если 4-й сегмент соответствует `-?\d+(\.\d+)?px`, это **расширение (spread)**, иначе — цвет:
+
+```ts
+if (rest.length > 1 && /^-?\d+(\.\d+)?px$/.test(rest[0])) {
+  spread = Number(rest[0].replace('px', ''))
+  rest.shift()
+}
+```
+
+Цветовая часть возвращается в `parseColor`.
+
+<Aside type="tip" title="spread игнорируется на всех платформах">
+`ParsedShadow.spread` фиксируется, но **target'ы всех платформ его не генерируют** (с пояснением в комментарии), поскольку API теней у SwiftUI / ArkUI не имеют параметра spread.
+</Aside>
+
+### `assertTypedValue(type: TokenType, value: TokenValue): void`
+
+**Семантическая валидация за пределами схемы**: для каждого типа выполняется утверждение и **фактический разбор** значения. Это последний контрольно-пропускной пункт трёхуровневого приоритета типов (см. [Система типов](../tokens/type-system)).
+
+| Тип | Утверждение |
+| --- | --- |
+| `color` | Является строкой и разбирается функцией `parseColor` |
+| `dimension` | Является строкой и разбирается функцией `parseDimension` |
+| `duration` | Является строкой и разбирается функцией `parseDuration` |
+| `shadow` | Является строкой и разбирается функцией `parseShadow` |
+| `cubicBezier` | Является массивом чисел длины 4 |
+| `number` / `string` | Не проверяется |
+
+## Функции форматирования
+
+### `toArgbHex(c: ParsedColor): string`
+
+Литерал `0xAARRGGBB` для **Kotlin / C**. Альфа-канал — `Math.round(a * 255)`, каждый канал записывается двумя шестнадцатеричными символами в верхнем регистре.
+
+### `toArgbHash(c: ParsedColor): string`
+
+Строка `#AARRGGBB` для **ArkTS**. Строится на основе `toArgbHex` заменой `0x` на `#`.
+
+### `usesSp(path: string): boolean`
+
+**Определение для Android**: если путь соответствует `/fontsize/i`, используется `sp`, во всех остальных случаях — `dp`.
+
+### `structureValue(token: ResolvedToken)`
+
+**Единая точка входа для target'ов**. В зависимости от `token.type` преобразует нейтральное значение в объект объединения с дискриминантом `kind`:
+
+```ts
+{ kind: 'color'; color: ParsedColor }
+| { kind: 'dimension'; dimension: ParsedDimension }
+| { kind: 'duration'; duration: ParsedDuration }
+| { kind: 'shadow'; shadow: ParsedShadow }
+| { kind: 'cubicBezier'; bezier: number[] }
+| { kind: 'number'; number: number }
+| { kind: 'string'; string: string }
+```
+
+Target'ы затем делают switch по этому объединению и форматируют значение в литерал своего языка. Таким образом **разбор нейтральных значений написан один раз**, а платформы заботит только то, «как это записать».

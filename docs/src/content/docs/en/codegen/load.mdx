@@ -1,0 +1,106 @@
+---
+title: "Loading Layer — load.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> JSON loading + Ajv schema validation + flattening.
+
+`load.ts` only performs **structural validation** (JSON Schema). **Semantic validation** (type-and-value matching, reference integrity, cycle detection) happens in [resolve.ts](./resolve).
+
+## Types
+
+```ts
+interface LoadedTokenFile {
+  fileName: string
+  namespace: string       // Namespace prefix (color / radius / zIndex; an empty string means the top-level keys are namespaces)
+  isDark: boolean
+  defaultType?: TokenType // The file-level $type
+  description?: string
+  flat: Map<string, RawToken>  // path -> RawToken (flattened, with the namespace prefix included)
+}
+```
+
+## Function inventory
+
+### `readJson<T>(filePath: string): T`
+
+Reads a JSON file and `JSON.parse`s it. An internal utility function.
+
+### `listJsonFiles(dir: string): string[]`
+
+Lists the `.json` files in a directory, **excluding `schema.json`**, sorted and converted to absolute paths. Sorting guarantees a stable load order (which affects error messages and output reproducibility).
+
+### `namespaceFromFileName(fileName: string): string`
+
+Derives the namespace from the file name (the fallback logic used when `$namespace` is missing): strip the `.json` suffix, split on `-`, keep the first segment as-is, capitalize the remaining segments, then join.
+
+| File name | Derived |
+| --- | --- |
+| `color.json` | `color` |
+| `z-index.json` | `zIndex` |
+| `color-dark.json` | `colorDark` |
+
+<Aside type="tip" title="Just a fallback">
+Dark files usually declare `$namespace` explicitly to align with their light counterpart (`color-dark.json` explicitly writes `"$namespace": "color"`), so the derived `colorDark` is never actually used. See [Namespaces & Dot Paths](../tokens/namespace).
+</Aside>
+
+### `flatten(obj, prefix, out, inheritedType?): void`
+
+Recursively collapses the nested JSON into a flat `Map<path, RawToken>`:
+
+- Skips every key starting with `$` (meta properties)
+- Path concatenation: `prefix ? prefix + '.' + key : key`
+- A node that is neither a leaf nor an object → throws `Token path X is neither a leaf token nor a group`
+
+**The key logic of type inheritance**: the `$type` declared by a group (including the file root) is propagated down the tree, but **only baked into literal leaves**:
+
+```ts
+// Literal tokens inherit the group type; ref tokens keep undefined and let
+// resolve take the type from the ref's target
+if (node.type === undefined && node.ref === undefined && groupType !== undefined) {
+  out.set(path, { ...node, type: groupType })
+}
+```
+
+Ref leaves are deliberately left unbaked, deferring the type decision to the resolve stage (the first step of the three-level type precedence; see [Type System](../tokens/type-system)).
+
+### `isRawToken(node: unknown): node is RawToken`
+
+A type guard: a node carrying a `value` or `ref` key counts as a **leaf token**; otherwise it counts as a group.
+
+### `loadTokenFiles(tokensDir = <root>/tokens): LoadedTokenFile[]`
+
+Loads the token directory:
+
+1. Read `tokens/schema.json` and compile it with Ajv (`allErrors: true, strict: false`)
+2. Read and validate each JSON file; on failure throw `Token file validation failed: <path>` plus a formatted error list
+3. Namespace: `raw.$namespace` (when a string) takes precedence, otherwise `namespaceFromFileName`
+4. `flatten(raw, namespace, flat)` collapses the tree
+5. Assemble `{ fileName, namespace, isDark: raw.$dark === true, defaultType: raw.$type, description: raw.$description, flat }`
+
+### `loadSpecs(specsDir = <root>/specs): ComponentSpec[]`
+
+Loads `specs/*.json` the same way; on validation failure throws `Component spec validation failed`.
+
+### `loadCases(casesDir = <root>/cases): ComponentCases[]`
+
+Loads `cases/*.json` the same way; on validation failure throws `Golden case validation failed`.
+
+### `formatErrors(errors: ErrorObject[]): string`
+
+Formats Ajv error objects into an indented list (`instancePath + message`).
+
+### `readVersion(): string`
+
+Reads `version` from `package.json`, used as part of every artifact's header comment ("source: @lh-ui/core tokens @ v0.0.1").
+
+## Validation layering
+
+| Layer | Where | What it does |
+| --- | --- | --- |
+| **Structural validation** | `load.ts` | JSON Schema: required fields, enum values, naming regular expressions, `additionalProperties: false` |
+| **Semantic validation** | `resolve.ts` | Type-and-value matching (`assertTypedValue`), reference existence, reference cycle detection |
+| **Consistency validation** | `scripts/verify-specs.mts` | Cross-consistency of specs and cases |
+
+The layering exists because JSON Schema cannot express cross-file, cross-node constraints like "the ref target must exist" or "the type must match the value".

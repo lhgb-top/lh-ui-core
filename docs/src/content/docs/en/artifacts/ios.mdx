@@ -1,0 +1,107 @@
+---
+title: "iOS Artifacts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+**Paths**: `dist/ios/Sources/LhUITokens/LhTokens.swift` and `LhDarkTokens.swift`, plus an extra `LhShadow.swift` when shadow tokens exist
+
+**Module directory**: `Sources/LhUITokens/` (the SwiftPM directory convention)
+
+## Structure
+
+Swift's instance-free namespace idiom: **nested `public enum`s** + `public static let`:
+
+```swift
+import SwiftUI
+import CoreGraphics
+
+public enum LhTokens {
+  public enum Button {
+    public static let borderRadius = CGFloat(2)  // The button's corner radius follows the global radius
+    public static let borderWidth = CGFloat(1)
+    public enum FontSize {
+      public static let large = CGFloat(16)
+      public static let medium = CGFloat(14)
+    }
+    public enum Height {
+      public static let medium = CGFloat(40)  // Medium button height (default)
+    }
+  }
+}
+```
+
+## Name mapping
+
+| Token path | Swift member |
+| --- | --- |
+| `button.height.medium` | `LhTokens.Button.Height.medium` |
+| `color.primary.default` | `LhTokens.Color.Primary.`default`` |
+| `zIndex.modal` | `LhTokens.ZIndex.modal` |
+
+## Keyword escaping
+
+When a member name collides with a Swift keyword it is **wrapped in backticks**, otherwise the artifact would not compile:
+
+```swift
+public enum Primary {
+  public static let `default` = SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)
+  public static let `repeat` = ...
+}
+```
+
+Escaping only applies to **member names** — enum type names go through `pascalCase` (first letter capitalized) and therefore never collide with a keyword. See `SWIFT_KEYWORDS` and `swiftMemberName()` in `ios.ts`.
+
+## Units and literals
+
+| Token type | Swift literal |
+| --- | --- |
+| Color (opaque) | `SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)` |
+| Color (semi-transparent) | as above + `.opacity(0.400)` |
+| Dimension | `CGFloat(40)` |
+| Percentage | `0.500  // 50% (a fraction, converted against the container size)` |
+| Duration | `0.200  // 0.2s (seconds)` — **SwiftUI animations are in seconds; converted at build time** (milliseconds ÷ 1000, 3 decimal places) |
+| Bézier | `(x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // Bézier control points; the target constructs its own easing` |
+| Shadow | `LhShadow(color:opacity:radius:x:y:)` |
+| Number / string | as-is / `JSON.stringify` |
+
+<Aside type="tip" title="Color normalization">
+SwiftUI's `Color(red:green:blue:)` takes normalized 0..1 values, so at build time the 0..255 range is divided by 255 and rounded to 3 decimal places. A typical example of "platform unit conversion is the target's responsibility".
+</Aside>
+
+## LhShadow.swift
+
+SwiftUI has no composite shadow type, so a carrier struct is generated (**a static template, with no token content**):
+
+```swift
+public struct LhShadow {
+  public let color: SwiftUI.Color
+  public let opacity: Double
+  public let radius: CGFloat
+  public let x: CGFloat
+  public let y: CGFloat
+  // memberwise init
+}
+```
+
+It is only generated when a token with `type: shadow` exists.
+
+## Dark mode
+
+A separate `public enum LhDarkTokens`:
+
+```swift
+public enum LhDarkTokens {
+  public enum Color {
+    public static let focus = SwiftUI.Color(red: 0.498, green: 0.651, blue: 0.851)
+    public static let selected = SwiftUI.Color(red: 0.694, green: 0.757, blue: 0.847)
+    // …the rest of the overridden keys
+  }
+}
+```
+
+Keys that are not overridden keep the `LhTokens` value in dark mode.
+
+## How it is consumed
+
+The iOS repository includes `dist/ios/` through SPM as a local path dependency or as a published package; `import LhUITokens` and use it.

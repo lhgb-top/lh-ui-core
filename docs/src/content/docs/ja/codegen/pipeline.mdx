@@ -1,0 +1,137 @@
+---
+title: "パイプライン概要"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+`pnpm codegen` は `codegen/src/index.ts` を実行します。完全なパイプラインは以下のとおりです：
+
+```
+package.json のバージョン番号
+        │
+        ▼
+loadTokenFiles()          tokens/*.json をロード、Ajv 構造検証、flatten 扁平化
+        │                  LoadedTokenFile[] を返す（各ファイルが namespace / isDark / flat を持つ）
+        ▼
+resolveTokens()           ref 解析（循環検出を含む）+ ダークのマージ
+        │                  { tokenSet, orphanDarkPaths, refMap } を返す
+        ▼
+loadSpecs()               specs/*.json をロード（schema 検証）
+loadCases()               cases/*.json をロード（schema 検証）
+        │
+        ▼
+CodegenInput { tokens: tokenSet, specs, cases, version } を組み立てる
+        │
+        ▼
+dist/ 全体を削除して再構築
+        │
+        ▼
+5 つの target を順に実行 ──► android → ios → harmony → c → docs
+        │                 各 target.generate(input) が GeneratedFile[] を返す
+        ▼
+dist/<outDir>/<relativePath> にファイル単位で書き出す
+```
+
+## エントリファイル `codegen/src/index.ts`
+
+### 定数
+
+| 定数 | 値 |
+| --- | --- |
+| `ROOT` | リポジトリルート（`import.meta.dirname` の 2 つ上） |
+| `DIST` | `<ROOT>/dist` |
+| `targets` | `[androidTarget, iosTarget, harmonyTarget, cTarget, docsTarget]`、**順序は固定** |
+
+### `main()`
+
+```ts
+function main(): void
+```
+
+唯一のエントリ（`index.ts` は実体を何もエクスポートせず、`main()` は内部関数で、ファイル末尾から直接呼び出される）。手順：
+
+1. `readVersion()` が `package.json` のバージョン番号を読む
+2. `loadTokenFiles()` がトークンをロード
+3. `resolveTokens(files)` が解決し、`tokenSet` を取る
+4. `loadSpecs()` / `loadCases()` が契約と用例をロード
+5. `CodegenInput` を組み立てる
+6. `existsSync(DIST)` のとき `rmSync(DIST, { recursive: true })` —— **削除してから再構築し、生成物に残骸がないことを保証する**
+7. target ごとに `generate(input)` を呼び、`dist/<outDir>/<relativePath>` に書き出し、生成物ごとに `[target] path` のログを出力
+8. 最終行で target 数、ファイル数、バージョンをまとめる
+
+ファイルヘッダーのコメントがレッドライン 1 を明示しています：**トークンの骨組みのみを生成し、UI 実装は一切生成しない**。
+
+## 中核インターフェース（`codegen/src/types.ts`）
+
+以下はパイプラインで最もよく使う 4 つのインターフェースです。**16 個の型エクスポートすべての完全なリファレンスは [型定義 types.ts](./types) を参照してください。**
+
+### `CodegenTarget`
+
+```ts
+interface CodegenTarget {
+  name: string               // ログのプレフィックス（例 'android'）
+  outDir: string             // dist 配下のサブディレクトリ名（例 'android'）
+  generate(input: CodegenInput): GeneratedFile[]
+}
+```
+
+各プラットフォーム target がこのインターフェースを実装します。プラットフォームの追加 = target を 1 つ追加し、`targets` 配列に加えることです。
+
+### `CodegenInput`
+
+```ts
+interface CodegenInput {
+  tokens: TokenSet    // 解析済みのライトトークンセット + ダークオーバーライド
+  specs: ComponentSpec[]   // 現在どの target も消費していない（将来のコンポーネントドキュメント / テスト生成用の予約）
+  cases: ComponentCases[]  // 同上
+  version: string     // package.json のバージョン番号。各生成物のヘッダーコメントに書き込む
+}
+```
+
+<Aside type="tip" title="specs / cases の状態">
+現在の各 target は `input.tokens` **のみ**を消費し、`specs` / `cases` を使う target は 1 つもありません——これらは将来のコンポーネントドキュメント / 型スケルトン / テスト生成のために予約されたインターフェースです。
+</Aside>
+
+### `GeneratedFile`
+
+```ts
+interface GeneratedFile {
+  relativePath: string  // dist/<outDir>/ からの相対出力パス
+  content: string
+}
+```
+
+### `TokenSet`
+
+```ts
+interface TokenSet {
+  tokens: ResolvedToken[]              // ライトトークン（path の辞書順）
+  byPath: Map<string, ResolvedToken>   // パスによる高速検索
+  dark: DarkOverrides                  // path -> ダークオーバーライド値
+}
+```
+
+## 生成物の総数
+
+| target | ファイル数 |
+| --- | --- |
+| android | 2（`LhTokens.kt` + `LhDarkTokens.kt`） |
+| ios | 2〜3（+ `LhShadow.swift`、shadow トークンが存在する場合） |
+| harmony | 2〜3（+ `LhShadow.ets`） |
+| c | 2 |
+| docs | 3 |
+
+`ios` / `harmony` の投影ファイルは `shadow` トークンが存在するときのみ生成されるため、総ファイル数はトークンの内容によって変わります。`dist/` の実際の生成物を基準にしてください。
+
+## 関連モジュール
+
+| モジュール | 責務 |
+| --- | --- |
+| [load.ts](./load) | ロードと構造検証 |
+| [resolve.ts](./resolve) | 参照解決とダークのマージ |
+| [format.ts](./format) | 中性値の解析と端ごとのフォーマット |
+| [tree.ts](./tree) | フラットからネストへの変換 |
+| [render.ts](./render) | テンプレートのレンダリング |
+| [types.ts](./types) | すべての型定義 |
+| [targets/](./targets) | 5 つのプラットフォーム target |
+| [templates/](./templates) | 7 つの handlebars テンプレート |

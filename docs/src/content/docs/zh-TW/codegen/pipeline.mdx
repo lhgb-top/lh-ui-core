@@ -1,0 +1,137 @@
+---
+title: "管線總覽"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+`pnpm codegen` 執行 `codegen/src/index.ts`，完整管線如下：
+
+```
+package.json 版本號
+        │
+        ▼
+loadTokenFiles()          載入 tokens/*.json，Ajv 結構校驗，flatten 扁平化
+        │                  傳回 LoadedTokenFile[]（每檔案含 namespace / isDark / flat）
+        ▼
+resolveTokens()           ref 解析（含環檢測）+ 暗色合併
+        │                  傳回 { tokenSet, orphanDarkPaths, refMap }
+        ▼
+loadSpecs()               載入 specs/*.json（schema 校驗）
+loadCases()               載入 cases/*.json（schema 校驗）
+        │
+        ▼
+組裝 CodegenInput { tokens: tokenSet, specs, cases, version }
+        │
+        ▼
+刪掉整個 dist/ 並重建
+        │
+        ▼
+依序執行 5 個 target ──► android → ios → harmony → c → docs
+        │                 每個 target.generate(input) 傳回 GeneratedFile[]
+        ▼
+按 dist/<outDir>/<relativePath> 逐檔案落盤
+```
+
+## 入口檔案 `codegen/src/index.ts`
+
+### 常數
+
+| 常數 | 值 |
+| --- | --- |
+| `ROOT` | 倉庫根（`import.meta.dirname` 上兩級） |
+| `DIST` | `<ROOT>/dist` |
+| `targets` | `[androidTarget, iosTarget, harmonyTarget, cTarget, docsTarget]`，**順序固定** |
+
+### `main()`
+
+```ts
+function main(): void
+```
+
+唯一的入口（`index.ts` 不匯出任何實體，`main()` 是內部函式，檔案底部直接呼叫）。步驟：
+
+1. `readVersion()` 讀 `package.json` 版本號
+2. `loadTokenFiles()` 載入令牌
+3. `resolveTokens(files)` 解析，取 `tokenSet`
+4. `loadSpecs()` / `loadCases()` 載入契約與用例
+5. 組裝 `CodegenInput`
+6. `existsSync(DIST)` 時 `rmSync(DIST, { recursive: true })` —— **先刪後建，保證產物無殘留**
+7. 逐 target 呼叫 `generate(input)`，按 `dist/<outDir>/<relativePath>` 寫檔案，每個產物印出 `[target] path` 日誌
+8. 末行彙總 target 數、檔案數、版本
+
+檔案頭註解明確紅線 1：**只生成令牌骨架，不生成任何 UI 實作**。
+
+## 核心介面（`codegen/src/types.ts`）
+
+下面是管線裡最常用的四個介面；**全部 16 個類型匯出的完整參考見 [類型定義 types.ts](./types)。**
+
+### `CodegenTarget`
+
+```ts
+interface CodegenTarget {
+  name: string               // 日誌前綴，如 'android'
+  outDir: string             // dist 下的子目錄名，如 'android'
+  generate(input: CodegenInput): GeneratedFile[]
+}
+```
+
+每個平台 target 實作這個介面。新增一個平台 = 新增一個 target 並加進 `targets` 陣列。
+
+### `CodegenInput`
+
+```ts
+interface CodegenInput {
+  tokens: TokenSet    // 解析後的明色令牌集 + 暗色覆蓋
+  specs: ComponentSpec[]   // 當前未被任何 target 消費（預留給未來元件文件/測試生成）
+  cases: ComponentCases[]  // 同上
+  version: string     // package.json 版本號，寫進每個產物的頭部註解
+}
+```
+
+<Aside type="tip" title="specs / cases 的狀態">
+目前各 target **只**消費 `input.tokens`，沒有任何 target 使用 `specs` / `cases`——它們是預留給未來元件文件 / 類型骨架 / 測試生成的介面。
+</Aside>
+
+### `GeneratedFile`
+
+```ts
+interface GeneratedFile {
+  relativePath: string  // 相對 dist/<outDir>/ 的輸出路徑
+  content: string
+}
+```
+
+### `TokenSet`
+
+```ts
+interface TokenSet {
+  tokens: ResolvedToken[]              // 明色令牌（path 字典序）
+  byPath: Map<string, ResolvedToken>   // 按路徑快速查找
+  dark: DarkOverrides                  // path -> 暗色覆蓋值
+}
+```
+
+## 產物總數
+
+| target | 檔案數 |
+| --- | --- |
+| android | 2（`LhTokens.kt` + `LhDarkTokens.kt`） |
+| ios | 2~3（+ `LhShadow.swift`，存在 shadow 令牌時） |
+| harmony | 2~3（+ `LhShadow.ets`） |
+| c | 2 |
+| docs | 3 |
+
+`ios` / `harmony` 的投影檔案只在存在 `shadow` 令牌時生成，故總檔案數隨令牌內容變化，以 `dist/` 實際產物為準。
+
+## 相關模組
+
+| 模組 | 職責 |
+| --- | --- |
+| [load.ts](./load) | 載入與結構校驗 |
+| [resolve.ts](./resolve) | 引用解析與暗色合併 |
+| [format.ts](./format) | 中性值解析與端格式化 |
+| [tree.ts](./tree) | 扁平轉巢狀 |
+| [render.ts](./render) | 模板渲染 |
+| [types.ts](./types) | 全部類型定義 |
+| [targets/](./targets) | 五個平台 target |
+| [templates/](./templates) | 7 個 handlebars 模板 |

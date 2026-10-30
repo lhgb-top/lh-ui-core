@@ -1,0 +1,75 @@
+---
+title: lh-ui-core
+template: splash
+description: lh-ui 原生血脈構建期中心 —— 設計令牌真源 + 元件契約 + 黃金用例 + 跨端 codegen
+hero:
+  title: lh-ui-core
+  tagline: 原生血脈的構建期中心 —— 設計令牌真源 · 元件契約 · 黃金用例 · 跨端 codegen。只在構建期工作，產物裡沒有一行 JavaScript。
+  actions:
+    - text: 快速開始
+      link: /lhui/core/zh-TW/guide/quickstart
+      variant: primary
+    - text: 令牌參考
+      link: /lhui/core/zh-TW/tokens/reference
+      variant: secondary
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+## 這個倉是做什麼的
+
+<CardGrid>
+  <Card title="🎨 設計令牌唯一真源">
+    9 份 JSON 中性源（色板 / 排版 / 間距 / 圓角 / 投影 / 動效 / 層級 / 元件級），schema 強約束，禁止任何平台專屬語法。
+    [令牌格式](/zh-TW/tokens/token-format)
+  </Card>
+  <Card title="📐 元件契約">
+    每元件一份 JSON 契約：props / 列舉 / 預設值 / 事件 / 插槽 / 行為，命名正則保證五端統一。
+    [契約格式](/zh-TW/specs/spec-format)
+  </Card>
+  <Card title="🧪 黃金用例">
+    可跨端翻譯的 given/when/then 行為級斷言——邏輯不共享，行為共享。
+    [用例格式](/zh-TW/cases/case-format)
+  </Card>
+  <Card title="⚙️ 跨端 codegen">
+    一套中性令牌，生成 Android（Kotlin）/ iOS（Swift）/ 鴻蒙（ArkTS）/ Windows（C#）四端語言骨架，只生骨架不生實作。
+    [管線總覽](/zh-TW/codegen/pipeline)
+  </Card>
+  <Card title="🌙 暗色預計算">
+    web 血脈的 `color-mix()` 在構建期預計算為字面色值，原生端零執行時成本。
+    [暗色合併](/zh-TW/tokens/dark-mode)
+  </Card>
+  <Card title="🔗 本地連動">
+    家族布局下改令牌重跑 codegen 即時生效，帶存在性守衛，無需發包。
+    [本地連動](/zh-TW/guide/local-linking)
+  </Card>
+</CardGrid>
+
+## 家族站點
+
+<CardGrid>
+  <Card title="lh-ui（總覽）">
+    家族入口網站，含雙血脈架構與設計語言基線。
+    [前往 →](https://www.lhgb.top)
+  </Card>
+  <Card title="lh-ui-plus（Vue3）">
+    web 血脈的 Vue3 元件庫。
+    [前往 →](https://www.lhgb.top/lhui/vue3/)
+  </Card>
+  <Card title="lh-ui-android">
+    原生血脈：Compose 令牌包 + 元件實作。
+    [前往 →](https://www.lhgb.top/lhui/android/)
+  </Card>
+  <Card title="lh-ui-ios">
+    原生血脈：SwiftUI 令牌包 + 元件實作。
+    [前往 →](https://www.lhgb.top/lhui/ios/)
+  </Card>
+  <Card title="lh-ui-harmony">
+    原生血脈：ArkUI 令牌包 + 元件實作。
+    [前往 →](https://www.lhgb.top/lhui/harmony/)
+  </Card>
+  <Card title="lh-ui-windows">
+    原生血脈：WinUI 3（C#）令牌包 + 元件實作。
+    [前往 →](https://www.lhgb.top/lhui/windows/)
+  </Card>
+</CardGrid>

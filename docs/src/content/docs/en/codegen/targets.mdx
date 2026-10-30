@@ -1,0 +1,220 @@
+---
+title: "The Five Targets"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+Every target implements the `CodegenTarget` interface (`{ name, outDir, generate(input): GeneratedFile[] }`) and is called in turn by the [pipeline](./pipeline).
+
+## The shared dark-artifact construction pattern
+
+The four platform targets use the same pattern to turn `tokenSet.dark` (`Map<path, value>`) into a `ResolvedToken[]`:
+
+```ts
+const darkTokens = [...tokenSet.dark.entries()]
+  .map(([path, value]) => {
+    const base = tokenSet.byPath.get(path)
+    return {
+      path,
+      type: base?.type ?? ('color' as const),   // Take the type from the same-named light key, fall back to color
+      value,
+      description: base?.description,
+    }
+  })
+  .sort((a, b) => a.path.localeCompare(b.path))
+```
+
+The sorted-then-emitted tree is the same as the light side's. Light artifacts carry `description` comments; `spread` is **ignored and documented on every target**.
+
+---
+
+## android.ts — Kotlin + Jetpack Compose
+
+**Artifacts**: `dist/android/top/lhgb/ui/tokens/LhTokens.kt` + `LhDarkTokens.kt`
+
+**Constant**: `PACKAGE = 'top.lhgb.ui.tokens'` (the family reverse-domain-name convention, master plan D20)
+
+### `formatKotlin(path, token): FormatResult`
+
+Returns `{ literal, features }` — `features` is the set of runtime types in use and **drives the import list**:
+
+| Type | Literal | features |
+| --- | --- | --- |
+| color | `ComposeColor(0xAARRGGBB)` | `color` |
+| dimension (px) | `${d.value}.${usesSp(path) ? 'sp' : 'dp'}` | `dimension` |
+| dimension (%) | `0.50f  // 50% (a fraction, converted against the container size)` (after `(v/100).toFixed(3)`, one trailing zero is removed) | — |
+| duration | `200  // 200ms (milliseconds)` | — |
+| cubicBezier | `CubicBezierEasing(0.4f, 0f, 0.2f, 1f)` | `bezier` |
+| shadow | `Shadow(color = ..., offset = Offset(xf, yf), blurRadius = bf)` | `color`, `shadow` |
+| number / string | as-is / `JSON.stringify` | — |
+
+### `emitTree(lines, group, indent, features)`
+
+Recursively emits the nested `object PascalCase { ... }`, with members `val name = literal` and descriptions as trailing comments. `features` accumulates during the traversal.
+
+### `buildKotlinBody(tokenSet, rootName, features)` / `buildDarkKotlinBody(tokenSet, features)`
+
+The light root object name is passed in as a parameter (`LhTokens`); **the dark root is always `LhDarkTokens`**.
+
+### `importsFor(features): string[]`
+
+**The import list is decided by the features actually in use — nothing unused is imported**:
+
+| feature | import |
+| --- | --- |
+| `color` | `androidx.compose.ui.graphics.Color as ComposeColor` |
+| `dimension` | `androidx.compose.ui.unit.dp` + `.sp` |
+| `shadow` | `androidx.compose.ui.graphics.Shadow` + `androidx.compose.ui.geometry.Offset` |
+| `bezier` | `androidx.compose.animation.core.CubicBezierEasing` |
+
+### `renderKotlinFile(body, version, features): string`
+
+Assembles the "do not hand-edit" header banner, the import block generated from `features`, and the body into a complete `.kt` file.
+
+---
+
+## ios.ts — Swift + SwiftUI
+
+**Artifacts**: `dist/ios/Sources/LhUITokens/LhTokens.swift` + `LhDarkTokens.swift`, plus an extra `LhShadow.swift` when shadow tokens exist
+
+### `formatSwift(token): string`
+
+| Type | Literal |
+| --- | --- |
+| color (a=1) | `SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)` |
+| color (a&lt;1) | as above + `.opacity(0.4)` |
+| dimension | `CGFloat(40)`; `%` emits a fraction + a comment |
+| duration | `0.200  // 0.2s (seconds)` — **SwiftUI animations are in seconds; converted at build time** (milliseconds ÷ 1000, 3 decimal places) |
+| cubicBezier | `(x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // Bézier control points; the target constructs its own easing` |
+| shadow | `LhShadow(color:opacity:radius:x:y:)` |
+
+### `swiftMemberName(name): string`
+
+When a member name collides with a Swift keyword, **it is wrapped in backticks** (e.g. `` `default` ``), otherwise the artifact would not compile.
+
+<Aside type="tip" title="Why only member names are escaped">
+`SWIFT_KEYWORDS` is the set of the 45 Swift keywords. **Enum type names go through `pascalCase` and never collide with a keyword** (after capitalization none of them is in the set); **only member names need escaping**.
+</Aside>
+
+### `buildSwiftBody(tokenSet, rootName): string` / `buildDarkSwiftBody(tokenSet): string`
+
+Assembles the `public enum` root structure: the light root name is passed in as a parameter (`LhTokens`), **the dark root is always `LhDarkTokens`**, and both are filled by the recursive `emitTree` on the inside. The file-header banner is assembled directly in `iosTarget.generate`.
+
+### `emitTree(lines, group, indent)`
+
+Swift's instance-free namespace idiom: nested `public enum PascalCase` with members `public static let name = ...`.
+
+---
+
+## harmony.ts — HarmonyOS ArkTS + ArkUI
+
+**Artifacts**: `dist/harmony/tokens/LhTokens.ets` + `LhDarkTokens.ets`, plus an extra `LhShadow.ets` when shadow tokens exist
+
+### `formatEts(token): string`
+
+| Type | Literal |
+| --- | --- |
+| color | `'#FF2B4C7C'` (ArkUI accepts `#AARRGGBB` strings, via `toArgbHash`) |
+| dimension | a plain `vp` number; `%` emits a fraction + a comment |
+| duration | `200  // 200ms (milliseconds)` |
+| cubicBezier | `[0.4, 0, 0.2, 1]  // Consumed as curves.cubicBezierCurve on the component side` |
+| shadow | `{ color: '#...', radius: 8, offsetX: 0, offsetY: 2 }` |
+
+### `typeAnnotation(token): string`
+
+**The only platform with type annotations** (ArkTS is strongly typed):
+
+| Type | Annotation |
+| --- | --- |
+| color | `ResourceColor` |
+| dimension | `Dimension \| number` |
+| duration / number | `number` |
+| shadow | `LhShadow` |
+| cubicBezier | `number[]` |
+| string | `string` |
+
+### `emitTree(lines, group, indent)`
+
+The root is an `export class`; **nested classes are not exported** (ArkTS does not allow export declarations inside a class body), with members `static readonly name: T = literal`.
+
+### `buildEtsBody(tokenSet, rootName): string` / `buildDarkEtsBody(tokenSet): string`
+
+Assembles the `export class` root structure: the light root name is passed in as a parameter (`LhTokens`), **the dark root is always `LhDarkTokens`**, and both are filled by the recursive `emitTree` on the inside. The file-header banner is assembled directly in `harmonyTarget.generate`.
+
+---
+
+## windows.ts — Windows C# + WinUI 3
+
+**Artifacts**: `dist/windows/Tokens/LhTokens.cs` + `LhDarkTokens.cs`, plus an extra `LhShadow.cs` when shadow tokens exist and an extra `LhEasing.cs` when Bézier tokens exist
+
+The namespace is `Top.Lhgb.Ui.Tokens` (reverse domain name, master plan D20).
+
+### `toCsColor(c): string`
+
+Converts a color into a WinUI factory call: `Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C)`.
+
+<Aside type="caution" title="Why Windows.UI.Color and not Microsoft.UI.Color">
+Windows App SDK 1.6 and below **does not have** a `Microsoft.UI.Color` struct; the properties of the `Microsoft.UI.Colors` color table (Black, Transparent, ...) return `Windows.UI.Color` too. So the token side always uses `Windows.UI.Color` — it ships its own `FromArgb` factory and matches the Colors table's type.
+</Aside>
+
+### `doubleLiteral(value): string`
+
+Appends the `.0` suffix to integers (8 → `8.0`), avoiding implicit-conversion ambiguity.
+
+### `formatCs(token): FormatResult`
+
+| Type | C# literal | Field type |
+| --- | --- | --- |
+| color | `Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C)` | `Windows.UI.Color` |
+| dimension (integer) | `40.0` | `double` |
+| dimension (fractional) | `0.5` | `double` |
+| dimension (%) | `0.500  // 50% (a fraction, converted against the container size)` | `double` |
+| duration | `200  // 200ms (milliseconds)` | `int` |
+| cubicBezier | `new LhEasing(0.4, 0, 0.2, 1)` | `LhEasing` |
+| shadow | `new LhShadow(0xFF..., 0.0, 2.0, 8.0)` | `LhShadow` |
+| number | `400` / `1.8` | `int` / `double` |
+| string | `"Source Code Pro, ..."` | `string` |
+
+The `note` (unit / conversion explanation) and `description` are merged into a single inline comment; **the semicolon must land between the literal and the comment**, otherwise the literal-with-comment cases (fractions / durations / Bézier / shadows) would leave the semicolon swallowed by the comment (CS1002).
+
+### `csMemberName(name): string`
+
+Converts to **PascalCase**: `default → Default`, `extraLarge → ExtraLarge`. It also steers around C# contextual keywords like `default` and `base` (group names go through `pascalCase` as well).
+
+### `emitTree(lines, group, indent)`
+
+Nested `public static class` expresses the token hierarchy (a static class is C#'s namespace idiom), with members `public static readonly T Name = literal;`.
+
+### `buildCsBody(tokenSet, rootName)` / `buildDarkCsBody(tokenSet)`
+
+The light root name is passed in as a parameter (`LhTokens`), **the dark root is always `LhDarkTokens`**, and both are filled by the recursive `emitTree` on the inside. The file-header banner is rendered in `windowsTarget.generate` by `windows/LhTokens.cs.hbs`.
+
+<Aside type="note" title="Dark mode: a sibling object">
+`LhDarkTokens` is an independent object sitting next to `LhTokens` — dark mode only overrides colors; dimensions / motion / radii are unchanged in dark mode, and a component that needs a dark-mode dimension takes the value from the light object. This is consistent with the android / ios / harmony targets.
+</Aside>
+
+### Exports
+
+`export { csTokenPath }` — converts a dot path to `LhTokens.Color.Primary.Default`, for tests and external consumption.
+
+---
+
+## docs.ts — the docs artifacts (no templates involved)
+
+**Artifacts**: `dist/docs/tokens.md` + `tokens.light.json` + `tokens.dark.json`
+
+**The only target that does not use handlebars templates** — it assembles strings directly in code.
+
+### `literalValue(token): string`
+
+For a color, emits `original → #rrggbb` (when a&lt;1, `→ rgba(r, g, b, a)`); everything else is just `String(value)`.
+
+### `buildTokenTable(input): string`
+
+Emits markdown tables grouped by the token paths' **top-level namespaces**, with the columns "Token | Type | Light | Dark | Description"; `nativeOnly` is annotated as a native-only addition; the dark column is `—` when there is no override.
+
+### `buildDarkJson(input): string`
+
+The dark override map, sorted, then `JSON.stringify(..., null, 2)`.
+
+For what the three artifacts are used, see [Docs Artifacts](../artifacts/docs-output).

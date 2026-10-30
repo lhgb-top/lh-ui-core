@@ -1,0 +1,81 @@
+---
+title: "Couche de construction arborescente — tree.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> Construire une arborescence imbriquée à partir d'un `path -> ResolvedToken` aplati, afin que chaque cible puisse émettre selon la hiérarchie des espaces de noms.
+
+## Pourquoi une arborescence est nécessaire
+
+Dans le JSON, les jetons sont imbriqués (`color.primary.default`), mais les étapes de chargement et de résolution travaillent toutes deux sur une **`Map<path, ResolvedToken>` aplatée** (pratique pour la détection des doublons, la résolution des refs, la fusion du mode sombre). À l'étape de génération, les `object Color { object Primary { ... } }` de Kotlin, les `enum Color { enum Primary { ... } }` de Swift et les commentaires de section de C nécessitent tous une **structure imbriquée** — d'où la construction préalable d'une arborescence.
+
+## Types
+
+```ts
+interface TokenTreeGroup {
+  name: string
+  tokens: { name: string; token: ResolvedToken }[]   // Les jetons directs sous le groupe (conservés sous leur nom d'origine)
+  children: TokenTreeGroup[]                          // Les sous-groupes
+}
+```
+
+Exemple de conversion :
+
+```
+color.primary.default  =>
+  { name: 'color', children: [
+      { name: 'primary', children: [
+          { name: 'default', tokens: [{ name: 'default', token }] }
+      ] }
+  ] }
+```
+
+## Fonctions
+
+### `buildTokenTree(tokens: ResolvedToken[]): TokenTreeGroup[]`
+
+Le point d'entrée. Crée une racine virtuelle, appelle `insert(root, segments, token, 0)` pour chaque jeton, et retourne finalement `root.children` (la racine virtuelle elle-même n'apparaît jamais).
+
+### `insert(group, segments, token, depth): void`
+
+La fonction récursive interne :
+
+```ts
+const name = segments[depth]
+if (depth === segments.length - 1) {
+  group.tokens.push({ name, token })   // Dernier segment : va dans tokens
+  return
+}
+let child = group.children.find((c) => c.name === name)
+if (!child) {
+  child = { name, tokens: [], children: [] }
+  group.children.push(child)           // S'il n'existe pas, on crée le sous-groupe
+}
+insert(child, segments, token, depth + 1)
+```
+
+**Un sous-groupe homonyme n'est créé qu'une seule fois** ; les jetons suivants avec le même préfixe le réutilisent.
+
+### `pascalCase(name: string): string`
+
+Convertit les noms de groupe en PascalCase, pour le nommage des groupes dans les `object` Kotlin / les `enum` Swift / les `class` ArkTS :
+
+```ts
+return name.charAt(0).toUpperCase() + name.slice(1)
+```
+
+<Aside type="caution" title="Seule la première lettre est mise en majuscule">
+`pascalCase` **ne découpe pas le camelCase, il se contente de mettre la première lettre en majuscule** — `fontSize` → `FontSize`, `zIndex` → `ZIndex`. Le nommage des jetons étant déjà en casse chameau, il n'est pas nécessaire de redécouper les mots ici.
+</Aside>
+
+## Comment chaque cible utilise l'arborescence
+
+| Cible | Usage |
+| --- | --- |
+| Android | `emitTree` émet récursivement des `object PascalCase { ... }`, avec des membres `val name = literal` |
+| iOS | `emitTree` émet récursivement des `public enum PascalCase`, avec des membres `public static let name = ...` |
+| HarmonyOS | `emitTree` émet récursivement des `class PascalCase` (les classes imbriquées sans export), avec des membres `static readonly name: T = ...` |
+| C | Un style aplati en `#define` ; l'arborescence ne sert qu'à générer les commentaires de section `/* --- group.path --- */` |
+
+Voir [Les cinq cibles](./targets).

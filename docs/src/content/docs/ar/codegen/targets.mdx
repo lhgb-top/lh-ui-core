@@ -1,0 +1,220 @@
+---
+title: "الأهداف الخمسة"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+ينفذ كل هدف الواجهة `CodegenTarget` (`{ name, outDir, generate(input): GeneratedFile[] }`)، ويستدعيها [خط الأنابيب](./pipeline) بالترتيب.
+
+## نمط بناء منتجات الوضع الداكن المشترك
+
+تستخدم الأهداف الأربعة للمنصات النمط نفسه لتحويل `tokenSet.dark` (`Map<path, value>`) إلى `ResolvedToken[]`:
+
+```ts
+const darkTokens = [...tokenSet.dark.entries()]
+  .map(([path, value]) => {
+    const base = tokenSet.byPath.get(path)
+    return {
+      path,
+      type: base?.type ?? ('color' as const),   // يؤخذ النوع من المفتاح المماثل في الوضع الفاتح، وإلا التراجع إلى color
+      value,
+      description: base?.description,
+    }
+  })
+  .sort((a, b) => a.path.localeCompare(b.path))
+```
+
+ثم تمر في شجرة الإصدار نفسها بعد ترتيبها حسب المسار. تحمل منتجات الوضع الفاتح تعليقات `description`؛ أما `spread` (مقدار الانتشار) فيه **مُهمَل وموضَّح بتعليق في جميع الأطراف**.
+
+---
+
+## android.ts — Kotlin + Jetpack Compose
+
+**المنتجات**: `dist/android/top/lhgb/ui/tokens/LhTokens.kt` + `LhDarkTokens.kt`
+
+**الثوابت**: `PACKAGE = 'top.lhgb.ui.tokens'` (اصطلاح النطاق العكسي للعائلة، الخطة الرئيسية D20)
+
+### `formatKotlin(path, token): FormatResult`
+
+يعيد `{ literal, features }` — و`features` هي مجموعة أنواع وقت التشغيل المستخدمة، **وهي التي تحدد قائمة الاستيرادات**:
+
+| النوع | القيمة الحرفية | features |
+| --- | --- | --- |
+| color | `ComposeColor(0xAARRGGBB)` | `color` |
+| dimension (px) | `${d.value}.${usesSp(path) ? 'sp' : 'dp'}` | `dimension` |
+| dimension (%) | `0.50f  // 50% (كسر، يُحوَّل وفق حجم الحاوية)` (بعد `(v/100).toFixed(3)` تُحذف صفر من النهاية) | — |
+| duration | `200  // 200ms (ملي ثانية)` | — |
+| cubicBezier | `CubicBezierEasing(0.4f, 0f, 0.2f, 1f)` | `bezier` |
+| shadow | `Shadow(color = ..., offset = Offset(xf, yf), blurRadius = bf)` | `color`, `shadow` |
+| number / string | كما هو / `JSON.stringify` | — |
+
+### `emitTree(lines, group, indent, features)`
+
+إصدار متكرر لـ `object PascalCase { ... }` متداخل، والأعضاء `val name = literal`، مع `description` كتعليق في نهاية السطر. وتُجمَّع `features` أثناء المرور.
+
+### `buildKotlinBody(tokenSet, rootName, features)` / `buildDarkKotlinBody(tokenSet, features)`
+
+يُمرَّر اسم الجذر object للوضع الفاتح كمعطى (`LhTokens`)، أما **جذر الوضع الداكن فثابت دائمًا `LhDarkTokens`**.
+
+### `importsFor(features): string[]`
+
+**تُحدَّد قائمة الاستيرادات وفق الخصائص المستخدمة فعليًا، فما لا يُستخدم لا يُستورد**:
+
+| feature | import |
+| --- | --- |
+| `color` | `androidx.compose.ui.graphics.Color as ComposeColor` |
+| `dimension` | `androidx.compose.ui.unit.dp` + `.sp` |
+| `shadow` | `androidx.compose.ui.graphics.Shadow` + `androidx.compose.ui.geometry.Offset` |
+| `bezier` | `androidx.compose.animation.core.CubicBezierEasing` |
+
+### `renderKotlinFile(body, version, features): string`
+
+تجميع اللافتة العلوية «يُمنع التعديل يدويًا»، وكتلة الاستيرادات المُولَّدة وفق `features`، و`body`، في ملف `.kt` كامل.
+
+---
+
+## ios.ts — Swift + SwiftUI
+
+**المنتجات**: `dist/ios/Sources/LhUITokens/LhTokens.swift` + `LhDarkTokens.swift`، **وعند وجود رموز ظلال يُضاف `LhShadow.swift`**
+
+### `formatSwift(token): string`
+
+| النوع | القيمة الحرفية |
+| --- | --- |
+| color (a=1) | `SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)` |
+| color (a&lt;1) | نفس ما سبق + `.opacity(0.4)` |
+| dimension | `CGFloat(40)`؛ و`%` يُخرج كسرًا + تعليقًا |
+| duration | `0.200  // 0.2s (ثانية)` — **رسوم SwiftUI المتحركة تعمل بالثواني، ويتم التحويل في وقت البناء** (ملي ثانية ÷ 1000، مع الاحتفاظ بـ 3 خانات عشرية) |
+| cubicBezier | `(x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // نقطتا تحكم بيزيه، ويبني الطرف easing بنفسه` |
+| shadow | `LhShadow(color:opacity:radius:x:y:)` |
+
+### `swiftMemberName(name): string`
+
+عند تطابق اسم العضو مع كلمة مفتاحية في Swift **تُضاف علامات الاقتباس الخلفية** (مثل `` `default` ``)، وإلا فلن تُترجم المنتجات.
+
+<Aside type="tip" title="لماذا تهريب أسماء الأعضاء فقط">
+`SWIFT_KEYWORDS` هي مجموعة تضم 45 كلمة مفتاحية في Swift. **وأسماء أنواع التعدادات تمر عبر `pascalCase` فلا تتصادم مع الكلمات المفتاحية** (بعد تكبير الحرف الأول لا يقع أي منها ضمن المجموعة)، **ولا تحتاج سوى أسماء الأعضاء إلى التهريب**.
+</Aside>
+
+### `buildSwiftBody(tokenSet, rootName): string` / `buildDarkSwiftBody(tokenSet): string`
+
+تجميع البنية الجذرية `public enum`: اسم جذر الوضع الفاتح يُمرَّر كمعطى (`LhTokens`)، أما **جذر الوضع الداكن فثابت دائمًا `LhDarkTokens`**، ويُملأ كلاهما بالعبور المتكرر `emitTree`. وتُجمع لافتة رأس الملف مباشرةً في `iosTarget.generate`.
+
+### `emitTree(lines, group, indent)`
+
+الأسلوب المعتاد لمساحات الأسماء في Swift (تعدادات بدون نسخ): `public enum PascalCase` متداخل، والأعضاء `public static let name = ...`.
+
+---
+
+## harmony.ts — HarmonyOS ArkTS + ArkUI
+
+**المنتجات**: `dist/harmony/tokens/LhTokens.ets` + `LhDarkTokens.ets`، **وعند وجود رموز ظلال يُضاف `LhShadow.ets`**
+
+### `formatEts(token): string`
+
+| النوع | القيمة الحرفية |
+| --- | --- |
+| color | `'#FF2B4C7C'` (يقبل ArkUI سلاسل `#AARRGGBB`، عبر `toArgbHash`) |
+| dimension | قيم `vp` صافية؛ و`%` يُخرج كسرًا + تعليقًا |
+| duration | `200  // 200ms (ملي ثانية)` |
+| cubicBezier | `[0.4, 0, 0.2, 1]  // يستهلكه المكوّن عبر curves.cubicBezierCurve` |
+| shadow | `{ color: '#...', radius: 8, offsetX: 0, offsetY: 2 }` |
+
+### `typeAnnotation(token): string`
+
+**المنصة الوحيدة التي تحمل تعليقات نوعية** (لأن ArkTS مكتوب بقوة):
+
+| النوع | التعليق |
+| --- | --- |
+| color | `ResourceColor` |
+| dimension | `Dimension \| number` |
+| duration / number | `number` |
+| shadow | `LhShadow` |
+| cubicBezier | `number[]` |
+| string | `string` |
+
+### `emitTree(lines, group, indent)`
+
+الجذر `export class`، و**الأصناف المتداخلة بلا export** (لا يسمح جسم الصنف في ArkTS بتصريحات export)، والأعضاء `static readonly name: T = literal`.
+
+### `buildEtsBody(tokenSet, rootName): string` / `buildDarkEtsBody(tokenSet): string`
+
+تجميع البنية الجذرية `export class`: اسم جذر الوضع الفاتح يُمرَّر كمعطى (`LhTokens`)، أما **جذر الوضع الداكن فثابت دائمًا `LhDarkTokens`**، ويُملأ كلاهما بالعبور المتكرر `emitTree`. وتُجمع لافتة رأس الملف مباشرةً في `harmonyTarget.generate`.
+
+---
+
+## windows.ts — Windows C# + WinUI 3
+
+**المنتجات**: `dist/windows/Tokens/LhTokens.cs` + `LhDarkTokens.cs`، **وعند وجود رموز ظلال يُضاف `LhShadow.cs`، وعند وجود رموز بيزيه يُضاف `LhEasing.cs`**
+
+مساحة الأسماء `Top.Lhgb.Ui.Tokens` (نطاق عكسي، الخطة الرئيسية D20).
+
+### `toCsColor(c): string`
+
+تحويل اللون إلى استدعاء المصنع في WinUI: `Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C)`.
+
+<Aside type="caution" title="لماذا Windows.UI.Color وليس Microsoft.UI.Color">
+لا وجود للبنية `Microsoft.UI.Color` في Windows App SDK 1.6 وما دونه؛ والخصائص التي تعيدها جدول الألوان `Microsoft.UI.Colors` (مثل Black / Transparent) هي أيضًا من النوع `Windows.UI.Color`. ولذلك تستخدم رموز `Windows.UI.Color` حصرًا — فهي تملك المصنع `FromArgb`، ونوعها يتطابق مع جدول Colors.
+</Aside>
+
+### `doubleLiteral(value): string`
+
+إضافة اللاحقة `.0` إلى الأعداد الصحيحة (8 ← `8.0`)، تفاديًا للبس في التحويل الضمني للأنواع.
+
+### `formatCs(token): FormatResult`
+
+| النوع | القيمة الحرفية في C# | نوع الحقل |
+| --- | --- | --- |
+| color | `Windows.UI.Color.FromArgb(0xFF, 0x2B, 0x4C, 0x7C)` | `Windows.UI.Color` |
+| dimension (عدد صحيح) | `40.0` | `double` |
+| dimension (عدد عشري) | `0.5` | `double` |
+| dimension (%) | `0.500  // 50% (كسر، يُحوَّل وفق حجم الحاوية)` | `double` |
+| duration | `200  // 200ms (ملي ثانية)` | `int` |
+| cubicBezier | `new LhEasing(0.4, 0, 0.2, 1)` | `LhEasing` |
+| shadow | `new LhShadow(0xFF..., 0.0, 2.0, 8.0)` | `LhShadow` |
+| number | `400` / `1.8` | `int` / `double` |
+| string | `"Source Code Pro, ..."` | `string` |
+
+يُدمج `note` (شرح الوحدات / التحويل) مع `description` في تعليق سطري واحد؛ **ويجب أن تقع الفاصلة المنقوطة بين القيمة الحرفية والتعليق**، وإلا فستبتلع التعليقاتُ الفاصلةِ المنقوطة في القيم الحرفية ذات التعليقات (الكسور / المدد / بيزيه / الظلال) (CS1002).
+
+### `csMemberName(name): string`
+
+تحويل إلى **PascalCase**: `default` ← `Default`، `extraLarge` ← `ExtraLarge`، مع تجاوز الكلمات المفتاحية السياقية في C# مثل `default` / `base` (وأسماء المجموعات تمر بـ `pascalCase` كذلك).
+
+### `emitTree(lines, group, indent)`
+
+استخدام `public static class` المتداخل للتعبير عن هرمية الرموز (الصنف الساكن في C# هو الأسلوب المعتاد لمساحات الأسماء)، والأعضاء `public static readonly T Name = literal;`.
+
+### `buildCsBody(tokenSet, rootName)` / `buildDarkCsBody(tokenSet)`
+
+اسم جذر الوضع الفاتح يُمرَّر كمعطى (`LhTokens`)، أما **جذر الوضع الداكن فثابت دائمًا `LhDarkTokens`**، ويُملأ كلاهما بالعبور المتكرر `emitTree`. وتُعرض لافتة رأس الملف في `windowsTarget.generate` عبر `windows/LhTokens.cs.hbs`.
+
+<Aside type="note" title="الوضع الداكن: كائنات متجاورة">
+`LhDarkTokens` كائن مستقل يجاور `LhTokens` — الوضع الداكن لا يغطي سوى الألوان، أما الأبعاد / الحركة / الزوايا فتبقى كما هي في الوضع الداكن، وعندما يحتاج المكوّن أبعادًا في الوضع الداكن يأخذها من كائن الوضع الفاتح. وهذا متطابق مع شكل الأطراف الثلاثة android / ios / harmony.
+</Aside>
+
+### التصديرات
+
+`export { csTokenPath }` — يحوّل مسار النقاط إلى `LhTokens.Color.Primary.Default`، للاستخدام في الاختبارات والاستهلاك الخارجي.
+
+---
+
+## docs.ts — منتجات التوثيق (بلا قوالب)
+
+**المنتجات**: `dist/docs/tokens.md` + `tokens.light.json` + `tokens.dark.json`
+
+**الهدف الوحيد الذي لا يستخدم قوالب handlebars**، بل يبني السلاسل مباشرةً بالكود.
+
+### `literalValue(token): string`
+
+يُخرج color على شكل `القيمة الأصلية ← #rrggbb` (عند a&lt;1 يكون `← rgba(r, g, b, a)`)، وما عدا ذلك `String(value)` مباشرةً.
+
+### `buildTokenTable(input): string`
+
+إخراج جداول markdown مقسَّمة وفق **مساحة الأسماء العلوية** للمسار، على شكل «الرمز | النوع | الوضع الفاتح | الوضع الداكن | الوصف»؛ وتُوسم عناصر `nativeOnly` بـ «إضافة أصلية»؛ ويُملأ عمود الوضع الداكن بـ `—` عند عدم وجود تغطية.
+
+### `buildDarkJson(input): string`
+
+ترتيب جدول تغطية الوضع الداكن ثم `JSON.stringify(..., null, 2)`.
+
+لاستخدامات المنتجات الثلاثة راجع [منتجات docs](../artifacts/docs-output).

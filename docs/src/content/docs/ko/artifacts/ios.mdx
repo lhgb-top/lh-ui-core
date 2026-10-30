@@ -1,0 +1,107 @@
+---
+title: "iOS 산출물"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+**경로**: `dist/ios/Sources/LhUITokens/LhTokens.swift`와 `LhDarkTokens.swift`, 그림자 토큰이 있을 때 추가로 `LhShadow.swift`가 생성됩니다
+
+**모듈 디렉터리**: `Sources/LhUITokens/`(SwiftPM 디렉터리 관례)
+
+## 구조
+
+Swift의 인스턴스 없는 네임스페이스 관용구: **중첩 `public enum`** + `public static let`:
+
+```swift
+import SwiftUI
+import CoreGraphics
+
+public enum LhTokens {
+  public enum Button {
+    public static let borderRadius = CGFloat(2)  // 버튼 모서리 둥글기가 전역 모서리 둥글기를 따름
+    public static let borderWidth = CGFloat(1)
+    public enum FontSize {
+      public static let large = CGFloat(16)
+      public static let medium = CGFloat(14)
+    }
+    public enum Height {
+      public static let medium = CGFloat(40)  // 중간 크기 버튼 높이(기본)
+    }
+  }
+}
+```
+
+## 명명 매핑
+
+| 토큰 경로 | Swift 멤버 |
+| --- | --- |
+| `button.height.medium` | `LhTokens.Button.Height.medium` |
+| `color.primary.default` | `LhTokens.Color.Primary.`default`` |
+| `zIndex.modal` | `LhTokens.ZIndex.modal` |
+
+## 키워드 이스케이프
+
+멤버 이름이 Swift 키워드와 같은 형태이면 **백틱을 추가**합니다. 그렇지 않으면 산출물이 컴파일되지 않습니다:
+
+```swift
+public enum Primary {
+  public static let `default` = SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)
+  public static let `repeat` = ...
+}
+```
+
+이스케이프는 **멤버 이름**에만 적용됩니다 — 열거형 타입 이름은 `pascalCase`(첫 글자 대문자)를 거치면 키워드와 충돌하지 않습니다. `ios.ts`의 `SWIFT_KEYWORDS`와 `swiftMemberName()`을 참고하세요.
+
+## 단위와 리터럴
+
+| 토큰 타입 | Swift 리터럴 |
+| --- | --- |
+| 색상(불투명) | `SwiftUI.Color(red: 0.169, green: 0.298, blue: 0.486)` |
+| 색상(반투명) | 같은 형태 + `.opacity(0.400)` |
+| 치수 | `CGFloat(40)` |
+| 백분율 | `0.500  // 50%(비율, 컨테이너 크기로 환산)` |
+| 지속 시간 | `0.200  // 0.2s(초)` — **SwiftUI 애니메이션은 초 단위, 빌드 시 환산**(밀리초 ÷ 1000, 소수점 3자리까지) |
+| 베지어 | `(x1: 0.4, y1: 0, x2: 0.2, y2: 1)  // 베지어 제어점, 플랫폼 측에서 easing을 직접 구성` |
+| 그림자 | `LhShadow(color:opacity:radius:x:y:)` |
+| 수치 / 문자열 | 그대로 / `JSON.stringify` |
+
+<Aside type="tip" title="색상 정규화">
+SwiftUI의 `Color(red:green:blue:)`는 0..1의 정규화된 값을 받으므로, 빌드 시 0..255를 255로 나누고 소수점 3자리까지 유지합니다. 이것이 "플랫폼 단위 환산은 target이 담당"의 전형적인 예입니다.
+</Aside>
+
+## LhShadow.swift
+
+SwiftUI에는 복합 그림자 타입이 없으므로 운반체 구조체를 생성합니다(**정적 템플릿, 토큰 콘텐츠 없음**):
+
+```swift
+public struct LhShadow {
+  public let color: SwiftUI.Color
+  public let opacity: Double
+  public let radius: CGFloat
+  public let x: CGFloat
+  public let y: CGFloat
+  // memberwise init
+}
+```
+
+타입이 `shadow`인 토큰이 있을 때만 생성됩니다.
+
+## 다크
+
+독립적인 `public enum LhDarkTokens`:
+
+```swift
+public enum LhDarkTokens {
+  public enum Color {
+    public static let focus = SwiftUI.Color(red: 0.498, green: 0.651, blue: 0.851)
+    public static let selected = SwiftUI.Color(red: 0.694, green: 0.757, blue: 0.847)
+    // …나머지 덮어쓰기된 키
+  }
+}
+```
+
+덮어쓰지 않은 키는 다크에서 `LhTokens`를 따릅니다.
+
+## 소비 방식
+
+iOS 리포지터리는 SPM으로 `dist/ios/`를 로컬 path 의존성이나 이미 게시된 패키지로 도입하고, `import LhUITokens`로 사용할 수 있습니다.

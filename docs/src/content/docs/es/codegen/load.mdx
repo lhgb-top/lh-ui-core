@@ -1,0 +1,106 @@
+---
+title: "Capa de carga load.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> Carga de JSON + validación de esquema con Ajv + aplanado.
+
+`load.ts` solo hace **validación estructural** (JSON Schema). La **validación semántica** (coincidencia de tipos y valores, integridad de las referencias, detección de ciclos) se completa en [resolve.ts](./resolve).
+
+## Tipos
+
+```ts
+interface LoadedTokenFile {
+  fileName: string
+  namespace: string       // prefijo del espacio de nombres (color / radius / zIndex; la cadena vacía indica que las claves de nivel superior son el espacio de nombres)
+  isDark: boolean
+  defaultType?: TokenType // $type de nivel de archivo
+  description?: string
+  flat: Map<string, RawToken>  // path -> RawToken (ya aplanado, con el prefijo del espacio de nombres)
+}
+```
+
+## Lista de funciones
+
+### `readJson<T>(filePath: string): T`
+
+Lee un archivo JSON y le aplica `JSON.parse`. Función interna de utilidad.
+
+### `listJsonFiles(dir: string): string[]`
+
+Lista los archivos `.json` del directorio, **excluido `schema.json`**, y los convierte a rutas absolutas tras ordenarlos. El ordenamiento garantiza un orden de carga estable (que afecta a los mensajes de error y a la reproducibilidad de los artefactos).
+
+### `namespaceFromFileName(fileName: string): string`
+
+Deduce el espacio de nombres a partir del nombre del archivo (la lógica de respaldo cuando no se declara `$namespace`): se elimina el sufijo `.json`, se parte por `-`, el primer segmento se deja tal cual y el resto se pone en mayúscula inicial, y luego se concatenan.
+
+| Nombre del archivo | Resultado de la deducción |
+| --- | --- |
+| `color.json` | `color` |
+| `z-index.json` | `zIndex` |
+| `color-dark.json` | `colorDark` |
+
+<Aside type="tip" title="Solo es un respaldo">
+Los archivos oscuros suelen declarar explícitamente el `$namespace` para alinearse con su archivo claro (`color-dark.json` lo declara explícitamente con `"$namespace": "color"`), de modo que el valor deducido `colorDark` no se usa en la práctica. Para más detalles, véanse los [Espacios de nombres](../tokens/namespace).
+</Aside>
+
+### `flatten(obj, prefix, out, inheritedType?): void`
+
+Convierte recursivamente el JSON anidado en un `Map<path, RawToken>` plano:
+
+- Se saltan todas las claves que empiezan por `$` (metapropiedades)
+- Concatenación de la ruta: `prefix ? prefix + '.' + key : key`
+- Un nodo que no es ni una hoja ni un objeto → se lanza `La ruta de token X no es ni un token hoja ni un grupo`
+
+**La lógica clave de la herencia de tipos**: el `$type` declarado por los grupos (incluida la raíz del archivo) se propaga hacia abajo por el árbol, pero **solo se cuece en las hojas literales**:
+
+```ts
+// Los tokens literales heredan el tipo del grupo; los tokens ref conservan undefined,
+// y es resolve quien toma el tipo del destino de la referencia
+if (node.type === undefined && node.ref === undefined && groupType !== undefined) {
+  out.set(path, { ...node, type: groupType })
+}
+```
+
+Las hojas ref se omiten deliberadamente, y la decisión sobre el tipo se delega a la fase de resolve (el primer paso de la prioridad de tres niveles de tipos; véase el [Sistema de tipos](../tokens/type-system)).
+
+### `isRawToken(node: unknown): node is RawToken`
+
+Guarda de tipos: si un nodo contiene la clave `value` o `ref`, se considera un **token hoja**; en caso contrario, se considera un grupo.
+
+### `loadTokenFiles(tokensDir = <root>/tokens): LoadedTokenFile[]`
+
+Carga el directorio de tokens:
+
+1. Lee `tokens/schema.json` y lo compila con Ajv (`allErrors: true, strict: false`)
+2. Lee y valida el JSON de cada archivo; si falla, lanza `Validación del archivo de tokens fallida: <path>` + una lista formateada de errores
+3. Espacio de nombres: `raw.$namespace` (cuando es una cadena) tiene prioridad; en caso contrario, `namespaceFromFileName`
+4. `flatten(raw, namespace, flat)` lo aplana
+5. Ensambla `{ fileName, namespace, isDark: raw.$dark === true, defaultType: raw.$type, description: raw.$description, flat }`
+
+### `loadSpecs(specsDir = <root>/specs): ComponentSpec[]`
+
+Carga `specs/*.json` de forma isomorfa; si la validación falla, lanza `Validación del contrato de componente fallida`.
+
+### `loadCases(casesDir = <root>/cases): ComponentCases[]`
+
+Carga `cases/*.json` de forma isomorfa; si la validación falla, lanza `Validación de los casos dorados fallida`.
+
+### `formatErrors(errors: ErrorObject[]): string`
+
+Formatea los objetos de error de Ajv como una lista sangrada (`instancePath + message`).
+
+### `readVersion(): string`
+
+Lee la `version` de `package.json`, que pasa a formar parte del comentario de cabecera de cada artefacto («Fuente: tokens de @lh-ui/core @ v0.0.1»).
+
+## Estratificación de la validación
+
+| Capa | Dónde | Qué hace |
+| --- | --- | --- |
+| **Validación estructural** | `load.ts` | JSON Schema: campos obligatorios, valores enumerados, expresiones regulares de nomenclatura, `additionalProperties: false` |
+| **Validación semántica** | `resolve.ts` | Coincidencia de tipos y valores (`assertTypedValue`), existencia de las referencias, detección de ciclos de referencias |
+| **Validación de coherencia** | `scripts/verify-specs.mts` | Coherencia cruzada entre specs y cases |
+
+La estratificación existe porque JSON Schema no puede expresar restricciones transversales entre archivos y entre nodos del tipo «el destino de un ref debe existir» o «el tipo debe coincidir con el valor».

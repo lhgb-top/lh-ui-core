@@ -1,0 +1,81 @@
+---
+title: "ツリー構築層 tree.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> フラットな `path -> ResolvedToken` をネストしたツリーへ構築し、各 target が名前空間の階層に従って出力できるようにします。
+
+## なぜツリーが必要か
+
+トークンは JSON ではネストしています（`color.primary.default`）が、ロードと解析の段階では**フラットな `Map<path, ResolvedToken>`** です（重複検出、ref 解析、ダークのマージに都合がよい）。生成段階になると、Kotlin の `object Color { object Primary { ... } }`、Swift の `enum Color { enum Primary { ... } }`、C の節コメントはいずれも**ネスト構造**を必要とします——そこで先にツリーを構築します。
+
+## 型
+
+```ts
+interface TokenTreeGroup {
+  name: string
+  tokens: { name: string; token: ResolvedToken }[]   // グループ直下のトークン（元の名前のまま保持）
+  children: TokenTreeGroup[]                          // 子グループ
+}
+```
+
+変換の例：
+
+```
+color.primary.default  =>
+  { name: 'color', children: [
+      { name: 'primary', children: [
+          { name: 'default', tokens: [{ name: 'default', token }] }
+      ] }
+  ] }
+```
+
+## 関数
+
+### `buildTokenTree(tokens: ResolvedToken[]): TokenTreeGroup[]`
+
+エントリ。仮のルートを作り、各トークンについて `insert(root, segments, token, 0)` を呼び、最後に `root.children` を返します（仮のルート自体は現れません）。
+
+### `insert(group, segments, token, depth): void`
+
+内部の再帰関数：
+
+```ts
+const name = segments[depth]
+if (depth === segments.length - 1) {
+  group.tokens.push({ name, token })   // 末尾セグメント：tokens に入れる
+  return
+}
+let child = group.children.find((c) => c.name === name)
+if (!child) {
+  child = { name, tokens: [], children: [] }
+  group.children.push(child)           // 存在しなければ子グループを作る
+}
+insert(child, segments, token, depth + 1)
+```
+
+**同名の子グループは 1 度だけ作られ**、以降は同じプレフィックスを持つトークンが再利用します。
+
+### `pascalCase(name: string): string`
+
+グループ名を PascalCase に変換し、Kotlin `object` / Swift `enum` / ArkTS `class` のグループ命名に使います：
+
+```ts
+return name.charAt(0).toUpperCase() + name.slice(1)
+```
+
+<Aside type="caution" title="先頭の文字を大文字にするだけ">
+`pascalCase` は **camelCase の分割を行わず、先頭の文字を大文字にするだけ**です——`fontSize` → `FontSize`、`zIndex` → `ZIndex`。トークンの命名自体がすでにキャメルケースなので、ここで単語を切り分け直す必要はありません。
+</Aside>
+
+## 各端がツリーをどう使うか
+
+| 端 | 使い方 |
+| --- | --- |
+| Android | `emitTree` が再帰的に `object PascalCase { ... }` を出力し、メンバーは `val name = literal` |
+| iOS | `emitTree` が再帰的に `public enum PascalCase` を出力し、メンバーは `public static let name = ...` |
+| HarmonyOS | `emitTree` が再帰的に `class PascalCase` を出力し（ネストしたクラスに export は付かない）、メンバーは `static readonly name: T = ...` |
+| C | フラットな `#define` 方式で、ツリーは節コメント `/* --- group.path --- */` の生成にのみ使う |
+
+詳しくは [5 つの target](./targets) を参照してください。

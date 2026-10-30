@@ -1,0 +1,71 @@
+---
+title: "Слой рендеринга render.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> Обёртка над рендерингом handlebars-шаблонов.
+
+## Принцип проектирования: тонкие шаблоны
+
+Шаблоны **отвечают только за каркас файла** (заголовочный комментарий, import, открытие/закрытие пространств имён). Форматирование литералов каждого отдельного токена **полностью выполняется в TS-коде target'а**, а в шаблон подаётся уже собранная строка `body`.
+
+```
+target.ts:  Форматирование каждого токена → собирается в строку body
+                        ▼
+render.ts:  render('android/LhTokens.kt.hbs', { package, imports, body })
+                        ▼
+Шаблон:     Заголовочный комментарий + объявление package + imports + {{{body}}}
+```
+
+Преимущество: в шаблоне нет сложной логики handlebars; изменение формата литералов затрагивает только TS target'а, изменение каркаса файла — только шаблон; они не мешают друг другу.
+
+## Функции
+
+### `loadTemplate(name: string): HandlebarsTemplateDelegate`
+
+Внутренняя функция. Читает `codegen/templates/<name>` по имени шаблона:
+
+```ts
+const compiled = Handlebars.compile(source, { noEscape: true })
+cache.set(name, compiled)   // Кэширование результата компиляции, чтобы не компилировать повторно
+```
+
+<Aside type="tip" title="Почему обязательно `noEscape: true`">
+Содержимое шаблона включает символы `<` `>` `#` (защита C-заголовочных файлов `#ifndef`, `#define`, дженерики Kotlin). HTML-экранирование по умолчанию их бы сломало, поэтому его необходимо отключить.
+</Aside>
+
+Каталог шаблонов задаётся константой `TEMPLATES_DIR` (`codegen/templates`).
+
+### `render<T>(templateName: string, data: T): string`
+
+Единственный внешний интерфейс:
+
+```ts
+return loadTemplate(templateName)(data)
+```
+
+Target'ам нужна только эта одна строка.
+
+## Никаких собственных хелперов
+
+В шаблонах **не зарегистрировано ни одного handlebars-хелпера**, используется только встроенное:
+
+| Синтаксис | Назначение |
+| --- | --- |
+| `{{{ }}}` | Тройные фигурные скобки + `noEscape`, вставка предформатированного `body` |
+| `{{#each}}` | Обход массивов вроде списка import'ов |
+
+## 7 шаблонов
+
+| Шаблон | Артефакт |
+| --- | --- |
+| `android/LhTokens.kt.hbs` | `LhTokens.kt` **и** `LhDarkTokens.kt` (общий для светлой и тёмной тем) |
+| `ios/LhTokens.swift.hbs` | `LhTokens.swift` и `LhDarkTokens.swift` |
+| `ios/LhShadow.swift.hbs` | `LhShadow.swift` (статический шаблон, без слота body) |
+| `harmony/LhTokens.ets.hbs` | `LhTokens.ets` и `LhDarkTokens.ets` |
+| `harmony/LhShadow.ets.hbs` | `LhShadow.ets` (статический шаблон) |
+| `c/lh_tokens.h.hbs` | `lh_tokens.h` |
+| `c/lh_dark_tokens.h.hbs` | `lh_dark_tokens.h` |
+
+Подробнее: [Список шаблонов](./templates).

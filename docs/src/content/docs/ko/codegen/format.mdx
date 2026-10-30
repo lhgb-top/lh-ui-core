@@ -1,0 +1,113 @@
+---
+title: "포맷팅 계층 format.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> 중성값의 해석과 각 단의 포맷팅.
+
+모든 토큰값은 플랫폼 무관한 중성 표현(16진수 / rgba / 단위 문자열 / 숫자 / 베지어 배열)입니다. `format.ts`는 이것들을 **구조화된 데이터로 해석**하고, 각 target이 로컬 언어의 리터럴로 포맷팅합니다.
+
+## 해석 후 구조 타입
+
+```ts
+interface ParsedColor    { r: number; g: number; b: number; a: number }   // r/g/b: 0..255, a: 0..1
+interface ParsedDimension { value: number; unit: 'px' | '%' }
+interface ParsedDuration { ms: number }                                     // 밀리초로 정규화
+interface ParsedShadow   { x: number; y: number; blur: number; spread?: number; color: ParsedColor }
+```
+
+## 해석 계열 함수
+
+### `parseHex(hex: string): ParsedColor`
+
+세 종류의 16진수를 지원합니다:
+
+| 입력 | 처리 |
+| --- | --- |
+| `#RGB` | 각 자리를 반복하여 확장 |
+| `#RRGGBB` | 채널 값을 그대로 취함 |
+| `#AARRGGBB` | **앞 두 자리가 alpha**, 255로 나누어 0..1로 정규화 |
+| 그 외 길이 | `분석할 수 없는 16진수 색상값`를 throw |
+
+### `parseRgba(raw: string): ParsedColor`
+
+`rgba()` / `rgb()`를 해석하며, alpha의 기본값은 1입니다. 채널은 `clamp255`로 검증합니다(0..255를 벗어나면 `색상 채널 범위 초과`를 throw).
+
+### `parseColor(value: string): ParsedColor`
+
+색상의 통일 진입점: `#`로 시작하면 `parseHex`로, `rgb`로 시작하면 `parseRgba`로, 그 외에는 `지원하지 않는 색상 형식(16진수와 rgba만 허용)`를 throw합니다.
+
+### `parseDimension(value: string): ParsedDimension`
+
+`/^(\d+(?:\.\d+)?)(px|%)$/`에 매칭하고, 그 외에는 `분석할 수 없는 크기값`를 throw합니다. **px와 %만 받습니다** — 다른 단위는 JSON 단계에서 레드라인 5에 의해 금지됩니다.
+
+### `parseDuration(value: string): ParsedDuration`
+
+`/^(\d+(?:\.\d+)?)(s|ms)$/`에 매칭하고, `s`는 1000을 곱해 **밀리초로 통일 정규화**합니다.
+
+### `parseShadow(value: string): ParsedShadow`
+
+공백으로 분할합니다(최소 4세그먼트):
+
+```
+x  y  blur  [spread]  color
+```
+
+네 번째 세그먼트가 `-?\d+(\.\d+)?px`에 매칭되면 **확장량(spread)**이고, 그렇지 않으면 색상입니다:
+
+```ts
+if (rest.length > 1 && /^-?\d+(\.\d+)?px$/.test(rest[0])) {
+  spread = Number(rest[0].replace('px', ''))
+  rest.shift()
+}
+```
+
+색상 부분은 다시 `parseColor`에 맡깁니다.
+
+<Aside type="tip" title="spread는 모든 단에서 무시됩니다">
+`ParsedShadow.spread`는 기록되지만 **각 단 target이 내보내지 않습니다**(주석으로 명시). SwiftUI / ArkUI의 그림자 API에는 spread 매개변수가 없기 때문입니다.
+</Aside>
+
+### `assertTypedValue(type: TokenType, value: TokenValue): void`
+
+**schema를 넘어선 의미 검증**: 타입별로 하나씩 단언하고 값을 **실제로 해석**합니다. 타입 시스템 3계층 우선순위의 마지막 관문입니다(자세한 내용은 [타입 시스템](../tokens/type-system) 참고).
+
+| 타입 | 단언 |
+| --- | --- |
+| `color` | 문자열이어야 하며 `parseColor`로 해석 가능해야 함 |
+| `dimension` | 문자열이어야 하며 `parseDimension`으로 해석 가능해야 함 |
+| `duration` | 문자열이어야 하며 `parseDuration`으로 해석 가능해야 함 |
+| `shadow` | 문자열이어야 하며 `parseShadow`로 해석 가능해야 함 |
+| `cubicBezier` | 길이 4의 숫자 배열이어야 함 |
+| `number` / `string` | 검증하지 않음 |
+
+## 포맷팅 계열 함수
+
+### `toArgbHex(c: ParsedColor): string`
+
+`0xAARRGGBB` 리터럴, **Kotlin / C**에서 사용합니다. alpha 채널은 `Math.round(a * 255)`이고, 각 채널은 두 자리 16진수 대문자입니다.
+
+### `toArgbHash(c: ParsedColor): string`
+
+`#AARRGGBB` 문자열, **ArkTS**에서 사용합니다. `toArgbHex`를 기반으로 `0x`를 `#`로 바꿉니다.
+
+### `usesSp(path: string): boolean`
+
+**Android 전용 판정**: 경로가 `/fontsize/i`에 매칭되면 `sp`를, 그 외에는 `dp`를 사용합니다.
+
+### `structureValue(token: ResolvedToken)`
+
+**target들의 통일 진입점**. `token.type`에 따라 중성값을 `kind` 판별자가 있는 유니온 객체로 변환합니다:
+
+```ts
+{ kind: 'color'; color: ParsedColor }
+| { kind: 'dimension'; dimension: ParsedDimension }
+| { kind: 'duration'; duration: ParsedDuration }
+| { kind: 'shadow'; shadow: ParsedShadow }
+| { kind: 'cubicBezier'; bezier: number[] }
+| { kind: 'number'; number: number }
+| { kind: 'string'; string: string }
+```
+
+각 target은 이 유니온에 대해 switch하여 로컬 리터럴로 포맷팅합니다. 이렇게 하면 **중성값 해석은 한 번만 작성**하고, 각 단은 "어떻게 쓸지"만 담당하면 됩니다.

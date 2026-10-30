@@ -1,0 +1,71 @@
+---
+title: "Couche de rendu — render.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> Encapsulation du rendu des modèles Handlebars.
+
+## Principe de conception : des modèles minces
+
+Les modèles **ne sont responsables que du squelette du fichier** (commentaire d'en-tête, imports, ouverture / fermeture des espaces de noms). La mise en forme littérale de chaque jeton **se fait entièrement dans le TS de la cible**, qui nourrit le modèle avec la chaîne `body` déjà assemblée.
+
+```
+target.ts:  mise en forme jeton par jeton → assemblage en une chaîne body
+                        ▼
+render.ts:  render('android/LhTokens.kt.hbs', { package, imports, body })
+                        ▼
+modèle:     commentaire d'en-tête + déclaration package + imports + {{{body}}}
+```
+
+L'avantage : aucune logique handlebars complexe dans les modèles ; pour modifier la mise en forme des littéraux, on ne touche qu'au TS de la cible, et pour modifier le squelette du fichier, on ne touche qu'au modèle — sans interférence.
+
+## Fonctions
+
+### `loadTemplate(name: string): HandlebarsTemplateDelegate`
+
+Fonction interne. Lit `codegen/templates/<name>` à partir du nom du modèle :
+
+```ts
+const compiled = Handlebars.compile(source, { noEscape: true })
+cache.set(name, compiled)   // Le résultat compilé est mis en cache pour éviter de recompiler
+```
+
+<Aside type="tip" title="Pourquoi `noEscape: true` est indispensable">
+Le contenu des modèles contient des caractères `<` `>` `#` (les gardes de fichiers d'en-tête C `#ifndef`, `#define`, les génériques Kotlin). L'échappement HTML par défaut les détériorerait, il faut donc le désactiver.
+</Aside>
+
+Le répertoire des modèles est désigné par la constante `TEMPLATES_DIR` (`codegen/templates`).
+
+### `render<T>(templateName: string, data: T): string`
+
+La seule interface exposée :
+
+```ts
+return loadTemplate(templateName)(data)
+```
+
+Chaque cible n'a besoin que de cet unique appel.
+
+## Aucun helper personnalisé
+
+Les modèles **n'enregistrent aucun helper handlebars** et n'utilisent que les capacités intégrées :
+
+| Syntaxe | Usage |
+| --- | --- |
+| `{{{ }}}` | Triple accolade + `noEscape`, pour insérer le `body` pré-formaté |
+| `{{#each}}` | Parcourir des tableaux comme la liste des imports |
+
+## Les 7 modèles
+
+| Modèle | Artéfact |
+| --- | --- |
+| `android/LhTokens.kt.hbs` | `LhTokens.kt` **et** `LhDarkTokens.kt` (commun au clair et au sombre) |
+| `ios/LhTokens.swift.hbs` | `LhTokens.swift` et `LhDarkTokens.swift` |
+| `ios/LhShadow.swift.hbs` | `LhShadow.swift` (modèle statique, sans emplacement body) |
+| `harmony/LhTokens.ets.hbs` | `LhTokens.ets` et `LhDarkTokens.ets` |
+| `harmony/LhShadow.ets.hbs` | `LhShadow.ets` (modèle statique) |
+| `c/lh_tokens.h.hbs` | `lh_tokens.h` |
+| `c/lh_dark_tokens.h.hbs` | `lh_dark_tokens.h` |
+
+Voir [Liste des modèles](./templates).

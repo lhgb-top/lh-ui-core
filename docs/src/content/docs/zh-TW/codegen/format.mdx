@@ -1,0 +1,113 @@
+---
+title: "格式化層 format.ts"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+> 中性值的解析與各端格式化。
+
+所有令牌值都是平台無關的中性表達（十六進位 / rgba / 帶單位字串 / 數字 / 貝茲陣列）。`format.ts` 把它們**解析為結構化資料**，再由各 target 格式化成本地語言的字面值。
+
+## 解析後的結構類型
+
+```ts
+interface ParsedColor    { r: number; g: number; b: number; a: number }   // r/g/b: 0..255，a: 0..1
+interface ParsedDimension { value: number; unit: 'px' | '%' }
+interface ParsedDuration { ms: number }                                     // 歸一為毫秒
+interface ParsedShadow   { x: number; y: number; blur: number; spread?: number; color: ParsedColor }
+```
+
+## 解析類函式
+
+### `parseHex(hex: string): ParsedColor`
+
+支援三種十六進位：
+
+| 輸入 | 處理 |
+| --- | --- |
+| `#RGB` | 每位重複展開 |
+| `#RRGGBB` | 直接取通道 |
+| `#AARRGGBB` | **前兩位是 alpha**，除以 255 歸一為 0..1 |
+| 其它長度 | 拋 `无法解析的十六进制色值` |
+
+### `parseRgba(raw: string): ParsedColor`
+
+`rgba()` / `rgb()` 解析，alpha 缺省為 1。通道經 `clamp255` 校驗（超 0..255 拋 `颜色通道超出范围`）。
+
+### `parseColor(value: string): ParsedColor`
+
+顏色統一入口：`#` 開頭走 `parseHex`，`rgb` 開頭走 `parseRgba`，否則拋 `不支持的颜色格式（仅接受十六进制与 rgba）`。
+
+### `parseDimension(value: string): ParsedDimension`
+
+匹配 `/^(\d+(?:\.\d+)?)(px|%)$/`，否則拋 `无法解析的尺寸值`。**只接受 px 和 %**——其它單位在 JSON 層就被紅線 5 禁止。
+
+### `parseDuration(value: string): ParsedDuration`
+
+匹配 `/^(\d+(?:\.\d+)?)(s|ms)$/`，`s` 乘 1000，**統一歸一為毫秒**。
+
+### `parseShadow(value: string): ParsedShadow`
+
+按空格切分（至少 4 段）：
+
+```
+x  y  blur  [spread]  color
+```
+
+第 4 段若匹配 `-?\d+(\.\d+)?px` 則是**擴展量（spread）**，否則是顏色：
+
+```ts
+if (rest.length > 1 && /^-?\d+(\.\d+)?px$/.test(rest[0])) {
+  spread = Number(rest[0].replace('px', ''))
+  rest.shift()
+}
+```
+
+顏色部分交回 `parseColor`。
+
+<Aside type="tip" title="spread 在所有端都被忽略">
+`ParsedShadow.spread` 記錄了但**各端 target 都不發射**（註解說明），因為 SwiftUI / ArkUI 的投影 API 沒有 spread 參數。
+</Aside>
+
+### `assertTypedValue(type: TokenType, value: TokenValue): void`
+
+**schema 之外的語意校驗**：按類型逐一斷言並**實際解析**值。這是類型系統三層優先順序的最後一道關卡（詳見 [類型系統](../tokens/type-system)）。
+
+| 類型 | 斷言 |
+| --- | --- |
+| `color` | 須為字串且能被 `parseColor` 解析 |
+| `dimension` | 須為字串且能被 `parseDimension` 解析 |
+| `duration` | 須為字串且能被 `parseDuration` 解析 |
+| `shadow` | 須為字串且能被 `parseShadow` 解析 |
+| `cubicBezier` | 須為長度 4 的數字陣列 |
+| `number` / `string` | 不校驗 |
+
+## 格式化類函式
+
+### `toArgbHex(c: ParsedColor): string`
+
+`0xAARRGGBB` 字面值，供 **Kotlin / C** 使用。alpha 通道 `Math.round(a * 255)`，各通道兩位十六進位大寫。
+
+### `toArgbHash(c: ParsedColor): string`
+
+`#AARRGGBB` 字串，供 **ArkTS** 使用。基於 `toArgbHex` 把 `0x` 換成 `#`。
+
+### `usesSp(path: string): boolean`
+
+**Android 專用判定**：路徑匹配 `/fontsize/i` 則用 `sp`，其餘用 `dp`。
+
+### `structureValue(token: ResolvedToken)`
+
+**target 們的統一入口**。按 `token.type` 把中性值轉成帶 `kind` 判別的聯合物件：
+
+```ts
+{ kind: 'color'; color: ParsedColor }
+| { kind: 'dimension'; dimension: ParsedDimension }
+| { kind: 'duration'; duration: ParsedDuration }
+| { kind: 'shadow'; shadow: ParsedShadow }
+| { kind: 'cubicBezier'; bezier: number[] }
+| { kind: 'number'; number: number }
+| { kind: 'string'; string: string }
+```
+
+各 target 再對這個聯合做 switch，格式化成本地字面值。這樣**中性值解析只寫一份**，各端只管「怎麼寫」。

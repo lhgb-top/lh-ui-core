@@ -1,0 +1,75 @@
+---
+title: lh-ui-core
+template: splash
+description: مركز وقت البناء للسلالة الأصلية في عائلة lh-ui —— المصدر الأصلي لرموز التصميم + عقود المكوّنات + الحالات الذهبية + توليد الكود عبر الأطراف
+hero:
+  title: lh-ui-core
+  tagline: مركز وقت البناء للسلالة الأصلية —— المصدر الأصلي لرموز التصميم · عقود المكوّنات · الحالات الذهبية · توليد الكود عبر الأطراف. يعمل في وقت البناء فقط، ولا يوجد سطر JavaScript واحد في المنتجات.
+  actions:
+    - text: البدء السريع
+      link: /lhui/core/ar/guide/quickstart
+      variant: primary
+    - text: مرجع الرموز
+      link: /lhui/core/ar/tokens/reference
+      variant: secondary
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+## ما الذي يفعله هذا المستودع
+
+<CardGrid>
+  <Card title="🎨 المصدر الأصلي الوحيد لرموز التصميم">
+    9 مصادر JSON محايدة (الألوان / الطباعة / المسافات / الزوايا / الظلال / الحركة / الترتيب الطبقي / مستوى المكوّنات)، مع قيود صارمة عبر الـ schema، ويُمنع أي صياغة خاصة بمنصة بعينها.
+    [تنسيق الرموز](/ar/tokens/token-format)
+  </Card>
+  <Card title="📐 عقود المكوّنات">
+    عقد JSON واحد لكل مكوّن: props / القيم المُعدَّدة / القيم الافتراضية / الأحداث / الفتحات / السلوكيات، مع تعابير قياسية للأسماء تضمن التوحيد عبر الأطراف الخمسة.
+    [تنسيق العقد](/ar/specs/spec-format)
+  </Card>
+  <Card title="🧪 الحالات الذهبية">
+    تأكيدات سلوكية given/when/then قابلة للترجمة عبر الأطراف —— لا تُشارك البنية المنطقية، وإنما السلوك.
+    [تنسيق الحالات](/ar/cases/case-format)
+  </Card>
+  <Card title="⚙️ توليد الكود عبر الأطراف">
+    مجموعة واحدة من الرموز المحايدة، تُولّد الهياكل اللغوية لأربع جهات أصلية: Android (Kotlin) / iOS (Swift) / HarmonyOS (ArkTS) / Windows (C#) —— هياكل فقط، دون أي تطبيقات.
+    [نظرة عامة على خط الأنابيب](/ar/codegen/pipeline)
+  </Card>
+  <Card title="🌙 الحساب المسبق للوضع الداكن">
+    تُحسب قيم `color-mix()` الخاصة بسلالة الويب مسبقًا في وقت البناء إلى قيم ألوان مسطحة، دون أي تكلفة في وقت التشغيل على الأطراف الأصلية.
+    [دمج الوضع الداكن](/ar/tokens/dark-mode)
+  </Card>
+  <Card title="🔗 الربط المحلي">
+    في تخطيط العائلة، يكفي تعديل الرمز وإعادة تشغيل codegen ليصبح التغيير فوريًا، مع وجود حراسة للتحقق من الوجود، ودون الحاجة إلى النشر.
+    [الربط المحلي](/ar/guide/local-linking)
+  </Card>
+</CardGrid>
+
+## مواقع العائلة
+
+<CardGrid>
+  <Card title="lh-ui (نظرة عامة)">
+    بوابة العائلة، وتضم بنية السلالتين وخط أساس لغة التصميم.
+    [فتح ←](https://www.lhgb.top)
+  </Card>
+  <Card title="lh-ui-plus (Vue3)">
+    مكتبة مكوّنات Vue3 الخاصة بسلالة الويب.
+    [فتح ←](https://www.lhgb.top/lhui/vue3/)
+  </Card>
+  <Card title="lh-ui-android">
+    السلالة الأصلية: حزمة رموز Compose + تطبيقات المكوّنات.
+    [فتح ←](https://www.lhgb.top/lhui/android/)
+  </Card>
+  <Card title="lh-ui-ios">
+    السلالة الأصلية: حزمة رموز SwiftUI + تطبيقات المكوّنات.
+    [فتح ←](https://www.lhgb.top/lhui/ios/)
+  </Card>
+  <Card title="lh-ui-harmony">
+    السلالة الأصلية: حزمة رموز ArkUI + تطبيقات المكوّنات.
+    [فتح ←](https://www.lhgb.top/lhui/harmony/)
+  </Card>
+  <Card title="lh-ui-windows">
+    السلالة الأصلية: حزمة رموز WinUI 3 (C#) + تطبيقات المكوّنات.
+    [فتح ←](https://www.lhgb.top/lhui/windows/)
+  </Card>
+</CardGrid>

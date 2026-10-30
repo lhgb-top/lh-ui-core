@@ -1,0 +1,137 @@
+---
+title: "Visión general del pipeline"
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+`pnpm codegen` ejecuta `codegen/src/index.ts`. El pipeline completo es el siguiente:
+
+```
+número de versión de package.json
+        │
+        ▼
+loadTokenFiles()          carga tokens/*.json, validación estructural con Ajv, aplanado
+        │                  devuelve LoadedTokenFile[] (cada archivo trae namespace / isDark / flat)
+        ▼
+resolveTokens()           resolución de refs (con detección de ciclos) + fusión del modo oscuro
+        │                  devuelve { tokenSet, orphanDarkPaths, refMap }
+        ▼
+loadSpecs()               carga specs/*.json (validación de esquema)
+loadCases()               carga cases/*.json (validación de esquema)
+        │
+        ▼
+ensamblar CodegenInput { tokens: tokenSet, specs, cases, version }
+        │
+        ▼
+borrar todo dist/ y reconstruirlo
+        │
+        ▼
+ejecutar secuencialmente 5 targets ──► android → ios → harmony → c → docs
+        │                 cada target.generate(input) devuelve GeneratedFile[]
+        ▼
+escribir archivo a archivo en dist/<outDir>/<relativePath>
+```
+
+## El archivo de entrada `codegen/src/index.ts`
+
+### Constantes
+
+| Constante | Valor |
+| --- | --- |
+| `ROOT` | La raíz del repositorio (dos niveles por encima de `import.meta.dirname`) |
+| `DIST` | `<ROOT>/dist` |
+| `targets` | `[androidTarget, iosTarget, harmonyTarget, cTarget, docsTarget]`, **en orden fijo** |
+
+### `main()`
+
+```ts
+function main(): void
+```
+
+La única entrada (`index.ts` no exporta ninguna entidad; `main()` es una función interna a la que se llama directamente al pie del archivo). Pasos:
+
+1. `readVersion()` lee el número de versión de `package.json`
+2. `loadTokenFiles()` carga los tokens
+3. `resolveTokens(files)` resuelve y obtiene el `tokenSet`
+4. `loadSpecs()` / `loadCases()` cargan los contratos y los casos
+5. Se ensambla el `CodegenInput`
+6. Si `existsSync(DIST)`, se ejecuta `rmSync(DIST, { recursive: true })` — **primero se borra y luego se construye, para que no queden restos**
+7. Se llama a `generate(input)` target por target, se escribe cada archivo en `dist/<outDir>/<relativePath>` y se imprime un registro `[target] path` por cada artefacto
+8. La última línea resume el número de targets, el número de archivos y la versión
+
+El comentario de cabecera del archivo deja explícita la línea roja 1: **solo se generan los esqueletos de los tokens, no se genera ninguna implementación de UI**.
+
+## Las interfaces principales (`codegen/src/types.ts`)
+
+Estas son las cuatro interfaces más utilizadas del pipeline; **la referencia completa de los 16 tipos exportados está en [Definiciones de tipos types.ts](./types).**
+
+### `CodegenTarget`
+
+```ts
+interface CodegenTarget {
+  name: string               // prefijo del registro, por ejemplo 'android'
+  outDir: string             // nombre del subdirectorio bajo dist, por ejemplo 'android'
+  generate(input: CodegenInput): GeneratedFile[]
+}
+```
+
+Cada target de plataforma implementa esta interfaz. Añadir una plataforma = añadir un target e incorporarlo al array `targets`.
+
+### `CodegenInput`
+
+```ts
+interface CodegenInput {
+  tokens: TokenSet    // el conjunto de tokens claros resuelto + las sobrescrituras del modo oscuro
+  specs: ComponentSpec[]   // actualmente no consumido por ningún target (reservado para la futura generación de documentación/pruebas de componentes)
+  cases: ComponentCases[]  // ídem
+  version: string     // el número de versión de package.json, escrito en la cabecera de cada artefacto
+}
+```
+
+<Aside type="tip" title="El estado de specs / cases">
+Por ahora, los targets **solo** consumen `input.tokens`; ningún target usa `specs` / `cases` — son interfaces reservadas para la futura generación de documentación de componentes, esqueletos de tipos y pruebas.
+</Aside>
+
+### `GeneratedFile`
+
+```ts
+interface GeneratedFile {
+  relativePath: string  // la ruta de salida relativa a dist/<outDir>/
+  content: string
+}
+```
+
+### `TokenSet`
+
+```ts
+interface TokenSet {
+  tokens: ResolvedToken[]              // tokens claros (path en orden lexicográfico)
+  byPath: Map<string, ResolvedToken>   // búsqueda rápida por ruta
+  dark: DarkOverrides                  // path -> valor de sobrescritura del modo oscuro
+}
+```
+
+## Número total de artefactos
+
+| target | Número de archivos |
+| --- | --- |
+| android | 2 (`LhTokens.kt` + `LhDarkTokens.kt`) |
+| ios | 2~3 (+ `LhShadow.swift`, cuando existen tokens de sombra) |
+| harmony | 2~3 (+ `LhShadow.ets`) |
+| c | 2 |
+| docs | 3 |
+
+Los archivos de sombra de `ios` / `harmony` solo se generan cuando existen tokens de tipo `shadow`, de modo que el número total de archivos varía con el contenido de los tokens; el resultado real de `dist/` es el que cuenta.
+
+## Módulos relacionados
+
+| Módulo | Responsabilidad |
+| --- | --- |
+| [load.ts](./load) | Carga y validación estructural |
+| [resolve.ts](./resolve) | Resolución de referencias y fusión del modo oscuro |
+| [format.ts](./format) | Análisis de valores neutrales y formateo por plataforma |
+| [tree.ts](./tree) | De plano a anidado |
+| [render.ts](./render) | Renderizado de plantillas |
+| [types.ts](./types) | Todas las definiciones de tipos |
+| [targets/](./targets) | Los cinco targets de plataforma |
+| [templates/](./templates) | Las 7 plantillas handlebars |

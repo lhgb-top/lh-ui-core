@@ -1,0 +1,75 @@
+---
+title: lh-ui-core
+template: splash
+description: Centre de construction de la lignée native de lh-ui — source de vérité des jetons de conception + contrats de composants + cas dorés + codegen multiplateforme
+hero:
+  title: lh-ui-core
+  tagline: Le centre de construction de la lignée native — source de vérité des jetons de conception, contrats de composants, cas dorés et codegen multiplateforme. Il fonctionne uniquement à la compilation ; les artéfacts ne contiennent pas une seule ligne de JavaScript.
+  actions:
+    - text: Démarrage
+      link: /lhui/core/fr/guide/quickstart
+      variant: primary
+    - text: Référence des jetons
+      link: /lhui/core/fr/tokens/reference
+      variant: secondary
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+## Que fait ce dépôt
+
+<CardGrid>
+  <Card title="🎨 Source unique de vérité des jetons de conception">
+    9 sources JSON neutres (couleurs / typographie / espacement / rayons / ombres / animation / élévation / niveau composant), contraintes strictes par schéma, aucune syntaxe propre à une plateforme.
+    [Format des jetons](/fr/tokens/token-format)
+  </Card>
+  <Card title="📐 Contrats de composants">
+    Un contrat JSON par composant : props / énumérations / valeurs par défaut / événements / slots / comportements, avec des expressions régulières de nommage garantissant l'uniformité des cinq cibles.
+    [Format des contrats](/fr/specs/spec-format)
+  </Card>
+  <Card title="🧪 Cas dorés">
+    Des assertions comportementales given/when/then traduisibles d'une plateforme à l'autre — la logique n'est pas partagée, le comportement si.
+    [Format des cas](/fr/cases/case-format)
+  </Card>
+  <Card title="⚙️ Codegen multiplateforme">
+    Un seul ensemble de jetons neutres génère les squelettes de langage des quatre cibles native : Android (Kotlin) / iOS (Swift) / HarmonyOS (ArkTS) / Windows (C#) — squelettes uniquement, jamais d'implémentations.
+    [Aperçu du pipeline](/fr/codegen/pipeline)
+  </Card>
+  <Card title="🌙 Précalcul du mode sombre">
+    Les `color-mix()` de la lignée web sont précalculés à la compilation en valeurs de couleurs aplaties, à coût d'exécution nul pour les cibles natives.
+    [Fusion du mode sombre](/fr/tokens/dark-mode)
+  </Card>
+  <Card title="🔗 Liaison locale">
+    Avec la disposition familiale, modifier un jeton et relancer le codegen prend effet immédiatement — avec des gardes d'existence, aucune publication nécessaire.
+    [Liaison locale](/fr/guide/local-linking)
+  </Card>
+</CardGrid>
+
+## Sites de la famille
+
+<CardGrid>
+  <Card title="lh-ui (vue d'ensemble)">
+    Le portail de la famille : l'architecture à deux lignées et la ligne de base du langage de conception.
+    [Ouvrir →](https://www.lhgb.top)
+  </Card>
+  <Card title="lh-ui-plus (Vue3)">
+    La bibliothèque de composants Vue3 de la lignée web.
+    [Ouvrir →](https://www.lhgb.top/lhui/vue3/)
+  </Card>
+  <Card title="lh-ui-android">
+    Lignée native : paquet de jetons Compose + implémentations des composants.
+    [Ouvrir →](https://www.lhgb.top/lhui/android/)
+  </Card>
+  <Card title="lh-ui-ios">
+    Lignée native : paquet de jetons SwiftUI + implémentations des composants.
+    [Ouvrir →](https://www.lhgb.top/lhui/ios/)
+  </Card>
+  <Card title="lh-ui-harmony">
+    Lignée native : paquet de jetons ArkUI + implémentations des composants.
+    [Ouvrir →](https://www.lhgb.top/lhui/harmony/)
+  </Card>
+  <Card title="lh-ui-windows">
+    Lignée native : paquet de jetons WinUI 3 (C#) + implémentations des composants.
+    [Ouvrir →](https://www.lhgb.top/lhui/windows/)
+  </Card>
+</CardGrid>
