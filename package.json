@@ -38,9 +38,9 @@
     "docs:build": "astro build --root docs",
     "docs:preview": "astro preview --root docs --port 5185"
   },
-  "dependencies": {},
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "@astrojs/markdown-satteri": "^0.4.3",
     "@astrojs/starlight": "^0.42.6",
     "@changesets/cli": "^2.27.12",
     "@eslint/js": "^9.17.0",

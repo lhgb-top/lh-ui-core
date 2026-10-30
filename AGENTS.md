@@ -121,3 +121,12 @@ C 走 CMake `add_subdirectory` 或头文件路径），本仓不强制。
 add / reset / revert / restore / checkout -- / stash / merge / rebase / tag / rm --cached）。
 只读指令（status / diff / log / show / branch 查看）不受限。当前默认分支为 `main`，
 提交前先开分支；`dist/` 已被 `.gitignore` 忽略，不要提交产物。
+
+## 备案/版权（docs 站）
+
+文档站页脚的备案（ICP / 公安）与版权行走「同步产物 + 适配器」：
+`docs/.beian/beian.json` 由工作区根 `scripts/sync-beian.mjs` 从
+`lh-feng-mo-workspace` 真源生成（**同步产物，禁止手改**；真源只读，改真源后重跑同步）；
+站点差异化（独立备案号、隐藏公安备案、许可证链接等）写 `docs/.beian/beian.local.json`，
+同步时与真源深合并。适配器在 docs/src/components/BeianFooter.astro（astro.config.mjs 的 components.Footer 覆写）。
+完整机制、渲染格式与变更流程见家族 [docs/备案资源同步方案.md](../docs/备案资源同步方案.md)。

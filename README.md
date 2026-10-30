@@ -2,6 +2,8 @@
 
 > lh-ui 原生血脉的构建期中心。设计令牌（JSON 真源）+ 组件契约 + 黄金用例 + 跨端 codegen。
 
+📖 **文档站**：<https://www.lhgb.top/lhui/core/>
+
 本仓 **不是** 运行时依赖。它只在构建期工作：把平台无关的令牌与组件契约，生成到
 Android（Kotlin）/ iOS（Swift）/ 鸿蒙（ArkTS）/ Windows（C# + WinUI 3）四个原生端的语言骨架，
 再由各端 UI 库手写实现。原生端运行时零 JavaScript。
