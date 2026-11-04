@@ -108,8 +108,10 @@ export default defineConfig({
       // label 保留中文作兜底——官方推荐做法，不复制整份 sidebar（术语沿用
       // lh-ui-android/docs/.vitepress/config.ts 与 docs/i18n/glossary.md）。
       locales: buildStarlightLocales(),
-      logo: { src: './src/assets/logo.svg', alt: 'lh-ui-core' },
-      favicon: '/favicon.svg',
+      // navbar logo 与图标：家族统一品牌 logo（scripts/sync-favicons.mjs 从
+      // docs/部署/favicon-src/ 同步 logo.png 到 public/ 与 src/assets/）
+      logo: { light: './src/assets/logo.png', dark: './src/assets/logo-dark.png', alt: 'lh-ui-core' },
+      favicon: '/logo.png',
       lastUpdated: true,
       // 站内搜索由 Pagefind 提供，默认开启；这里显式声明便于日后关闭或调参
       pagefind: true,
