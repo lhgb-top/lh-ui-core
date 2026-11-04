@@ -14,6 +14,7 @@ object LhDarkTokens {
     val focus = ComposeColor(0xFF7FA6D9)  // 键盘焦点环色，默认跟随主色
     val hoverBg = ComposeColor(0x14FFFFFF)  // 列表/面板项的中性悬停底色
     val ink = ComposeColor(0xFF4A4540)  // 中性黑（墨）
+    val onPrimary = ComposeColor(0xFFFFFFFF)  // 主色底上的文字色（浅主色预设不应写死白字）
     val selected = ComposeColor(0xFFB1C1D8)  // 选中态文字色，跟随主色按压变体
     val surface = ComposeColor(0xFF242018)  // 中性白（宣纸白）
     object Background {

@@ -4,109 +4,274 @@
 // 修改请编辑 lh-ui-core 仓的 tokens/*.json 后重新执行 pnpm codegen。
 // =====================================================================================
 
-export class LhDarkTokens {
-  class Color {
-    static readonly decoration: ResourceColor = '#14D4A843'  // 花纹装饰色
-    static readonly focus: ResourceColor = '#FF7FA6D9'  // 键盘焦点环色，默认跟随主色
-    static readonly hoverBg: ResourceColor = '#14FFFFFF'  // 列表/面板项的中性悬停底色
-    static readonly ink: ResourceColor = '#FF4A4540'  // 中性黑（墨）
-    static readonly selected: ResourceColor = '#FFB1C1D8'  // 选中态文字色，跟随主色按压变体
-    static readonly surface: ResourceColor = '#FF242018'  // 中性白（宣纸白）
-    class Background {
-      static readonly default: ResourceColor = '#FF2A2520'  // 组件底色（宣纸色）
-      static readonly disabled: ResourceColor = '#FF242018'
-      static readonly overlay: ResourceColor = '#B30A0806'  // 遮罩层底色
-      static readonly page: ResourceColor = '#FF1E1A16'  // 页面底色
-    }
-    class Border {
-      static readonly base: ResourceColor = '#FF3A3530'  // 基础描边
-      static readonly extraLight: ResourceColor = '#FF242018'
-      static readonly light: ResourceColor = '#FF302B28'
-      static readonly lighter: ResourceColor = '#FF2A2520'
-    }
-    class Danger {
-      static readonly active: ResourceColor = '#FFB23A3A'
-      static readonly bg: ResourceColor = '#FF2A1A1A'
-      static readonly default: ResourceColor = '#FFC45050'  // 危险色（朱砂 — 印泥朱红）
-      static readonly hover: ResourceColor = '#FFD46060'
-    }
-    class Disabled {
-      static readonly bg: ResourceColor = '#FF332D27'  // 禁用底色
-      static readonly border: ResourceColor = '#FF3A3530'  // 禁用描边色
-      static readonly text: ResourceColor = '#FF5A5250'  // 禁用文字色
-    }
-    class Gold {
-      static readonly active: ResourceColor = '#FFB8860B'
-      static readonly bg: ResourceColor = '#FF2A241A'
-      static readonly border: ResourceColor = '#FF3A2E1A'
-      static readonly default: ResourceColor = '#FFD4A843'  // 金色点缀（华贵古韵）
-      static readonly hover: ResourceColor = '#FFE8C35C'
-    }
-    class Info {
-      static readonly active: ResourceColor = '#FF7A7A7A'
-      static readonly bg: ResourceColor = '#FF1A1A1A'
-      static readonly default: ResourceColor = '#FF8F8F8F'  // 信息色（黛色 — 水墨淡彩）
-      static readonly hover: ResourceColor = '#FFA0A0A0'
-    }
-    class Jade {
-      static readonly active: ResourceColor = '#FF5B8C5A'
-      static readonly bg: ResourceColor = '#FF1A2A1A'
-      static readonly default: ResourceColor = '#FF7AAE7A'  // 玉色（翠竹清雅）
-      static readonly hover: ResourceColor = '#FF9CC89C'
-    }
-    class Primary {
-      static readonly active: ResourceColor = '#FF2B4C7C'  // 主色按压/选中文字
-      static readonly bg: ResourceColor = '#403D649E'  // 主色浅底（选中态底色）
-      static readonly border: ResourceColor = '#FF2A3A4A'  // 主色描边
-      static readonly default: ResourceColor = '#FF3D649E'  // 主色（靛蓝 — 青花瓷之蓝）
-      static readonly hover: ResourceColor = '#FF5078AB'  // 主色悬停
-    }
-    class Success {
-      static readonly active: ResourceColor = '#FF5B8C5A'
-      static readonly bg: ResourceColor = '#FF1A2A1A'
-      static readonly default: ResourceColor = '#FF6FA36E'  // 成功色（松花绿 — 竹影青翠）
-      static readonly hover: ResourceColor = '#FF82B581'
-    }
-    class Text {
-      static readonly disabled: ResourceColor = '#FF5A5250'  // 禁用文字
-      static readonly placeholder: ResourceColor = '#FF7A7270'  // 占位文字
-      static readonly primary: ResourceColor = '#FFE8E0D8'  // 主要文字
-      static readonly regular: ResourceColor = '#FFC8C0B8'  // 常规文字
-      static readonly secondary: ResourceColor = '#FFA09890'  // 次要文字
-    }
-    class Vermilion {
-      static readonly active: ResourceColor = '#FFC43A31'
-      static readonly bg: ResourceColor = '#FF2A1A18'
-      static readonly default: ResourceColor = '#FFE85D4A'  // 朱砂点缀（印泥朱红）
-      static readonly hover: ResourceColor = '#FFFF7B6B'
-    }
-    class Warning {
-      static readonly active: ResourceColor = '#FFC4A35A'
-      static readonly bg: ResourceColor = '#FF2A251A'
-      static readonly default: ResourceColor = '#FFD4B76F'  // 警告色（藤黄 — 秋叶金黄）
-      static readonly hover: ResourceColor = '#FFE0C680'
-    }
-  }
-  class Docs {
-    class Card {
-      static readonly background: ResourceColor = '#FF242018'  // 卡片底色
-      static readonly borderColor: ResourceColor = '#FF2A2520'  // 卡片描边色
-    }
-    class Code {
-      static readonly background: ResourceColor = '#FF2A2520'  // 代码块底色
-      static readonly textColor: ResourceColor = '#FFC8C0B8'  // 代码块文字色
-    }
-    class Heading {
-      static readonly color: ResourceColor = '#FFE8E0D8'  // 标题文字色
-    }
-    class Prose {
-      static readonly secondaryColor: ResourceColor = '#FFA09890'  // 次要说明文字色
-      static readonly textColor: ResourceColor = '#FFC8C0B8'  // 正文文字色
-    }
-    class Table {
-      static readonly borderColor: ResourceColor = '#FF2A2520'  // 表格分割线色
-      static readonly headerBg: ResourceColor = '#FF1E1A16'  // 表头行底色
-      static readonly headerTextColor: ResourceColor = '#FFE8E0D8'  // 表头行文字色
-    }
-  }
+export interface LhDarkTokensColorBackgroundT {
+  readonly default: ResourceColor
+  readonly disabled: ResourceColor
+  readonly overlay: ResourceColor
+  readonly page: ResourceColor
+}
+export const LhDarkTokensColorBackground: LhDarkTokensColorBackgroundT = {
+  default: '#FF2A2520',  // 组件底色（宣纸色）
+  disabled: '#FF242018',
+  overlay: '#B30A0806',  // 遮罩层底色
+  page: '#FF1E1A16',  // 页面底色
+}
+
+export interface LhDarkTokensColorBorderT {
+  readonly base: ResourceColor
+  readonly extraLight: ResourceColor
+  readonly light: ResourceColor
+  readonly lighter: ResourceColor
+}
+export const LhDarkTokensColorBorder: LhDarkTokensColorBorderT = {
+  base: '#FF3A3530',  // 基础描边
+  extraLight: '#FF242018',
+  light: '#FF302B28',
+  lighter: '#FF2A2520',
+}
+
+export interface LhDarkTokensColorDangerT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhDarkTokensColorDanger: LhDarkTokensColorDangerT = {
+  active: '#FFB23A3A',
+  bg: '#FF2A1A1A',
+  default: '#FFC45050',  // 危险色（朱砂 — 印泥朱红）
+  hover: '#FFD46060',
+}
+
+export interface LhDarkTokensColorDisabledT {
+  readonly bg: ResourceColor
+  readonly border: ResourceColor
+  readonly text: ResourceColor
+}
+export const LhDarkTokensColorDisabled: LhDarkTokensColorDisabledT = {
+  bg: '#FF332D27',  // 禁用底色
+  border: '#FF3A3530',  // 禁用描边色
+  text: '#FF5A5250',  // 禁用文字色
+}
+
+export interface LhDarkTokensColorGoldT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly border: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhDarkTokensColorGold: LhDarkTokensColorGoldT = {
+  active: '#FFB8860B',
+  bg: '#FF2A241A',
+  border: '#FF3A2E1A',
+  default: '#FFD4A843',  // 金色点缀（华贵古韵）
+  hover: '#FFE8C35C',
+}
+
+export interface LhDarkTokensColorInfoT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhDarkTokensColorInfo: LhDarkTokensColorInfoT = {
+  active: '#FF7A7A7A',
+  bg: '#FF1A1A1A',
+  default: '#FF8F8F8F',  // 信息色（黛色 — 水墨淡彩）
+  hover: '#FFA0A0A0',
+}
+
+export interface LhDarkTokensColorJadeT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhDarkTokensColorJade: LhDarkTokensColorJadeT = {
+  active: '#FF5B8C5A',
+  bg: '#FF1A2A1A',
+  default: '#FF7AAE7A',  // 玉色（翠竹清雅）
+  hover: '#FF9CC89C',
+}
+
+export interface LhDarkTokensColorPrimaryT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly border: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhDarkTokensColorPrimary: LhDarkTokensColorPrimaryT = {
+  active: '#FF2B4C7C',  // 主色按压/选中文字
+  bg: '#403D649E',  // 主色浅底（选中态底色）
+  border: '#FF2A3A4A',  // 主色描边
+  default: '#FF3D649E',  // 主色（靛蓝 — 青花瓷之蓝）
+  hover: '#FF5078AB',  // 主色悬停
+}
+
+export interface LhDarkTokensColorSuccessT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhDarkTokensColorSuccess: LhDarkTokensColorSuccessT = {
+  active: '#FF5B8C5A',
+  bg: '#FF1A2A1A',
+  default: '#FF6FA36E',  // 成功色（松花绿 — 竹影青翠）
+  hover: '#FF82B581',
+}
+
+export interface LhDarkTokensColorTextT {
+  readonly disabled: ResourceColor
+  readonly placeholder: ResourceColor
+  readonly primary: ResourceColor
+  readonly regular: ResourceColor
+  readonly secondary: ResourceColor
+}
+export const LhDarkTokensColorText: LhDarkTokensColorTextT = {
+  disabled: '#FF5A5250',  // 禁用文字
+  placeholder: '#FF7A7270',  // 占位文字
+  primary: '#FFE8E0D8',  // 主要文字
+  regular: '#FFC8C0B8',  // 常规文字
+  secondary: '#FFA09890',  // 次要文字
+}
+
+export interface LhDarkTokensColorVermilionT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhDarkTokensColorVermilion: LhDarkTokensColorVermilionT = {
+  active: '#FFC43A31',
+  bg: '#FF2A1A18',
+  default: '#FFE85D4A',  // 朱砂点缀（印泥朱红）
+  hover: '#FFFF7B6B',
+}
+
+export interface LhDarkTokensColorWarningT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhDarkTokensColorWarning: LhDarkTokensColorWarningT = {
+  active: '#FFC4A35A',
+  bg: '#FF2A251A',
+  default: '#FFD4B76F',  // 警告色（藤黄 — 秋叶金黄）
+  hover: '#FFE0C680',
+}
+
+export interface LhDarkTokensDocsCardT {
+  readonly background: ResourceColor
+  readonly borderColor: ResourceColor
+}
+export const LhDarkTokensDocsCard: LhDarkTokensDocsCardT = {
+  background: '#FF242018',  // 卡片底色
+  borderColor: '#FF2A2520',  // 卡片描边色
+}
+
+export interface LhDarkTokensDocsCodeT {
+  readonly background: ResourceColor
+  readonly textColor: ResourceColor
+}
+export const LhDarkTokensDocsCode: LhDarkTokensDocsCodeT = {
+  background: '#FF2A2520',  // 代码块底色
+  textColor: '#FFC8C0B8',  // 代码块文字色
+}
+
+export interface LhDarkTokensDocsHeadingT {
+  readonly color: ResourceColor
+}
+export const LhDarkTokensDocsHeading: LhDarkTokensDocsHeadingT = {
+  color: '#FFE8E0D8',  // 标题文字色
+}
+
+export interface LhDarkTokensDocsProseT {
+  readonly secondaryColor: ResourceColor
+  readonly textColor: ResourceColor
+}
+export const LhDarkTokensDocsProse: LhDarkTokensDocsProseT = {
+  secondaryColor: '#FFA09890',  // 次要说明文字色
+  textColor: '#FFC8C0B8',  // 正文文字色
+}
+
+export interface LhDarkTokensDocsTableT {
+  readonly borderColor: ResourceColor
+  readonly headerBg: ResourceColor
+  readonly headerTextColor: ResourceColor
+}
+export const LhDarkTokensDocsTable: LhDarkTokensDocsTableT = {
+  borderColor: '#FF2A2520',  // 表格分割线色
+  headerBg: '#FF1E1A16',  // 表头行底色
+  headerTextColor: '#FFE8E0D8',  // 表头行文字色
+}
+
+export interface LhDarkTokensColorT {
+  readonly decoration: ResourceColor
+  readonly focus: ResourceColor
+  readonly hoverBg: ResourceColor
+  readonly ink: ResourceColor
+  readonly onPrimary: ResourceColor
+  readonly selected: ResourceColor
+  readonly surface: ResourceColor
+  readonly Background: LhDarkTokensColorBackgroundT
+  readonly Border: LhDarkTokensColorBorderT
+  readonly Danger: LhDarkTokensColorDangerT
+  readonly Disabled: LhDarkTokensColorDisabledT
+  readonly Gold: LhDarkTokensColorGoldT
+  readonly Info: LhDarkTokensColorInfoT
+  readonly Jade: LhDarkTokensColorJadeT
+  readonly Primary: LhDarkTokensColorPrimaryT
+  readonly Success: LhDarkTokensColorSuccessT
+  readonly Text: LhDarkTokensColorTextT
+  readonly Vermilion: LhDarkTokensColorVermilionT
+  readonly Warning: LhDarkTokensColorWarningT
+}
+export const LhDarkTokensColor: LhDarkTokensColorT = {
+  decoration: '#14D4A843',  // 花纹装饰色
+  focus: '#FF7FA6D9',  // 键盘焦点环色，默认跟随主色
+  hoverBg: '#14FFFFFF',  // 列表/面板项的中性悬停底色
+  ink: '#FF4A4540',  // 中性黑（墨）
+  onPrimary: '#FFFFFFFF',  // 主色底上的文字色（浅主色预设不应写死白字）
+  selected: '#FFB1C1D8',  // 选中态文字色，跟随主色按压变体
+  surface: '#FF242018',  // 中性白（宣纸白）
+  Background: LhDarkTokensColorBackground,
+  Border: LhDarkTokensColorBorder,
+  Danger: LhDarkTokensColorDanger,
+  Disabled: LhDarkTokensColorDisabled,
+  Gold: LhDarkTokensColorGold,
+  Info: LhDarkTokensColorInfo,
+  Jade: LhDarkTokensColorJade,
+  Primary: LhDarkTokensColorPrimary,
+  Success: LhDarkTokensColorSuccess,
+  Text: LhDarkTokensColorText,
+  Vermilion: LhDarkTokensColorVermilion,
+  Warning: LhDarkTokensColorWarning,
+}
+
+export interface LhDarkTokensDocsT {
+  readonly Card: LhDarkTokensDocsCardT
+  readonly Code: LhDarkTokensDocsCodeT
+  readonly Heading: LhDarkTokensDocsHeadingT
+  readonly Prose: LhDarkTokensDocsProseT
+  readonly Table: LhDarkTokensDocsTableT
+}
+export const LhDarkTokensDocs: LhDarkTokensDocsT = {
+  Card: LhDarkTokensDocsCard,
+  Code: LhDarkTokensDocsCode,
+  Heading: LhDarkTokensDocsHeading,
+  Prose: LhDarkTokensDocsProse,
+  Table: LhDarkTokensDocsTable,
+}
+
+export interface LhDarkTokensT {
+  readonly Color: LhDarkTokensColorT
+  readonly Docs: LhDarkTokensDocsT
+}
+export const LhDarkTokens: LhDarkTokensT = {
+  Color: LhDarkTokensColor,
+  Docs: LhDarkTokensDocs,
 }

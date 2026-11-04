@@ -12,6 +12,7 @@ public static class LhDarkTokens {
     public static readonly Windows.UI.Color Focus = Windows.UI.Color.FromArgb(0xFF, 0x7F, 0xA6, 0xD9);  // 键盘焦点环色，默认跟随主色
     public static readonly Windows.UI.Color HoverBg = Windows.UI.Color.FromArgb(0x14, 0xFF, 0xFF, 0xFF);  // 列表/面板项的中性悬停底色
     public static readonly Windows.UI.Color Ink = Windows.UI.Color.FromArgb(0xFF, 0x4A, 0x45, 0x40);  // 中性黑（墨）
+    public static readonly Windows.UI.Color OnPrimary = Windows.UI.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);  // 主色底上的文字色（浅主色预设不应写死白字）
     public static readonly Windows.UI.Color Selected = Windows.UI.Color.FromArgb(0xFF, 0xB1, 0xC1, 0xD8);  // 选中态文字色，跟随主色按压变体
     public static readonly Windows.UI.Color Surface = Windows.UI.Color.FromArgb(0xFF, 0x24, 0x20, 0x18);  // 中性白（宣纸白）
     public static class Background {

@@ -4,351 +4,881 @@
 // 修改请编辑 lh-ui-core 仓的 tokens/*.json 后重新执行 pnpm codegen。
 // =====================================================================================
 
-export class LhTokens {
-  class Button {
-    static readonly borderRadius: Dimension | number = 2  // 按钮圆角跟随全局圆角
-    static readonly borderWidth: Dimension | number = 1
-    static readonly focusRingOffset: Dimension | number = 2
-    static readonly focusRingWidth: Dimension | number = 2
-    static readonly fontWeight: number = 400
-    class FontSize {
-      static readonly large: Dimension | number = 16
-      static readonly medium: Dimension | number = 14
-      static readonly small: Dimension | number = 13
-    }
-    class Height {
-      static readonly large: Dimension | number = 48  // 大号按钮高度
-      static readonly medium: Dimension | number = 40  // 中号按钮高度（默认）
-      static readonly small: Dimension | number = 32  // 小号按钮高度
-    }
-    class IconSize {
-      static readonly large: Dimension | number = 20
-      static readonly medium: Dimension | number = 18
-      static readonly small: Dimension | number = 16
-    }
-    class PaddingHorizontal {
-      static readonly large: Dimension | number = 24
-      static readonly medium: Dimension | number = 20
-      static readonly small: Dimension | number = 16
-    }
-  }
-  class Cell {
-    static readonly borderWidth: Dimension | number = 1  // 底部分隔线宽度
-    static readonly fontSizeLabel: Dimension | number = 13  // 说明文字字号
-    static readonly fontSizeTitle: Dimension | number = 14  // 标题字号
-    static readonly fontSizeValue: Dimension | number = 14  // 右侧值字号
-    static readonly gap: Dimension | number = 8  // 标题与说明文字之间的垂直间距
-    static readonly paddingHorizontal: Dimension | number = 16  // 单元格左右内边距
-    static readonly paddingVertical: Dimension | number = 8  // 单元格上下内边距
-  }
-  class Checkbox {
-    static readonly borderRadius: Dimension | number = 2  // 复选框圆角
-    static readonly borderWidth: Dimension | number = 2
-    static readonly checkWidth: Dimension | number = 2  // 勾形描边宽度
-    static readonly dashScale: Dimension | number = 0.500  // 50%（分数，由容器尺寸换算）  // 不确定态横杠相对方框的宽度比例
-    static readonly gap: Dimension | number = 8  // 复选框与文字之间的间距
-    class Size {
-      static readonly large: Dimension | number = 24  // 大号复选框尺寸
-      static readonly medium: Dimension | number = 20  // 中号复选框尺寸（默认）
-      static readonly small: Dimension | number = 16  // 小号复选框尺寸
-    }
-  }
-  class Color {
-    static readonly decoration: ResourceColor = '#1FB8860B'  // 花纹装饰色
-    static readonly focus: ResourceColor = '#FF2B4C7C'  // 键盘焦点环色，默认跟随主色
-    static readonly hoverBg: ResourceColor = '#0D000000'  // 列表/面板项的中性悬停底色
-    static readonly ink: ResourceColor = '#FF1A1A1A'  // 中性黑（墨）
-    static readonly onPrimary: ResourceColor = '#FFFFFFFF'  // 主色底上的文字色（浅主色预设不应写死白字）
-    static readonly selected: ResourceColor = '#FF1F3A5F'  // 选中态文字色，跟随主色按压变体
-    static readonly surface: ResourceColor = '#FFFAF6F0'  // 中性白（宣纸白）
-    class Background {
-      static readonly default: ResourceColor = '#FFFAF6F0'  // 组件底色（宣纸色）
-      static readonly disabled: ResourceColor = '#FFEDE8E0'
-      static readonly overlay: ResourceColor = '#661A1A1A'  // 遮罩层底色
-      static readonly page: ResourceColor = '#FFF5F0EB'  // 页面底色
-    }
-    class Border {
-      static readonly base: ResourceColor = '#FFD8D3CC'  // 基础描边
-      static readonly extraLight: ResourceColor = '#FFF5F0EB'
-      static readonly light: ResourceColor = '#FFE5E0D8'
-      static readonly lighter: ResourceColor = '#FFEEE9E2'
-    }
-    class Danger {
-      static readonly active: ResourceColor = '#FF9A3030'
-      static readonly bg: ResourceColor = '#FFFDF0F0'
-      static readonly default: ResourceColor = '#FFB23A3A'  // 危险色（朱砂 — 印泥朱红）
-      static readonly hover: ResourceColor = '#FFC45050'
-    }
-    class Disabled {
-      static readonly bg: ResourceColor = '#FFEDE8E0'  // 禁用底色
-      static readonly border: ResourceColor = '#FFE5E0D8'  // 禁用描边色
-      static readonly text: ResourceColor = '#FFC8C8C8'  // 禁用文字色
-    }
-    class Gold {
-      static readonly active: ResourceColor = '#FF9A7208'
-      static readonly bg: ResourceColor = '#FFFBF6EA'
-      static readonly border: ResourceColor = '#FFFDFAF3'
-      static readonly default: ResourceColor = '#FFB8860B'  // 金色点缀（华贵古韵）
-      static readonly hover: ResourceColor = '#FFD4A843'
-    }
-    class Info {
-      static readonly active: ResourceColor = '#FF6A6A6A'
-      static readonly bg: ResourceColor = '#FFF2F2F2'
-      static readonly default: ResourceColor = '#FF7A7A7A'  // 信息色（黛色 — 水墨淡彩）
-      static readonly hover: ResourceColor = '#FF8F8F8F'
-    }
-    class Jade {
-      static readonly active: ResourceColor = '#FF4B7A4A'
-      static readonly bg: ResourceColor = '#FFEDF5EC'
-      static readonly default: ResourceColor = '#FF5B8C5A'  // 玉色（翠竹清雅）
-      static readonly hover: ResourceColor = '#FF7AAE7A'
-    }
-    class Primary {
-      static readonly active: ResourceColor = '#FF1F3A5F'  // 主色按压/选中文字
-      static readonly bg: ResourceColor = '#FFE8EDF3'  // 主色浅底（选中态底色）
-      static readonly border: ResourceColor = '#FFD4DCE8'  // 主色描边
-      static readonly default: ResourceColor = '#FF2B4C7C'  // 主色（靛蓝 — 青花瓷之蓝）
-      static readonly hover: ResourceColor = '#FF3D649E'  // 主色悬停
-    }
-    class Success {
-      static readonly active: ResourceColor = '#FF4B7A4A'
-      static readonly bg: ResourceColor = '#FFEDF5EC'
-      static readonly default: ResourceColor = '#FF5B8C5A'  // 成功色（松花绿 — 竹影青翠）
-      static readonly hover: ResourceColor = '#FF6FA36E'
-    }
-    class Text {
-      static readonly disabled: ResourceColor = '#FFC8C8C8'  // 禁用文字
-      static readonly placeholder: ResourceColor = '#FFB0B0B0'  // 占位文字
-      static readonly primary: ResourceColor = '#FF2C2C2C'  // 主要文字
-      static readonly regular: ResourceColor = '#FF5A5A5A'  // 常规文字
-      static readonly secondary: ResourceColor = '#FF8A8A8A'  // 次要文字
-    }
-    class Vermilion {
-      static readonly active: ResourceColor = '#FFA92E26'
-      static readonly bg: ResourceColor = '#FFFDF0EE'
-      static readonly default: ResourceColor = '#FFC43A31'  // 朱砂点缀（印泥朱红）
-      static readonly hover: ResourceColor = '#FFE85D4A'
-    }
-    class Warning {
-      static readonly active: ResourceColor = '#FFB3924A'
-      static readonly bg: ResourceColor = '#FFFBF6EA'
-      static readonly default: ResourceColor = '#FFC4A35A'  // 警告色（藤黄 — 秋叶金黄）
-      static readonly hover: ResourceColor = '#FFD4B76F'
-    }
-  }
-  class Dialog {
-    static readonly borderRadius: Dimension | number = 2  // 对话框圆角
-    static readonly contentFontSize: Dimension | number = 14  // 内容字号
-    static readonly gap: Dimension | number = 12  // 标题与内容的间距
-    static readonly paddingHorizontal: Dimension | number = 20  // 对话框左右内边距
-    static readonly paddingVertical: Dimension | number = 20  // 对话框上下内边距
-    static readonly titleFontSize: Dimension | number = 16  // 标题字号
-    static readonly width: Dimension | number = 320  // 对话框内容卡宽度
-  }
-  class Docs {
-    class Card {
-      static readonly background: ResourceColor = '#FFFAF6F0'  // 卡片底色
-      static readonly borderColor: ResourceColor = '#FFEEE9E2'  // 卡片描边色
-      static readonly borderRadius: Dimension | number = 8
-      static readonly borderWidth: Dimension | number = 1
-      static readonly padding: Dimension | number = 16
-    }
-    class Code {
-      static readonly background: ResourceColor = '#FFFAF6F0'  // 代码块底色
-      static readonly borderRadius: Dimension | number = 4  // 代码块圆角
-      static readonly fontFamily: string = "'Source Code Pro', 'JetBrains Mono', 'Consolas', 'Courier New', monospace"  // 代码块等宽字体栈，各端取首个可用族
-      static readonly fontSize: Dimension | number = 13  // 代码块字号
-      static readonly paddingX: Dimension | number = 12
-      static readonly paddingY: Dimension | number = 12
-      static readonly textColor: ResourceColor = '#FF5A5A5A'  // 代码块文字色
-    }
-    class Heading {
-      static readonly color: ResourceColor = '#FF2C2C2C'  // 标题文字色
-      static readonly fontSizeH1: Dimension | number = 20  // 一级标题（页面标题）
-      static readonly fontSizeH2: Dimension | number = 18  // 二级标题（章节）
-      static readonly fontSizeH3: Dimension | number = 16  // 三级标题（小节）
-    }
-    class Prose {
-      static readonly fontSize: Dimension | number = 14  // 正文字号
-      static readonly secondaryColor: ResourceColor = '#FF8A8A8A'  // 次要说明文字色
-      static readonly textColor: ResourceColor = '#FF5A5A5A'  // 正文文字色
-    }
-    class Table {
-      static readonly borderColor: ResourceColor = '#FFEEE9E2'  // 表格分割线色
-      static readonly borderWidth: Dimension | number = 1  // 表格分割线宽
-      static readonly cellPaddingX: Dimension | number = 12
-      static readonly cellPaddingY: Dimension | number = 8
-      static readonly fontSize: Dimension | number = 13  // 表格文字字号
-      static readonly headerBg: ResourceColor = '#FFF5F0EB'  // 表头行底色
-      static readonly headerTextColor: ResourceColor = '#FF2C2C2C'  // 表头行文字色
-    }
-  }
-  class Icon {
-    class Size {
-      static readonly large: Dimension | number = 24  // 大号图标尺寸
-      static readonly medium: Dimension | number = 20  // 中号图标尺寸（默认）
-      static readonly small: Dimension | number = 16  // 小号图标尺寸
-    }
-  }
-  class Input {
-    static readonly borderRadius: Dimension | number = 2  // 输入框圆角
-    static readonly borderWidth: Dimension | number = 1
-    static readonly clearIconSize: Dimension | number = 16  // 清除按钮图标尺寸
-    static readonly focusRingWidth: Dimension | number = 2  // 聚焦时的描边宽度
-    class FontSize {
-      static readonly large: Dimension | number = 16
-      static readonly medium: Dimension | number = 14
-      static readonly small: Dimension | number = 13
-    }
-    class Height {
-      static readonly large: Dimension | number = 48  // 大号输入框高度
-      static readonly medium: Dimension | number = 40  // 中号输入框高度（默认）
-      static readonly small: Dimension | number = 32  // 小号输入框高度
-    }
-    class PaddingHorizontal {
-      static readonly large: Dimension | number = 20
-      static readonly medium: Dimension | number = 16
-      static readonly small: Dimension | number = 12
-    }
-  }
-  class Loading {
-    static readonly strokeWidth: Dimension | number = 2  // 加载环描边宽度
-    class Size {
-      static readonly large: Dimension | number = 24  // 大号加载指示器直径
-      static readonly medium: Dimension | number = 20  // 中号加载指示器直径（默认）
-      static readonly small: Dimension | number = 16  // 小号加载指示器直径
-    }
-  }
-  class Motion {
-    class Duration {
-      static readonly base: number = 300  // 0.3s（毫秒）
-      static readonly fast: number = 250  // 0.25s（毫秒）
-      static readonly slow: number = 400  // 0.4s（毫秒）
-    }
-    class Easing {
-      static readonly easeInOut: number[] = [0.4, 0, 0.2, 1]  // 贝塞尔控制点，组件侧以 curves.cubicBezierCurve 消费  // 标准缓动 cubic-bezier(0.4, 0, 0.2, 1)
-    }
-  }
-  class Navbar {
-    static readonly borderWidth: Dimension | number = 1
-    static readonly height: Dimension | number = 44  // 导航栏高度
-    static readonly iconSize: Dimension | number = 20  // 左右图标尺寸
-    static readonly paddingHorizontal: Dimension | number = 12  // 导航栏左右内边距
-    static readonly titleFontSize: Dimension | number = 16  // 标题字号
-  }
-  class Picker {
-    static readonly borderRadius: Dimension | number = 2  // 面板顶部圆角
-    static readonly height: Dimension | number = 260  // 选择器面板高度
-    static readonly itemFontSize: Dimension | number = 14  // 候选项字号
-    static readonly itemHeight: Dimension | number = 40  // 候选项高度（滚轮单页高度）
-    static readonly toolbarHeight: Dimension | number = 44  // 顶部工具栏高度
-  }
-  class Radio {
-    static readonly dotScale: Dimension | number = 0.500  // 50%（分数，由容器尺寸换算）  // 内圆点相对外环直径的比例（分数）
-    static readonly gap: Dimension | number = 8  // 单选框与文字之间的间距
-    static readonly ringWidth: Dimension | number = 2  // 外环描边宽度
-    class Size {
-      static readonly large: Dimension | number = 24  // 大号单选框尺寸
-      static readonly medium: Dimension | number = 20  // 中号单选框尺寸（默认）
-      static readonly small: Dimension | number = 16  // 小号单选框尺寸
-    }
-  }
-  class Radius {
-    static readonly base: Dimension | number = 2
-    static readonly circle: Dimension | number = 0.500  // 50%（分数，由容器尺寸换算）  // 正圆，各端取 min(宽,高)/2
-    static readonly round: Dimension | number = 20  // 胶囊圆角
-    static readonly small: Dimension | number = 2
-  }
-  class Shadow {
-    static readonly base: LhShadow = { color: '#141A1A1A', radius: 12, offsetX: 0, offsetY: 2 }  // 扩展量 0px ArkUI 不支持，已忽略
-    static readonly light: LhShadow = { color: '#0F1A1A1A', radius: 4, offsetX: 0, offsetY: 2 }  // 扩展量 0px ArkUI 不支持，已忽略
-    static readonly lighter: LhShadow = { color: '#0A1A1A1A', radius: 4, offsetX: 0, offsetY: 0 }  // 扩展量 0px ArkUI 不支持，已忽略
-  }
-  class Spacing {
-    static readonly base: Dimension | number = 16
-    static readonly lg: Dimension | number = 20
-    static readonly md: Dimension | number = 12
-    static readonly sm: Dimension | number = 8
-    static readonly xl: Dimension | number = 24
-    static readonly xs: Dimension | number = 4
-    static readonly xxl: Dimension | number = 32
-  }
-  class Switch {
-    static readonly gap: Dimension | number = 2  // 滑块与轨道之间的留白
-    class Height {
-      static readonly large: Dimension | number = 28  // 大号开关高度
-      static readonly medium: Dimension | number = 24  // 中号开关高度（默认）
-      static readonly small: Dimension | number = 20  // 小号开关高度
-    }
-    class Width {
-      static readonly large: Dimension | number = 52  // 大号开关宽度
-      static readonly medium: Dimension | number = 44  // 中号开关宽度（默认）
-      static readonly small: Dimension | number = 36  // 小号开关宽度
-    }
-  }
-  class Tag {
-    static readonly borderRadius: Dimension | number = 2  // 标签圆角（round 态由组件按高度一半计算）
-    static readonly borderWidth: Dimension | number = 1
-    class FontSize {
-      static readonly large: Dimension | number = 14
-      static readonly medium: Dimension | number = 13
-      static readonly small: Dimension | number = 12
-    }
-    class Height {
-      static readonly large: Dimension | number = 28  // 大号标签高度
-      static readonly medium: Dimension | number = 24  // 中号标签高度（默认）
-      static readonly small: Dimension | number = 20  // 小号标签高度
-    }
-    class PaddingHorizontal {
-      static readonly large: Dimension | number = 16
-      static readonly medium: Dimension | number = 12
-      static readonly small: Dimension | number = 8
-    }
-  }
-  class Textarea {
-    static readonly borderRadius: Dimension | number = 2  // 多行输入框圆角
-    static readonly borderWidth: Dimension | number = 1
-    static readonly countFontSize: Dimension | number = 12  // 字数统计字号
-    static readonly focusRingWidth: Dimension | number = 2  // 聚焦时的描边宽度
-    static readonly fontSize: Dimension | number = 14  // 多行输入框字号
-    static readonly minHeight: Dimension | number = 72  // 无内容时的最小高度（约三行）
-    static readonly paddingHorizontal: Dimension | number = 12  // 多行输入框左右内边距
-    static readonly paddingVertical: Dimension | number = 12  // 多行输入框上下内边距
-    static readonly textInset: Dimension | number = 6  // TextEditor 文本容器内嵌补偿（SwiftUI 固定行为，叠加占位文字与字数统计定位用）
-  }
-  class Toast {
-    static readonly borderRadius: Dimension | number = 2  // 提示圆角
-    static readonly fontSize: Dimension | number = 14  // 提示文字字号
-    static readonly gap: Dimension | number = 8  // 类型色点与文字之间的间距
-    static readonly paddingHorizontal: Dimension | number = 16  // 提示左右内边距
-    static readonly paddingVertical: Dimension | number = 8  // 提示上下内边距
-  }
-  class Typography {
-    static readonly fontFamily: string = "'Noto Serif SC', 'STSong', 'SimSun', 'Source Han Serif SC', 'PingFang SC', 'Microsoft YaHei', serif"  // 国风衬线字体栈，各端取首个可用族
-    class FontSize {
-      static readonly base: Dimension | number = 14  // 正文基准字号
-      static readonly extraLarge: Dimension | number = 20  // 字号 特大
-      static readonly extraSmall: Dimension | number = 12
-      static readonly large: Dimension | number = 18
-      static readonly medium: Dimension | number = 16
-      static readonly small: Dimension | number = 13
-    }
-    class FontWeight {
-      static readonly bold: number = 600  // 加粗字重
-      static readonly primary: number = 400  // 常规字重
-    }
-    class LineHeight {
-      static readonly primary: number = 1.8  // 正文行高
-    }
-  }
-  class ZIndex {
-    static readonly dropdown: number = 1000
-    static readonly fixed: number = 1030
-    static readonly modal: number = 1050
-    static readonly modalBackdrop: number = 1040
-    static readonly normal: number = 1
-    static readonly popover: number = 1060
-    static readonly sticky: number = 1020
-    static readonly toast: number = 2000  // 原生血脉新增：轻提示层级（web 血脉对应 tooltip 位）
-  }
+import { LhShadow } from './LhShadow'
+
+export interface LhTokensButtonFontSizeT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensButtonFontSize: LhTokensButtonFontSizeT = {
+  large: 16,
+  medium: 14,
+  small: 13,
+}
+
+export interface LhTokensButtonHeightT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensButtonHeight: LhTokensButtonHeightT = {
+  large: 48,  // 大号按钮高度
+  medium: 40,  // 中号按钮高度（默认）
+  small: 32,  // 小号按钮高度
+}
+
+export interface LhTokensButtonIconSizeT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensButtonIconSize: LhTokensButtonIconSizeT = {
+  large: 20,
+  medium: 18,
+  small: 16,
+}
+
+export interface LhTokensButtonPaddingHorizontalT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensButtonPaddingHorizontal: LhTokensButtonPaddingHorizontalT = {
+  large: 24,
+  medium: 20,
+  small: 16,
+}
+
+export interface LhTokensCheckboxSizeT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensCheckboxSize: LhTokensCheckboxSizeT = {
+  large: 24,  // 大号复选框尺寸
+  medium: 20,  // 中号复选框尺寸（默认）
+  small: 16,  // 小号复选框尺寸
+}
+
+export interface LhTokensColorBackgroundT {
+  readonly default: ResourceColor
+  readonly disabled: ResourceColor
+  readonly overlay: ResourceColor
+  readonly page: ResourceColor
+}
+export const LhTokensColorBackground: LhTokensColorBackgroundT = {
+  default: '#FFFAF6F0',  // 组件底色（宣纸色）
+  disabled: '#FFEDE8E0',
+  overlay: '#661A1A1A',  // 遮罩层底色
+  page: '#FFF5F0EB',  // 页面底色
+}
+
+export interface LhTokensColorBorderT {
+  readonly base: ResourceColor
+  readonly extraLight: ResourceColor
+  readonly light: ResourceColor
+  readonly lighter: ResourceColor
+}
+export const LhTokensColorBorder: LhTokensColorBorderT = {
+  base: '#FFD8D3CC',  // 基础描边
+  extraLight: '#FFF5F0EB',
+  light: '#FFE5E0D8',
+  lighter: '#FFEEE9E2',
+}
+
+export interface LhTokensColorDangerT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhTokensColorDanger: LhTokensColorDangerT = {
+  active: '#FF9A3030',
+  bg: '#FFFDF0F0',
+  default: '#FFB23A3A',  // 危险色（朱砂 — 印泥朱红）
+  hover: '#FFC45050',
+}
+
+export interface LhTokensColorDisabledT {
+  readonly bg: ResourceColor
+  readonly border: ResourceColor
+  readonly text: ResourceColor
+}
+export const LhTokensColorDisabled: LhTokensColorDisabledT = {
+  bg: '#FFEDE8E0',  // 禁用底色
+  border: '#FFE5E0D8',  // 禁用描边色
+  text: '#FFC8C8C8',  // 禁用文字色
+}
+
+export interface LhTokensColorGoldT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly border: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhTokensColorGold: LhTokensColorGoldT = {
+  active: '#FF9A7208',
+  bg: '#FFFBF6EA',
+  border: '#FFFDFAF3',
+  default: '#FFB8860B',  // 金色点缀（华贵古韵）
+  hover: '#FFD4A843',
+}
+
+export interface LhTokensColorInfoT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhTokensColorInfo: LhTokensColorInfoT = {
+  active: '#FF6A6A6A',
+  bg: '#FFF2F2F2',
+  default: '#FF7A7A7A',  // 信息色（黛色 — 水墨淡彩）
+  hover: '#FF8F8F8F',
+}
+
+export interface LhTokensColorJadeT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhTokensColorJade: LhTokensColorJadeT = {
+  active: '#FF4B7A4A',
+  bg: '#FFEDF5EC',
+  default: '#FF5B8C5A',  // 玉色（翠竹清雅）
+  hover: '#FF7AAE7A',
+}
+
+export interface LhTokensColorPrimaryT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly border: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhTokensColorPrimary: LhTokensColorPrimaryT = {
+  active: '#FF1F3A5F',  // 主色按压/选中文字
+  bg: '#FFE8EDF3',  // 主色浅底（选中态底色）
+  border: '#FFD4DCE8',  // 主色描边
+  default: '#FF2B4C7C',  // 主色（靛蓝 — 青花瓷之蓝）
+  hover: '#FF3D649E',  // 主色悬停
+}
+
+export interface LhTokensColorSuccessT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhTokensColorSuccess: LhTokensColorSuccessT = {
+  active: '#FF4B7A4A',
+  bg: '#FFEDF5EC',
+  default: '#FF5B8C5A',  // 成功色（松花绿 — 竹影青翠）
+  hover: '#FF6FA36E',
+}
+
+export interface LhTokensColorTextT {
+  readonly disabled: ResourceColor
+  readonly placeholder: ResourceColor
+  readonly primary: ResourceColor
+  readonly regular: ResourceColor
+  readonly secondary: ResourceColor
+}
+export const LhTokensColorText: LhTokensColorTextT = {
+  disabled: '#FFC8C8C8',  // 禁用文字
+  placeholder: '#FFB0B0B0',  // 占位文字
+  primary: '#FF2C2C2C',  // 主要文字
+  regular: '#FF5A5A5A',  // 常规文字
+  secondary: '#FF8A8A8A',  // 次要文字
+}
+
+export interface LhTokensColorVermilionT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhTokensColorVermilion: LhTokensColorVermilionT = {
+  active: '#FFA92E26',
+  bg: '#FFFDF0EE',
+  default: '#FFC43A31',  // 朱砂点缀（印泥朱红）
+  hover: '#FFE85D4A',
+}
+
+export interface LhTokensColorWarningT {
+  readonly active: ResourceColor
+  readonly bg: ResourceColor
+  readonly default: ResourceColor
+  readonly hover: ResourceColor
+}
+export const LhTokensColorWarning: LhTokensColorWarningT = {
+  active: '#FFB3924A',
+  bg: '#FFFBF6EA',
+  default: '#FFC4A35A',  // 警告色（藤黄 — 秋叶金黄）
+  hover: '#FFD4B76F',
+}
+
+export interface LhTokensDocsCardT {
+  readonly background: ResourceColor
+  readonly borderColor: ResourceColor
+  readonly borderRadius: number
+  readonly borderWidth: number
+  readonly padding: number
+}
+export const LhTokensDocsCard: LhTokensDocsCardT = {
+  background: '#FFFAF6F0',  // 卡片底色
+  borderColor: '#FFEEE9E2',  // 卡片描边色
+  borderRadius: 8,
+  borderWidth: 1,
+  padding: 16,
+}
+
+export interface LhTokensDocsCodeT {
+  readonly background: ResourceColor
+  readonly borderRadius: number
+  readonly fontFamily: string
+  readonly fontSize: number
+  readonly paddingX: number
+  readonly paddingY: number
+  readonly textColor: ResourceColor
+}
+export const LhTokensDocsCode: LhTokensDocsCodeT = {
+  background: '#FFFAF6F0',  // 代码块底色
+  borderRadius: 4,  // 代码块圆角
+  fontFamily: "'Source Code Pro', 'JetBrains Mono', 'Consolas', 'Courier New', monospace",  // 代码块等宽字体栈，各端取首个可用族
+  fontSize: 13,  // 代码块字号
+  paddingX: 12,
+  paddingY: 12,
+  textColor: '#FF5A5A5A',  // 代码块文字色
+}
+
+export interface LhTokensDocsHeadingT {
+  readonly color: ResourceColor
+  readonly fontSizeH1: number
+  readonly fontSizeH2: number
+  readonly fontSizeH3: number
+}
+export const LhTokensDocsHeading: LhTokensDocsHeadingT = {
+  color: '#FF2C2C2C',  // 标题文字色
+  fontSizeH1: 20,  // 一级标题（页面标题）
+  fontSizeH2: 18,  // 二级标题（章节）
+  fontSizeH3: 16,  // 三级标题（小节）
+}
+
+export interface LhTokensDocsProseT {
+  readonly fontSize: number
+  readonly secondaryColor: ResourceColor
+  readonly textColor: ResourceColor
+}
+export const LhTokensDocsProse: LhTokensDocsProseT = {
+  fontSize: 14,  // 正文字号
+  secondaryColor: '#FF8A8A8A',  // 次要说明文字色
+  textColor: '#FF5A5A5A',  // 正文文字色
+}
+
+export interface LhTokensDocsTableT {
+  readonly borderColor: ResourceColor
+  readonly borderWidth: number
+  readonly cellPaddingX: number
+  readonly cellPaddingY: number
+  readonly fontSize: number
+  readonly headerBg: ResourceColor
+  readonly headerTextColor: ResourceColor
+}
+export const LhTokensDocsTable: LhTokensDocsTableT = {
+  borderColor: '#FFEEE9E2',  // 表格分割线色
+  borderWidth: 1,  // 表格分割线宽
+  cellPaddingX: 12,
+  cellPaddingY: 8,
+  fontSize: 13,  // 表格文字字号
+  headerBg: '#FFF5F0EB',  // 表头行底色
+  headerTextColor: '#FF2C2C2C',  // 表头行文字色
+}
+
+export interface LhTokensIconSizeT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensIconSize: LhTokensIconSizeT = {
+  large: 24,  // 大号图标尺寸
+  medium: 20,  // 中号图标尺寸（默认）
+  small: 16,  // 小号图标尺寸
+}
+
+export interface LhTokensInputFontSizeT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensInputFontSize: LhTokensInputFontSizeT = {
+  large: 16,
+  medium: 14,
+  small: 13,
+}
+
+export interface LhTokensInputHeightT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensInputHeight: LhTokensInputHeightT = {
+  large: 48,  // 大号输入框高度
+  medium: 40,  // 中号输入框高度（默认）
+  small: 32,  // 小号输入框高度
+}
+
+export interface LhTokensInputPaddingHorizontalT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensInputPaddingHorizontal: LhTokensInputPaddingHorizontalT = {
+  large: 20,
+  medium: 16,
+  small: 12,
+}
+
+export interface LhTokensLoadingSizeT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensLoadingSize: LhTokensLoadingSizeT = {
+  large: 24,  // 大号加载指示器直径
+  medium: 20,  // 中号加载指示器直径（默认）
+  small: 16,  // 小号加载指示器直径
+}
+
+export interface LhTokensMotionDurationT {
+  readonly base: number
+  readonly fast: number
+  readonly slow: number
+}
+export const LhTokensMotionDuration: LhTokensMotionDurationT = {
+  base: 300,  // 0.3s（毫秒）
+  fast: 250,  // 0.25s（毫秒）
+  slow: 400,  // 0.4s（毫秒）
+}
+
+export interface LhTokensMotionEasingT {
+  readonly easeInOut: number[]
+}
+export const LhTokensMotionEasing: LhTokensMotionEasingT = {
+  easeInOut: [0.4, 0, 0.2, 1],  // 贝塞尔控制点，组件侧以 curves.cubicBezierCurve 消费；标准缓动 cubic-bezier(0.4, 0, 0.2, 1)
+}
+
+export interface LhTokensRadioSizeT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensRadioSize: LhTokensRadioSizeT = {
+  large: 24,  // 大号单选框尺寸
+  medium: 20,  // 中号单选框尺寸（默认）
+  small: 16,  // 小号单选框尺寸
+}
+
+export interface LhTokensSwitchHeightT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensSwitchHeight: LhTokensSwitchHeightT = {
+  large: 28,  // 大号开关高度
+  medium: 24,  // 中号开关高度（默认）
+  small: 20,  // 小号开关高度
+}
+
+export interface LhTokensSwitchWidthT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensSwitchWidth: LhTokensSwitchWidthT = {
+  large: 52,  // 大号开关宽度
+  medium: 44,  // 中号开关宽度（默认）
+  small: 36,  // 小号开关宽度
+}
+
+export interface LhTokensTagFontSizeT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensTagFontSize: LhTokensTagFontSizeT = {
+  large: 14,
+  medium: 13,
+  small: 12,
+}
+
+export interface LhTokensTagHeightT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensTagHeight: LhTokensTagHeightT = {
+  large: 28,  // 大号标签高度
+  medium: 24,  // 中号标签高度（默认）
+  small: 20,  // 小号标签高度
+}
+
+export interface LhTokensTagPaddingHorizontalT {
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensTagPaddingHorizontal: LhTokensTagPaddingHorizontalT = {
+  large: 16,
+  medium: 12,
+  small: 8,
+}
+
+export interface LhTokensTypographyFontSizeT {
+  readonly base: number
+  readonly extraLarge: number
+  readonly extraSmall: number
+  readonly large: number
+  readonly medium: number
+  readonly small: number
+}
+export const LhTokensTypographyFontSize: LhTokensTypographyFontSizeT = {
+  base: 14,  // 正文基准字号
+  extraLarge: 20,  // 字号 特大
+  extraSmall: 12,
+  large: 18,
+  medium: 16,
+  small: 13,
+}
+
+export interface LhTokensTypographyFontWeightT {
+  readonly bold: number
+  readonly primary: number
+}
+export const LhTokensTypographyFontWeight: LhTokensTypographyFontWeightT = {
+  bold: 600,  // 加粗字重
+  primary: 400,  // 常规字重
+}
+
+export interface LhTokensTypographyLineHeightT {
+  readonly primary: number
+}
+export const LhTokensTypographyLineHeight: LhTokensTypographyLineHeightT = {
+  primary: 1.8,  // 正文行高
+}
+
+export interface LhTokensButtonT {
+  readonly borderRadius: number
+  readonly borderWidth: number
+  readonly focusRingOffset: number
+  readonly focusRingWidth: number
+  readonly fontWeight: number
+  readonly FontSize: LhTokensButtonFontSizeT
+  readonly Height: LhTokensButtonHeightT
+  readonly IconSize: LhTokensButtonIconSizeT
+  readonly PaddingHorizontal: LhTokensButtonPaddingHorizontalT
+}
+export const LhTokensButton: LhTokensButtonT = {
+  borderRadius: 2,  // 按钮圆角跟随全局圆角
+  borderWidth: 1,
+  focusRingOffset: 2,
+  focusRingWidth: 2,
+  fontWeight: 400,
+  FontSize: LhTokensButtonFontSize,
+  Height: LhTokensButtonHeight,
+  IconSize: LhTokensButtonIconSize,
+  PaddingHorizontal: LhTokensButtonPaddingHorizontal,
+}
+
+export interface LhTokensCellT {
+  readonly borderWidth: number
+  readonly fontSizeLabel: number
+  readonly fontSizeTitle: number
+  readonly fontSizeValue: number
+  readonly gap: number
+  readonly paddingHorizontal: number
+  readonly paddingVertical: number
+}
+export const LhTokensCell: LhTokensCellT = {
+  borderWidth: 1,  // 底部分隔线宽度
+  fontSizeLabel: 13,  // 说明文字字号
+  fontSizeTitle: 14,  // 标题字号
+  fontSizeValue: 14,  // 右侧值字号
+  gap: 8,  // 标题与说明文字之间的垂直间距
+  paddingHorizontal: 16,  // 单元格左右内边距
+  paddingVertical: 8,  // 单元格上下内边距
+}
+
+export interface LhTokensCheckboxT {
+  readonly borderRadius: number
+  readonly borderWidth: number
+  readonly checkWidth: number
+  readonly dashScale: number
+  readonly gap: number
+  readonly Size: LhTokensCheckboxSizeT
+}
+export const LhTokensCheckbox: LhTokensCheckboxT = {
+  borderRadius: 2,  // 复选框圆角
+  borderWidth: 2,
+  checkWidth: 2,  // 勾形描边宽度
+  dashScale: 0.500,  // 50%（分数，由容器尺寸换算）；不确定态横杠相对方框的宽度比例
+  gap: 8,  // 复选框与文字之间的间距
+  Size: LhTokensCheckboxSize,
+}
+
+export interface LhTokensColorT {
+  readonly decoration: ResourceColor
+  readonly focus: ResourceColor
+  readonly hoverBg: ResourceColor
+  readonly ink: ResourceColor
+  readonly onPrimary: ResourceColor
+  readonly selected: ResourceColor
+  readonly surface: ResourceColor
+  readonly Background: LhTokensColorBackgroundT
+  readonly Border: LhTokensColorBorderT
+  readonly Danger: LhTokensColorDangerT
+  readonly Disabled: LhTokensColorDisabledT
+  readonly Gold: LhTokensColorGoldT
+  readonly Info: LhTokensColorInfoT
+  readonly Jade: LhTokensColorJadeT
+  readonly Primary: LhTokensColorPrimaryT
+  readonly Success: LhTokensColorSuccessT
+  readonly Text: LhTokensColorTextT
+  readonly Vermilion: LhTokensColorVermilionT
+  readonly Warning: LhTokensColorWarningT
+}
+export const LhTokensColor: LhTokensColorT = {
+  decoration: '#1FB8860B',  // 花纹装饰色
+  focus: '#FF2B4C7C',  // 键盘焦点环色，默认跟随主色
+  hoverBg: '#0D000000',  // 列表/面板项的中性悬停底色
+  ink: '#FF1A1A1A',  // 中性黑（墨）
+  onPrimary: '#FFFFFFFF',  // 主色底上的文字色（浅主色预设不应写死白字）
+  selected: '#FF1F3A5F',  // 选中态文字色，跟随主色按压变体
+  surface: '#FFFAF6F0',  // 中性白（宣纸白）
+  Background: LhTokensColorBackground,
+  Border: LhTokensColorBorder,
+  Danger: LhTokensColorDanger,
+  Disabled: LhTokensColorDisabled,
+  Gold: LhTokensColorGold,
+  Info: LhTokensColorInfo,
+  Jade: LhTokensColorJade,
+  Primary: LhTokensColorPrimary,
+  Success: LhTokensColorSuccess,
+  Text: LhTokensColorText,
+  Vermilion: LhTokensColorVermilion,
+  Warning: LhTokensColorWarning,
+}
+
+export interface LhTokensDialogT {
+  readonly borderRadius: number
+  readonly contentFontSize: number
+  readonly gap: number
+  readonly paddingHorizontal: number
+  readonly paddingVertical: number
+  readonly titleFontSize: number
+  readonly width: number
+}
+export const LhTokensDialog: LhTokensDialogT = {
+  borderRadius: 2,  // 对话框圆角
+  contentFontSize: 14,  // 内容字号
+  gap: 12,  // 标题与内容的间距
+  paddingHorizontal: 20,  // 对话框左右内边距
+  paddingVertical: 20,  // 对话框上下内边距
+  titleFontSize: 16,  // 标题字号
+  width: 320,  // 对话框内容卡宽度
+}
+
+export interface LhTokensDocsT {
+  readonly Card: LhTokensDocsCardT
+  readonly Code: LhTokensDocsCodeT
+  readonly Heading: LhTokensDocsHeadingT
+  readonly Prose: LhTokensDocsProseT
+  readonly Table: LhTokensDocsTableT
+}
+export const LhTokensDocs: LhTokensDocsT = {
+  Card: LhTokensDocsCard,
+  Code: LhTokensDocsCode,
+  Heading: LhTokensDocsHeading,
+  Prose: LhTokensDocsProse,
+  Table: LhTokensDocsTable,
+}
+
+export interface LhTokensIconT {
+  readonly Size: LhTokensIconSizeT
+}
+export const LhTokensIcon: LhTokensIconT = {
+  Size: LhTokensIconSize,
+}
+
+export interface LhTokensInputT {
+  readonly borderRadius: number
+  readonly borderWidth: number
+  readonly clearIconSize: number
+  readonly focusRingWidth: number
+  readonly FontSize: LhTokensInputFontSizeT
+  readonly Height: LhTokensInputHeightT
+  readonly PaddingHorizontal: LhTokensInputPaddingHorizontalT
+}
+export const LhTokensInput: LhTokensInputT = {
+  borderRadius: 2,  // 输入框圆角
+  borderWidth: 1,
+  clearIconSize: 16,  // 清除按钮图标尺寸
+  focusRingWidth: 2,  // 聚焦时的描边宽度
+  FontSize: LhTokensInputFontSize,
+  Height: LhTokensInputHeight,
+  PaddingHorizontal: LhTokensInputPaddingHorizontal,
+}
+
+export interface LhTokensLoadingT {
+  readonly strokeWidth: number
+  readonly Size: LhTokensLoadingSizeT
+}
+export const LhTokensLoading: LhTokensLoadingT = {
+  strokeWidth: 2,  // 加载环描边宽度
+  Size: LhTokensLoadingSize,
+}
+
+export interface LhTokensMotionT {
+  readonly Duration: LhTokensMotionDurationT
+  readonly Easing: LhTokensMotionEasingT
+}
+export const LhTokensMotion: LhTokensMotionT = {
+  Duration: LhTokensMotionDuration,
+  Easing: LhTokensMotionEasing,
+}
+
+export interface LhTokensNavbarT {
+  readonly borderWidth: number
+  readonly height: number
+  readonly iconSize: number
+  readonly paddingHorizontal: number
+  readonly titleFontSize: number
+}
+export const LhTokensNavbar: LhTokensNavbarT = {
+  borderWidth: 1,
+  height: 44,  // 导航栏高度
+  iconSize: 20,  // 左右图标尺寸
+  paddingHorizontal: 12,  // 导航栏左右内边距
+  titleFontSize: 16,  // 标题字号
+}
+
+export interface LhTokensPickerT {
+  readonly borderRadius: number
+  readonly height: number
+  readonly itemFontSize: number
+  readonly itemHeight: number
+  readonly toolbarHeight: number
+}
+export const LhTokensPicker: LhTokensPickerT = {
+  borderRadius: 2,  // 面板顶部圆角
+  height: 260,  // 选择器面板高度
+  itemFontSize: 14,  // 候选项字号
+  itemHeight: 40,  // 候选项高度（滚轮单页高度）
+  toolbarHeight: 44,  // 顶部工具栏高度
+}
+
+export interface LhTokensRadioT {
+  readonly dotScale: number
+  readonly gap: number
+  readonly ringWidth: number
+  readonly Size: LhTokensRadioSizeT
+}
+export const LhTokensRadio: LhTokensRadioT = {
+  dotScale: 0.500,  // 50%（分数，由容器尺寸换算）；内圆点相对外环直径的比例（分数）
+  gap: 8,  // 单选框与文字之间的间距
+  ringWidth: 2,  // 外环描边宽度
+  Size: LhTokensRadioSize,
+}
+
+export interface LhTokensRadiusT {
+  readonly base: number
+  readonly circle: number
+  readonly round: number
+  readonly small: number
+}
+export const LhTokensRadius: LhTokensRadiusT = {
+  base: 2,
+  circle: 0.500,  // 50%（分数，由容器尺寸换算）；正圆，各端取 min(宽,高)/2
+  round: 20,  // 胶囊圆角
+  small: 2,
+}
+
+export interface LhTokensShadowT {
+  readonly base: LhShadow
+  readonly light: LhShadow
+  readonly lighter: LhShadow
+}
+export const LhTokensShadow: LhTokensShadowT = {
+  base: { color: '#141A1A1A', radius: 12, offsetX: 0, offsetY: 2 },  // 扩展量 0px ArkUI 不支持，已忽略
+  light: { color: '#0F1A1A1A', radius: 4, offsetX: 0, offsetY: 2 },  // 扩展量 0px ArkUI 不支持，已忽略
+  lighter: { color: '#0A1A1A1A', radius: 4, offsetX: 0, offsetY: 0 },  // 扩展量 0px ArkUI 不支持，已忽略
+}
+
+export interface LhTokensSpacingT {
+  readonly base: number
+  readonly lg: number
+  readonly md: number
+  readonly sm: number
+  readonly xl: number
+  readonly xs: number
+  readonly xxl: number
+}
+export const LhTokensSpacing: LhTokensSpacingT = {
+  base: 16,
+  lg: 20,
+  md: 12,
+  sm: 8,
+  xl: 24,
+  xs: 4,
+  xxl: 32,
+}
+
+export interface LhTokensSwitchT {
+  readonly gap: number
+  readonly Height: LhTokensSwitchHeightT
+  readonly Width: LhTokensSwitchWidthT
+}
+export const LhTokensSwitch: LhTokensSwitchT = {
+  gap: 2,  // 滑块与轨道之间的留白
+  Height: LhTokensSwitchHeight,
+  Width: LhTokensSwitchWidth,
+}
+
+export interface LhTokensTagT {
+  readonly borderRadius: number
+  readonly borderWidth: number
+  readonly FontSize: LhTokensTagFontSizeT
+  readonly Height: LhTokensTagHeightT
+  readonly PaddingHorizontal: LhTokensTagPaddingHorizontalT
+}
+export const LhTokensTag: LhTokensTagT = {
+  borderRadius: 2,  // 标签圆角（round 态由组件按高度一半计算）
+  borderWidth: 1,
+  FontSize: LhTokensTagFontSize,
+  Height: LhTokensTagHeight,
+  PaddingHorizontal: LhTokensTagPaddingHorizontal,
+}
+
+export interface LhTokensTextareaT {
+  readonly borderRadius: number
+  readonly borderWidth: number
+  readonly countFontSize: number
+  readonly focusRingWidth: number
+  readonly fontSize: number
+  readonly minHeight: number
+  readonly paddingHorizontal: number
+  readonly paddingVertical: number
+  readonly textInset: number
+}
+export const LhTokensTextarea: LhTokensTextareaT = {
+  borderRadius: 2,  // 多行输入框圆角
+  borderWidth: 1,
+  countFontSize: 12,  // 字数统计字号
+  focusRingWidth: 2,  // 聚焦时的描边宽度
+  fontSize: 14,  // 多行输入框字号
+  minHeight: 72,  // 无内容时的最小高度（约三行）
+  paddingHorizontal: 12,  // 多行输入框左右内边距
+  paddingVertical: 12,  // 多行输入框上下内边距
+  textInset: 6,  // TextEditor 文本容器内嵌补偿（SwiftUI 固定行为，叠加占位文字与字数统计定位用）
+}
+
+export interface LhTokensToastT {
+  readonly borderRadius: number
+  readonly fontSize: number
+  readonly gap: number
+  readonly paddingHorizontal: number
+  readonly paddingVertical: number
+}
+export const LhTokensToast: LhTokensToastT = {
+  borderRadius: 2,  // 提示圆角
+  fontSize: 14,  // 提示文字字号
+  gap: 8,  // 类型色点与文字之间的间距
+  paddingHorizontal: 16,  // 提示左右内边距
+  paddingVertical: 8,  // 提示上下内边距
+}
+
+export interface LhTokensTypographyT {
+  readonly fontFamily: string
+  readonly FontSize: LhTokensTypographyFontSizeT
+  readonly FontWeight: LhTokensTypographyFontWeightT
+  readonly LineHeight: LhTokensTypographyLineHeightT
+}
+export const LhTokensTypography: LhTokensTypographyT = {
+  fontFamily: "'Noto Serif SC', 'STSong', 'SimSun', 'Source Han Serif SC', 'PingFang SC', 'Microsoft YaHei', serif",  // 国风衬线字体栈，各端取首个可用族
+  FontSize: LhTokensTypographyFontSize,
+  FontWeight: LhTokensTypographyFontWeight,
+  LineHeight: LhTokensTypographyLineHeight,
+}
+
+export interface LhTokensZIndexT {
+  readonly dropdown: number
+  readonly fixed: number
+  readonly modal: number
+  readonly modalBackdrop: number
+  readonly normal: number
+  readonly popover: number
+  readonly sticky: number
+  readonly toast: number
+}
+export const LhTokensZIndex: LhTokensZIndexT = {
+  dropdown: 1000,
+  fixed: 1030,
+  modal: 1050,
+  modalBackdrop: 1040,
+  normal: 1,
+  popover: 1060,
+  sticky: 1020,
+  toast: 2000,  // 原生血脉新增：轻提示层级（web 血脉对应 tooltip 位）
+}
+
+export interface LhTokensT {
+  readonly Button: LhTokensButtonT
+  readonly Cell: LhTokensCellT
+  readonly Checkbox: LhTokensCheckboxT
+  readonly Color: LhTokensColorT
+  readonly Dialog: LhTokensDialogT
+  readonly Docs: LhTokensDocsT
+  readonly Icon: LhTokensIconT
+  readonly Input: LhTokensInputT
+  readonly Loading: LhTokensLoadingT
+  readonly Motion: LhTokensMotionT
+  readonly Navbar: LhTokensNavbarT
+  readonly Picker: LhTokensPickerT
+  readonly Radio: LhTokensRadioT
+  readonly Radius: LhTokensRadiusT
+  readonly Shadow: LhTokensShadowT
+  readonly Spacing: LhTokensSpacingT
+  readonly Switch: LhTokensSwitchT
+  readonly Tag: LhTokensTagT
+  readonly Textarea: LhTokensTextareaT
+  readonly Toast: LhTokensToastT
+  readonly Typography: LhTokensTypographyT
+  readonly ZIndex: LhTokensZIndexT
+}
+export const LhTokens: LhTokensT = {
+  Button: LhTokensButton,
+  Cell: LhTokensCell,
+  Checkbox: LhTokensCheckbox,
+  Color: LhTokensColor,
+  Dialog: LhTokensDialog,
+  Docs: LhTokensDocs,
+  Icon: LhTokensIcon,
+  Input: LhTokensInput,
+  Loading: LhTokensLoading,
+  Motion: LhTokensMotion,
+  Navbar: LhTokensNavbar,
+  Picker: LhTokensPicker,
+  Radio: LhTokensRadio,
+  Radius: LhTokensRadius,
+  Shadow: LhTokensShadow,
+  Spacing: LhTokensSpacing,
+  Switch: LhTokensSwitch,
+  Tag: LhTokensTag,
+  Textarea: LhTokensTextarea,
+  Toast: LhTokensToast,
+  Typography: LhTokensTypography,
+  ZIndex: LhTokensZIndex,
 }

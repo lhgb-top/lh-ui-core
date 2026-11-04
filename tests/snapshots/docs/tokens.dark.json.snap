@@ -31,6 +31,7 @@
   "color.jade.bg": "#1A2A1A",
   "color.jade.default": "#7AAE7A",
   "color.jade.hover": "#9CC89C",
+  "color.onPrimary": "#FFFFFF",
   "color.primary.active": "#2B4C7C",
   "color.primary.bg": "rgba(61, 100, 158, 0.25)",
   "color.primary.border": "#2A3A4A",

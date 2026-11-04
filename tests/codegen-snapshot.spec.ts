@@ -60,15 +60,19 @@ describe('codegen 产物快照', () => {
 describe('codegen 产物不变式', () => {
   it('产物中不含任何 JavaScript 运行时代码', () => {
     const input = buildInput()
-    const allFiles = [
+    // ArkTS 本就使用 ES import 语法（编译期模块引用，非 JS 运行时代码），
+    // import 断言只对其余三端生效，避免对 harmony 产物误判
+    const importChecked = [
       ...androidTarget.generate(input),
       ...iosTarget.generate(input),
-      ...harmonyTarget.generate(input),
       ...windowsTarget.generate(input),
     ]
+    const allFiles = [...importChecked, ...harmonyTarget.generate(input)]
     for (const file of allFiles) {
       expect(file.content).not.toMatch(/\brequire\s*\(/)
       expect(file.content).not.toMatch(/\bmodule\.exports\b/)
+    }
+    for (const file of importChecked) {
       expect(file.content).not.toMatch(/import\s+.*\s+from\s+['"]/)
     }
   })
