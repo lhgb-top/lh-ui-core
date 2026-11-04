@@ -10,3 +10,6 @@ docs/.astro/
 .DS_Store
 # ZCode 工具目录（plan 文件等，非仓库内容）
 .zcode/
+
+# ---------- AI 工具产物目录（不上传）----------
+.mimosa/
