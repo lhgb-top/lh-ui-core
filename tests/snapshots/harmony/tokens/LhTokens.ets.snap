@@ -287,6 +287,7 @@ export interface LhTokensDocsTableT {
   readonly fontSize: number
   readonly headerBg: ResourceColor
   readonly headerTextColor: ResourceColor
+  readonly narrowBreakpoint: number
 }
 export const LhTokensDocsTable: LhTokensDocsTableT = {
   borderColor: '#FFEEE9E2',  // 表格分割线色
@@ -296,6 +297,7 @@ export const LhTokensDocsTable: LhTokensDocsTableT = {
   fontSize: 13,  // 表格文字字号
   headerBg: '#FFF5F0EB',  // 表头行底色
   headerTextColor: '#FF2C2C2C',  // 表头行文字色
+  narrowBreakpoint: 600,  // 窄屏断点：内容可用宽度小于该值时表格折叠为字段卡片（手机竖屏折叠、平板/横屏保持表格）
 }
 
 export interface LhTokensIconSizeT {

@@ -183,6 +183,7 @@ public static class LhTokens {
       public static readonly double FontSize = 13.0;  // 表格文字字号
       public static readonly Windows.UI.Color HeaderBg = Windows.UI.Color.FromArgb(0xFF, 0xF5, 0xF0, 0xEB);  // 表头行底色
       public static readonly Windows.UI.Color HeaderTextColor = Windows.UI.Color.FromArgb(0xFF, 0x2C, 0x2C, 0x2C);  // 表头行文字色
+      public static readonly double NarrowBreakpoint = 600.0;  // 窄屏断点：内容可用宽度小于该值时表格折叠为字段卡片（手机竖屏折叠、平板/横屏保持表格）
     }
   }
   public static class Icon {

@@ -27,20 +27,23 @@
     {
       "name": "title",
       "type": "string",
-      "default": "",
-      "description": "工具栏中间的标题"
+      "default": "@lh-i18n",
+      "i18n": "picker.title",
+      "description": "工具栏中间的标题；未传入时随语言包（默认「请选择」）；为空串时不显示标题"
     },
     {
       "name": "confirmText",
       "type": "string",
-      "default": "确认",
-      "description": "确认按钮文字"
+      "default": "@lh-i18n",
+      "i18n": "picker.confirm",
+      "description": "确认按钮文字；未传入时随语言包（哨兵 @lh-i18n）"
     },
     {
       "name": "cancelText",
       "type": "string",
-      "default": "取消",
-      "description": "取消按钮文字"
+      "default": "@lh-i18n",
+      "i18n": "picker.cancel",
+      "description": "取消按钮文字；未传入时随语言包（哨兵 @lh-i18n）"
     }
   ],
   "events": [
@@ -77,6 +80,7 @@
     "visible 为 false 时不渲染（不发射任何绘制指令）",
     "面板高度 picker.height，从底部弹出，顶部圆角 picker.borderRadius，底色 color.background.default",
     "工具栏高度 picker.toolbarHeight：左取消、中标题、右确认；点击确认触发 onConfirm(当前索引) 后触发 onClose，取消触发 onCancel 后触发 onClose",
+    "标题未传入时随语言包回退（哨兵 @lh-i18n，默认「请选择」）；为空串时不渲染标题节点",
     "候选项高度 picker.itemHeight、字号 picker.itemFontSize；中央指示器为两条水平线（color.border.lighter），间距 = picker.itemHeight",
     "滚轮滚动停止后，最靠近中央指示器的项成为选中项，变化时触发 onValueChange(新索引)",
     "value 越界时钳制：负数取 0，大于候选项数 - 1 取最后一项",

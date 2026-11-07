@@ -121,6 +121,7 @@
   "docs.table.fontSize": "13px",
   "docs.table.headerBg": "#F5F0EB",
   "docs.table.headerTextColor": "#2C2C2C",
+  "docs.table.narrowBreakpoint": "600px",
   "icon.size.large": "24px",
   "icon.size.medium": "20px",
   "icon.size.small": "16px",

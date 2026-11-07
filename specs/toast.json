@@ -44,7 +44,7 @@
     }
   ],
   "behaviors": [
-    "show(text) 使其可见并重置计时；hide() 立即隐藏但不触发 onClose",
+    "show(text) 使其可见并重置计时；text 未传或为空串时按 type 从语言包回退语义文案（哨兵行为：toast.success → 操作成功 等；default 类型无回退）；hide() 立即隐藏但不触发 onClose",
     "tick(deltaMs) 累加已用时长，达到 duration 时自动隐藏并触发 onClose",
     "不可见时不发射任何绘制指令",
     "胶囊底取 color.ink，文字取 color.onPrimary，圆角取 toast.borderRadius",

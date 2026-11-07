@@ -19,13 +19,13 @@ public static class LhDarkTokens {
       public static readonly Windows.UI.Color Default = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x25, 0x20);  // 组件底色（宣纸色）
       public static readonly Windows.UI.Color Disabled = Windows.UI.Color.FromArgb(0xFF, 0x24, 0x20, 0x18);
       public static readonly Windows.UI.Color Overlay = Windows.UI.Color.FromArgb(0xB3, 0x0A, 0x08, 0x06);  // 遮罩层底色
-      public static readonly Windows.UI.Color Page = Windows.UI.Color.FromArgb(0xFF, 0x1E, 0x1A, 0x16);  // 页面底色
+      public static readonly Windows.UI.Color Page = Windows.UI.Color.FromArgb(0xFF, 0x1A, 0x16, 0x12);  // 页面底色
     }
     public static class Border {
       public static readonly Windows.UI.Color Base = Windows.UI.Color.FromArgb(0xFF, 0x3A, 0x35, 0x30);  // 基础描边
       public static readonly Windows.UI.Color ExtraLight = Windows.UI.Color.FromArgb(0xFF, 0x24, 0x20, 0x18);
       public static readonly Windows.UI.Color Light = Windows.UI.Color.FromArgb(0xFF, 0x30, 0x2B, 0x28);
-      public static readonly Windows.UI.Color Lighter = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x25, 0x20);
+      public static readonly Windows.UI.Color Lighter = Windows.UI.Color.FromArgb(0xFF, 0x33, 0x2D, 0x27);
     }
     public static class Danger {
       public static readonly Windows.UI.Color Active = Windows.UI.Color.FromArgb(0xFF, 0xB2, 0x3A, 0x3A);
@@ -93,7 +93,7 @@ public static class LhDarkTokens {
   public static class Docs {
     public static class Card {
       public static readonly Windows.UI.Color Background = Windows.UI.Color.FromArgb(0xFF, 0x24, 0x20, 0x18);  // 卡片底色
-      public static readonly Windows.UI.Color BorderColor = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x25, 0x20);  // 卡片描边色
+      public static readonly Windows.UI.Color BorderColor = Windows.UI.Color.FromArgb(0xFF, 0x33, 0x2D, 0x27);  // 卡片描边色
     }
     public static class Code {
       public static readonly Windows.UI.Color Background = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x25, 0x20);  // 代码块底色
@@ -107,8 +107,8 @@ public static class LhDarkTokens {
       public static readonly Windows.UI.Color TextColor = Windows.UI.Color.FromArgb(0xFF, 0xC8, 0xC0, 0xB8);  // 正文文字色
     }
     public static class Table {
-      public static readonly Windows.UI.Color BorderColor = Windows.UI.Color.FromArgb(0xFF, 0x2A, 0x25, 0x20);  // 表格分割线色
-      public static readonly Windows.UI.Color HeaderBg = Windows.UI.Color.FromArgb(0xFF, 0x1E, 0x1A, 0x16);  // 表头行底色
+      public static readonly Windows.UI.Color BorderColor = Windows.UI.Color.FromArgb(0xFF, 0x33, 0x2D, 0x27);  // 表格分割线色
+      public static readonly Windows.UI.Color HeaderBg = Windows.UI.Color.FromArgb(0xFF, 0x1A, 0x16, 0x12);  // 表头行底色
       public static readonly Windows.UI.Color HeaderTextColor = Windows.UI.Color.FromArgb(0xFF, 0xE8, 0xE0, 0xD8);  // 表头行文字色
     }
   }

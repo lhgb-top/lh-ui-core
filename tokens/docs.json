@@ -21,7 +21,8 @@
     "headerTextColor": { "ref": "color.text.primary", "description": "表头行文字色" },
     "cellPaddingX": { "value": "12px", "type": "dimension" },
     "cellPaddingY": { "value": "8px", "type": "dimension" },
-    "fontSize": { "value": "13px", "type": "dimension", "description": "表格文字字号" }
+    "fontSize": { "value": "13px", "type": "dimension", "description": "表格文字字号" },
+    "narrowBreakpoint": { "value": "600px", "type": "dimension", "description": "窄屏断点：内容可用宽度小于该值时表格折叠为字段卡片（手机竖屏折叠、平板/横屏保持表格）" }
   },
   "heading": {
     "fontSizeH1": { "value": "20px", "type": "dimension", "description": "一级标题（页面标题）" },

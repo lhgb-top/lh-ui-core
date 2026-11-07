@@ -73,12 +73,12 @@
   "border": {
     "base": { "value": "#3A3530" },
     "light": { "value": "#302B28" },
-    "lighter": { "value": "#2A2520" },
+    "lighter": { "value": "#332D27", "description": "修复：此前与 background.default 同值导致暗色分割线/表格网格线完全不可见" },
     "extraLight": { "value": "#242018" }
   },
   "background": {
     "default": { "value": "#2A2520", "description": "深墨宣纸" },
-    "page": { "value": "#1E1A16" },
+    "page": { "value": "#1A1612", "description": "加深：与 background.default 拉开顶栏/内容分层" },
     "disabled": { "value": "#242018" },
     "overlay": { "value": "rgba(10, 8, 6, 0.7)" }
   },

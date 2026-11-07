@@ -69,6 +69,45 @@
       "then": {
         "tokens": [{ "path": "color.danger.default", "applied": true }]
       }
+    },
+    {
+      "id": "confirm-text-fallback-locale",
+      "name": "确认文字未传入时取语言包",
+      "given": { "props": { "visible": true, "confirmText": "@lh-i18n" } },
+      "when": { "action": "render" },
+      "then": {
+        "text": "确认",
+        "visible": true,
+        "notes": "哨兵值表示未显式传入，回退当前语言包（默认 zh-CN）；宿主切换 LhLocale 后文案随之更新"
+      }
+    },
+    {
+      "id": "cancel-text-fallback-locale",
+      "name": "取消文字未传入时取语言包",
+      "given": { "props": { "visible": true, "cancelText": "@lh-i18n" } },
+      "when": { "action": "render" },
+      "then": {
+        "text": "取消",
+        "visible": true,
+        "notes": "哨兵值表示未显式传入，回退当前语言包（默认 zh-CN）"
+      }
+    },
+    {
+      "id": "confirm-text-explicit-wins",
+      "name": "显式传入的确认文字优先于语言包",
+      "given": { "props": { "visible": true, "confirmText": "好了" } },
+      "when": { "action": "render" },
+      "then": { "text": "好了", "visible": true }
+    },
+    {
+      "id": "cancel-text-empty-hides-button",
+      "name": "取消文字为空串时不渲染取消按钮",
+      "given": { "props": { "visible": true, "cancelText": "" } },
+      "when": { "action": "render" },
+      "then": {
+        "visible": true,
+        "notes": "空串语义为隐藏按钮（显式传入优先，不回退语言包）"
+      }
     }
   ]
 }

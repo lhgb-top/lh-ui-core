@@ -190,6 +190,7 @@ object LhTokens {
       val fontSize = 13.sp  // 表格文字字号
       val headerBg = ComposeColor(0xFFF5F0EB)  // 表头行底色
       val headerTextColor = ComposeColor(0xFF2C2C2C)  // 表头行文字色
+      val narrowBreakpoint = 600.dp  // 窄屏断点：内容可用宽度小于该值时表格折叠为字段卡片（手机竖屏折叠、平板/横屏保持表格）
     }
   }
   object Icon {

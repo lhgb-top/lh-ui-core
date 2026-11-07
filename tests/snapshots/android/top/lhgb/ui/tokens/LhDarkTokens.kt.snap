@@ -21,13 +21,13 @@ object LhDarkTokens {
       val default = ComposeColor(0xFF2A2520)  // 组件底色（宣纸色）
       val disabled = ComposeColor(0xFF242018)
       val overlay = ComposeColor(0xB30A0806)  // 遮罩层底色
-      val page = ComposeColor(0xFF1E1A16)  // 页面底色
+      val page = ComposeColor(0xFF1A1612)  // 页面底色
     }
     object Border {
       val base = ComposeColor(0xFF3A3530)  // 基础描边
       val extraLight = ComposeColor(0xFF242018)
       val light = ComposeColor(0xFF302B28)
-      val lighter = ComposeColor(0xFF2A2520)
+      val lighter = ComposeColor(0xFF332D27)
     }
     object Danger {
       val active = ComposeColor(0xFFB23A3A)
@@ -95,7 +95,7 @@ object LhDarkTokens {
   object Docs {
     object Card {
       val background = ComposeColor(0xFF242018)  // 卡片底色
-      val borderColor = ComposeColor(0xFF2A2520)  // 卡片描边色
+      val borderColor = ComposeColor(0xFF332D27)  // 卡片描边色
     }
     object Code {
       val background = ComposeColor(0xFF2A2520)  // 代码块底色
@@ -109,8 +109,8 @@ object LhDarkTokens {
       val textColor = ComposeColor(0xFFC8C0B8)  // 正文文字色
     }
     object Table {
-      val borderColor = ComposeColor(0xFF2A2520)  // 表格分割线色
-      val headerBg = ComposeColor(0xFF1E1A16)  // 表头行底色
+      val borderColor = ComposeColor(0xFF332D27)  // 表格分割线色
+      val headerBg = ComposeColor(0xFF1A1612)  // 表头行底色
       val headerTextColor = ComposeColor(0xFFE8E0D8)  // 表头行文字色
     }
   }

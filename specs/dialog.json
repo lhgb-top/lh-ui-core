@@ -33,14 +33,16 @@
     {
       "name": "confirmText",
       "type": "string",
-      "default": "确认",
-      "description": "确认按钮文字；为空时不显示确认按钮"
+      "default": "@lh-i18n",
+      "i18n": "dialog.confirm",
+      "description": "确认按钮文字；未传入时随语言包（哨兵 @lh-i18n）；为空时不显示确认按钮"
     },
     {
       "name": "cancelText",
       "type": "string",
-      "default": "取消",
-      "description": "取消按钮文字；为空时不显示取消按钮"
+      "default": "@lh-i18n",
+      "i18n": "dialog.cancel",
+      "description": "取消按钮文字；未传入时随语言包（哨兵 @lh-i18n）；为空时不显示取消按钮"
     },
     {
       "name": "closable",

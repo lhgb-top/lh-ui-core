@@ -76,6 +76,11 @@
         },
         "default": {},
         "required": { "type": "boolean", "default": false },
+        "i18n": {
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9]*\\.[a-z][a-zA-Z0-9]*$",
+          "description": "标记该 prop 为 i18n 感知：default 为哨兵 \"@lh-i18n\" 时表示「未显式传入」，各端从自己的语言包按该点路径取值（如 dialog.confirm）；显式传入（含空串）时一律以传入值为准"
+        },
         "description": { "type": "string" }
       },
       "required": ["name", "type", "description"],

@@ -104,6 +104,45 @@
         ],
         "notes": "绘制指令流有且仅有一条 RING 指令，半径为尺寸一半"
       }
+    },
+    {
+      "id": "text-fallback-locale",
+      "name": "加载文案未传入时取语言包",
+      "given": {
+        "props": { "text": "@lh-i18n" }
+      },
+      "when": {
+        "action": "render"
+      },
+      "then": {
+        "text": "加载中…",
+        "notes": "哨兵值表示未显式传入，回退当前语言包（默认 zh-CN）；宿主切换 LhLocale 后文案随之更新"
+      }
+    },
+    {
+      "id": "text-explicit-wins",
+      "name": "显式传入的加载文案优先于语言包",
+      "given": {
+        "props": { "text": "正在同步" }
+      },
+      "when": {
+        "action": "render"
+      },
+      "then": { "text": "正在同步" }
+    },
+    {
+      "id": "text-empty-spinner-only",
+      "name": "加载文案为空串时只显示转圈",
+      "given": {
+        "props": { "text": "" }
+      },
+      "when": {
+        "action": "render"
+      },
+      "then": {
+        "text": "",
+        "notes": "不渲染文字节点（空串语义为只显示环形转圈，显式传入优先）"
+      }
     }
   ]
 }

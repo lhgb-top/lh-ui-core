@@ -69,6 +69,56 @@
       "given": { "props": { "visible": false, "options": ["甲"] } },
       "when": { "action": "render" },
       "then": { "visible": false, "notes": "不发射任何绘制指令" }
+    },
+    {
+      "id": "confirm-text-fallback-locale",
+      "name": "确认文字未传入时取语言包",
+      "given": { "props": { "visible": true, "options": ["甲", "乙"], "confirmText": "@lh-i18n" } },
+      "when": { "action": "render" },
+      "then": {
+        "text": "确认",
+        "visible": true,
+        "notes": "哨兵值表示未显式传入，回退当前语言包（默认 zh-CN）；宿主切换 LhLocale 后文案随之更新"
+      }
+    },
+    {
+      "id": "cancel-text-fallback-locale",
+      "name": "取消文字未传入时取语言包",
+      "given": { "props": { "visible": true, "options": ["甲", "乙"], "cancelText": "@lh-i18n" } },
+      "when": { "action": "render" },
+      "then": {
+        "text": "取消",
+        "visible": true,
+        "notes": "哨兵值表示未显式传入，回退当前语言包（默认 zh-CN）"
+      }
+    },
+    {
+      "id": "confirm-text-explicit-wins",
+      "name": "显式传入的确认文字优先于语言包",
+      "given": { "props": { "visible": true, "options": ["甲", "乙"], "confirmText": "好了" } },
+      "when": { "action": "render" },
+      "then": { "text": "好了", "visible": true }
+    },
+    {
+      "id": "title-fallback-locale",
+      "name": "标题未传入时取语言包",
+      "given": { "props": { "visible": true, "options": ["甲", "乙"], "title": "@lh-i18n" } },
+      "when": { "action": "render" },
+      "then": {
+        "text": "请选择",
+        "visible": true,
+        "notes": "哨兵值表示未显式传入，回退当前语言包（默认 zh-CN）"
+      }
+    },
+    {
+      "id": "title-empty-hides-node",
+      "name": "标题为空串时不渲染标题节点",
+      "given": { "props": { "visible": true, "options": ["甲", "乙"], "title": "" } },
+      "when": { "action": "render" },
+      "then": {
+        "visible": true,
+        "notes": "工具栏中间不渲染标题节点（显式传入优先，不回退语言包）"
+      }
     }
   ]
 }

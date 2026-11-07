@@ -56,11 +56,11 @@
 | `color.background.default` | color | #FAF6F0 → #faf6f0 | #2A2520 → #2a2520 | 组件底色（宣纸色） |
 | `color.background.disabled` | color | #EDE8E0 → #ede8e0 | #242018 → #242018 |  |
 | `color.background.overlay` | color | rgba(26, 26, 26, 0.4) → rgba(26, 26, 26, 0.4) | rgba(10, 8, 6, 0.7) → rgba(10, 8, 6, 0.7) | 遮罩层底色 |
-| `color.background.page` | color | #F5F0EB → #f5f0eb | #1E1A16 → #1e1a16 | 页面底色 |
+| `color.background.page` | color | #F5F0EB → #f5f0eb | #1A1612 → #1a1612 | 页面底色 |
 | `color.border.base` | color | #D8D3CC → #d8d3cc | #3A3530 → #3a3530 | 基础描边 |
 | `color.border.extraLight` | color | #F5F0EB → #f5f0eb | #242018 → #242018 |  |
 | `color.border.light` | color | #E5E0D8 → #e5e0d8 | #302B28 → #302b28 |  |
-| `color.border.lighter` | color | #EEE9E2 → #eee9e2 | #2A2520 → #2a2520 |  |
+| `color.border.lighter` | color | #EEE9E2 → #eee9e2 | #332D27 → #332d27 |  |
 | `color.danger.active` | color | #9A3030 → #9a3030 | #B23A3A → #b23a3a |  |
 | `color.danger.bg` | color | #FDF0F0 → #fdf0f0 | #2A1A1A → #2a1a1a |  |
 | `color.danger.default` | color | #B23A3A → #b23a3a | #C45050 → #c45050 | 危险色（朱砂 — 印泥朱红） |
@@ -128,7 +128,7 @@
 | 令牌 | 类型 | 明色 | 暗色 | 说明 |
 | --- | --- | --- | --- | --- |
 | `docs.card.background` | color | #FAF6F0 → #faf6f0 | #242018 → #242018 | 卡片底色 |
-| `docs.card.borderColor` | color | #EEE9E2 → #eee9e2 | #2A2520 → #2a2520 | 卡片描边色 |
+| `docs.card.borderColor` | color | #EEE9E2 → #eee9e2 | #332D27 → #332d27 | 卡片描边色 |
 | `docs.card.borderRadius` | dimension | 8px | — |  |
 | `docs.card.borderWidth` | dimension | 1px | — |  |
 | `docs.card.padding` | dimension | 16px | — |  |
@@ -146,13 +146,14 @@
 | `docs.prose.fontSize` | dimension | 14px | — | 正文字号 |
 | `docs.prose.secondaryColor` | color | #8A8A8A → #8a8a8a | #A09890 → #a09890 | 次要说明文字色 |
 | `docs.prose.textColor` | color | #5A5A5A → #5a5a5a | #C8C0B8 → #c8c0b8 | 正文文字色 |
-| `docs.table.borderColor` | color | #EEE9E2 → #eee9e2 | #2A2520 → #2a2520 | 表格分割线色 |
+| `docs.table.borderColor` | color | #EEE9E2 → #eee9e2 | #332D27 → #332d27 | 表格分割线色 |
 | `docs.table.borderWidth` | dimension | 1px | — | 表格分割线宽 |
 | `docs.table.cellPaddingX` | dimension | 12px | — |  |
 | `docs.table.cellPaddingY` | dimension | 8px | — |  |
 | `docs.table.fontSize` | dimension | 13px | — | 表格文字字号 |
-| `docs.table.headerBg` | color | #F5F0EB → #f5f0eb | #1E1A16 → #1e1a16 | 表头行底色 |
+| `docs.table.headerBg` | color | #F5F0EB → #f5f0eb | #1A1612 → #1a1612 | 表头行底色 |
 | `docs.table.headerTextColor` | color | #2C2C2C → #2c2c2c | #E8E0D8 → #e8e0d8 | 表头行文字色 |
+| `docs.table.narrowBreakpoint` | dimension | 600px | — | 窄屏断点：内容可用宽度小于该值时表格折叠为字段卡片（手机竖屏折叠、平板/横屏保持表格） |
 
 ## icon
 

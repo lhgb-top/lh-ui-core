@@ -14,7 +14,7 @@ export const LhDarkTokensColorBackground: LhDarkTokensColorBackgroundT = {
   default: '#FF2A2520',  // 组件底色（宣纸色）
   disabled: '#FF242018',
   overlay: '#B30A0806',  // 遮罩层底色
-  page: '#FF1E1A16',  // 页面底色
+  page: '#FF1A1612',  // 页面底色
 }
 
 export interface LhDarkTokensColorBorderT {
@@ -27,7 +27,7 @@ export const LhDarkTokensColorBorder: LhDarkTokensColorBorderT = {
   base: '#FF3A3530',  // 基础描边
   extraLight: '#FF242018',
   light: '#FF302B28',
-  lighter: '#FF2A2520',
+  lighter: '#FF332D27',
 }
 
 export interface LhDarkTokensColorDangerT {
@@ -170,7 +170,7 @@ export interface LhDarkTokensDocsCardT {
 }
 export const LhDarkTokensDocsCard: LhDarkTokensDocsCardT = {
   background: '#FF242018',  // 卡片底色
-  borderColor: '#FF2A2520',  // 卡片描边色
+  borderColor: '#FF332D27',  // 卡片描边色
 }
 
 export interface LhDarkTokensDocsCodeT {
@@ -204,8 +204,8 @@ export interface LhDarkTokensDocsTableT {
   readonly headerTextColor: ResourceColor
 }
 export const LhDarkTokensDocsTable: LhDarkTokensDocsTableT = {
-  borderColor: '#FF2A2520',  // 表格分割线色
-  headerBg: '#FF1E1A16',  // 表头行底色
+  borderColor: '#FF332D27',  // 表格分割线色
+  headerBg: '#FF1A1612',  // 表头行底色
   headerTextColor: '#FFE8E0D8',  // 表头行文字色
 }
 

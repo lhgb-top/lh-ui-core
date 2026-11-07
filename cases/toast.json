@@ -58,6 +58,31 @@
       "given": { "props": {}, "state": { "visible": false } },
       "when": { "action": "render" },
       "then": { "visible": false, "notes": "绘制指令流为空" }
+    },
+    {
+      "id": "empty-text-fallback-locale",
+      "name": "show 空串时按语义类型回退语言包文案",
+      "given": { "props": { "type": "success" } },
+      "when": { "action": "custom", "payload": { "call": "show", "text": "" } },
+      "then": {
+        "visible": true,
+        "text": "操作成功",
+        "notes": "宿主切换 LhLocale 后回退文案随之更新"
+      }
+    },
+    {
+      "id": "empty-text-default-type-no-fallback",
+      "name": "default 类型空串不回退语言包",
+      "given": { "props": { "type": "default" } },
+      "when": { "action": "custom", "payload": { "call": "show", "text": "" } },
+      "then": { "visible": true, "notes": "default 类型无语义回退文案" }
+    },
+    {
+      "id": "explicit-text-wins",
+      "name": "显式传入的文字优先于语义回退",
+      "given": { "props": { "type": "success" } },
+      "when": { "action": "custom", "payload": { "call": "show", "text": "已保存" } },
+      "then": { "visible": true, "text": "已保存" }
     }
   ]
 }
